@@ -26,7 +26,8 @@ function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2.5 md:py-3 flex items-center gap-2 sm:gap-3 md:gap-4">
+<div className='max-w-7xl w-full mx-auto flex justify-center items-center'>
+          <div className="w-full justify-between px-3 sm:px-4 md:px-6 py-2.5 md:py-3 flex items-center gap-2 sm:gap-3 md:gap-4">
           <button 
             onClick={toggleSidebar}
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900 touch-manipulation"
@@ -46,12 +47,12 @@ function Navbar() {
           </div>
           <button 
             onClick={toggleSearch}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors ml-auto text-slate-900 touch-manipulation"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors  text-slate-900 touch-manipulation"
             aria-label="جستجو"
           >
             <SearchNormal1 size={20} color="#0f172a" />
           </button>
-          <div className="hidden md:flex items-center gap-3 ml-auto">
+          <div className="hidden md:flex items-center gap-3 ">
             <button className="p-2.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900" title="آپلود ویدیو">
               <VideoAdd size={22} color="#0f172a" />
             </button>
@@ -65,6 +66,7 @@ function Navbar() {
             </Link>
           </div>
         </div>
+</div>
         
         {/* Mobile Search Bar */}
         {isSearchOpen && (
