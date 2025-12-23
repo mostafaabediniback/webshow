@@ -31,12 +31,7 @@ export const updateChannel = async (id, payload) => {
 };
 
 export const deleteChannel = async (id) => {
-  await axiosInstanceNew.delete(`/channel/${id}`, {
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
+  await axiosInstanceNew.delete(`/channel/delete/${id}`);
   return true;
 };
 

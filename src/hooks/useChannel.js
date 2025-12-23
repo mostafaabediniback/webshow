@@ -6,6 +6,7 @@ import {
   deleteChannel,
 } from "../services/channelApi";
 import { QueryKeys } from "../enums";
+import { toast } from "react-toastify";
 
 function useChannel(pageNumber = 1, pageSize = 10, filters = {}) {
   const queryClient = useQueryClient();
@@ -27,6 +28,10 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}) {
     mutationFn: createChannel,
     onSuccess: () => {
       queryClient.invalidateQueries([QueryKeys.channel]);
+      toast.success("کانال با موفقیت ثبت شد", {
+        position: "top-right",
+        theme: "colored",
+      });
     },
   });
 
@@ -52,7 +57,8 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}) {
     isErrorChannels,
     refetchChannels,
     createChannel: createChannelMutation.mutate,
-    updateChannel: (id, payload) => updateChannelMutation.mutate({ id, payload }),
+    updateChannel: (id, payload) =>
+      updateChannelMutation.mutate({ id, payload }),
     deleteChannel: deleteChannelMutation.mutate,
   };
 }

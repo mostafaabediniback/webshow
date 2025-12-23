@@ -531,11 +531,7 @@
             "headers": {}
           }
         },
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
+        "security": []
       }
     },
     "/api/channel/{channel_id}": {
@@ -748,6 +744,68 @@
                     "created_at": "2025-12-02 20:23:52",
                     "updated_at": "2025-12-08 09:43:01"
                   }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/delete/{channel_id}": {
+      "delete": {
+        "summary": "Delete",
+        "deprecated": false,
+        "description": "With this endpoint you can delete existing channel. Just need token and channel id in url.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "message": "کانال با موفقیت حذف شد"
                 }
               }
             },
@@ -1085,11 +1143,7 @@
             "headers": {}
           }
         },
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
+        "security": []
       }
     },
     "/api/video": {
@@ -1313,6 +1367,44 @@
                     "to": 3,
                     "total": 3
                   }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/video/delete/{video_id}": {
+      "delete": {
+        "summary": "Delete Video",
+        "deprecated": false,
+        "description": "With this endpoint you can delete specific video. Just need token and video id.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "message": "ویدئو با موفقیت پاک شد"
                 }
               }
             },

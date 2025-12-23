@@ -46,10 +46,16 @@ export const getAllVideos = async (pageNumber = 1, pageSize = 25) => {
   return res.data?.data || [];
 };
 
+export const deleteVideo = async (videoId) => {
+  const res = await axiosInstanceNew.delete(`/video/delete/${videoId}`);
+  return res.data;
+};
+
 export default {
   uploadVideo,
   storeVideo,
   getVideosByChannel,
   getVideoDetail,
   getAllVideos,
+  deleteVideo,
 };
