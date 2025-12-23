@@ -1,4 +1,5 @@
 import axios from 'axios'
+import axiosInstanceNew from '../utils/axiosConfigNew'
 
 const api = axios.create({
   baseURL: '/',
@@ -91,29 +92,44 @@ export const deleteCategory = async (id) => {
 }
 
 export const getChannels = async () => {
-  return readLS(LS_KEYS.channels)
+  const res = await axiosInstanceNew.get('/channel', {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
+  return res.data || []
 }
 
 export const createChannel = async (payload) => {
-  const list = readLS(LS_KEYS.channels)
-  const id = crypto.randomUUID()
-  const item = { id, name: payload.name }
-  const next = [item, ...list]
-  writeLS(LS_KEYS.channels, next)
-  return item
+  const uidRaw = typeof window !== 'undefined' ? sessionStorage.getItem('user_id') : null
+  const user_id = uidRaw ? Number(uidRaw) : undefined
+  const res = await axiosInstanceNew.post('/channel/create', { ...payload, user_id }, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
+  return res.data
 }
 
 export const updateChannel = async (id, payload) => {
-  const list = readLS(LS_KEYS.channels)
-  const next = list.map((c) => (c.id === id ? { ...c, name: payload.name } : c))
-  writeLS(LS_KEYS.channels, next)
-  return next.find((c) => c.id === id)
+  const res = await axiosInstanceNew.put(`/channel/${id}`, payload, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
+  return res.data
 }
 
 export const deleteChannel = async (id) => {
-  const list = readLS(LS_KEYS.channels)
-  const next = list.filter((c) => c.id !== id)
-  writeLS(LS_KEYS.channels, next)
+  await axiosInstanceNew.delete(`/channel/${id}`, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
   return true
 }
 
