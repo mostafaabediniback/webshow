@@ -12,7 +12,7 @@ function Channels() {
     if (!name.trim()) return;
 
     if (editing) {
-      updateChannel({ id: editing.id, payload: { name } });
+      updateChannel(editing.id, { name });
       setEditing(null);
     } else {
       createChannel({ name });

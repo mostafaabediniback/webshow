@@ -1,11 +1,10 @@
 import DashboardLayout from '../layouts/DashboardLayout'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getChannels, addVideo } from '../services/api'
+import useChannel from '../hooks/useChannel'
+import useVideoUpload from '../hooks/useVideoUpload'
 import { useState } from 'react'
 
 function Upload() {
-  const qc = useQueryClient()
-  const { data: chans } = useQuery({ queryKey: ['chans'], queryFn: getChannels })
+  const { channels: chans } = useChannel()
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [videoFile, setVideoFile] = useState(null)
@@ -13,29 +12,7 @@ function Upload() {
   const [videoDrag, setVideoDrag] = useState(false)
   const [thumbDrag, setThumbDrag] = useState(false)
   const [chanId, setChanId] = useState('')
-
-  const mAdd = useMutation({
-    mutationFn: async () => {
-      if (!title || !videoFile || !chanId) return Promise.reject(new Error('invalid'))
-      const videoUrl = URL.createObjectURL(videoFile)
-      const chanName = (chans || []).find((c)=>c.id===chanId)?.name || ''
-      let thumbnailUrl = ''
-      if (thumbFile) {
-        thumbnailUrl = URL.createObjectURL(thumbFile)
-      } else {
-        thumbnailUrl = `https://picsum.photos/seed/${encodeURIComponent(title)}${Math.floor(Math.random()*1000)}/640/360`
-      }
-      return addVideo({ title, description: desc, thumbnailUrl, channelName: chanName, videoUrl })
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['videos'] })
-      setTitle('')
-      setDesc('')
-      setVideoFile(null)
-      setThumbFile(null)
-      setChanId('')
-    }
-  })
+  const { uploadAsync, isPending } = useVideoUpload()
 
   return (
     <DashboardLayout>
@@ -93,7 +70,29 @@ function Upload() {
                 )}
               </div>
             </div>
-            <button onClick={()=>mAdd.mutate()} className="h-10 px-4 rounded-lg bg-black text-white">ثبت</button>
+            <button 
+              onClick={async () => {
+                if (!title || !videoFile || !chanId) {
+                  alert('لطفاً عنوان، فایل ویدیو و کانال را انتخاب کنید')
+                  return
+                }
+                try {
+                  await uploadAsync({ channelId: chanId, title, description: desc, videoFile, coverFile: thumbFile })
+                  // در صورت موفقیت، فرم را پاک می‌کنیم
+                  setTitle('')
+                  setDesc('')
+                  setVideoFile(null)
+                  setThumbFile(null)
+                  setChanId('')
+                } catch (error) {
+                  // خطا در useVideoUpload مدیریت می‌شود
+                }
+              }}
+              disabled={!title || !videoFile || !chanId || isPending}
+              className="h-10 px-4 rounded-lg bg-black text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isPending ? 'در حال آپلود...' : 'ثبت'}
+            </button>
           </div>
         </div>
         <p className="text-xs text-gray-500 mt-2">کیفیت ویدیو تغییر نمی‌کند و فایل در همین جلسه پخش می‌شود.</p>

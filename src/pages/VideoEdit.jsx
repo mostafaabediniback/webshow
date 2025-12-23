@@ -1,14 +1,15 @@
 import DashboardLayout from '../layouts/DashboardLayout'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, Link } from 'react-router-dom'
-import { getLocalVideos, updateLocalVideo, getChannels } from '../services/api'
+import { getLocalVideos, updateLocalVideo } from '../services/api'
 import { useMemo, useState } from 'react'
+import useChannel from '../hooks/useChannel'
 
 function VideoEdit() {
   const { id } = useParams()
   const qc = useQueryClient()
   const { data: localVideos } = useQuery({ queryKey: ['localVideos'], queryFn: getLocalVideos })
-  const { data: channels } = useQuery({ queryKey: ['chans'], queryFn: getChannels })
+  const { channels } = useChannel()
   const item = useMemo(() => (localVideos || []).find((v)=>v.id === id), [localVideos, id])
 
   const [title, setTitle] = useState(item?.title || '')

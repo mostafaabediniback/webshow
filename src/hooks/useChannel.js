@@ -32,7 +32,7 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}) {
 
   // [03] - Update channel
   const updateChannelMutation = useMutation({
-    mutationFn: updateChannel,
+    mutationFn: ({ id, payload }) => updateChannel(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries([QueryKeys.channel]);
     },
@@ -46,24 +46,14 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}) {
     },
   });
 
-  // [05] - Get channel detail
-  const getChannelDetail = (id) => {
-    return useQuery({
-      queryKey: [QueryKeys.channel, id],
-      queryFn: () => getChannels(id), // اگر endpoint detail جدا داری، باید تابع جدا بسازی
-      enabled: !!id,
-    });
-  };
-
   return {
     channels,
     isLoadingChannels,
     isErrorChannels,
     refetchChannels,
     createChannel: createChannelMutation.mutate,
-    updateChannel: updateChannelMutation.mutate,
+    updateChannel: (id, payload) => updateChannelMutation.mutate({ id, payload }),
     deleteChannel: deleteChannelMutation.mutate,
-    getChannelDetail,
   };
 }
 

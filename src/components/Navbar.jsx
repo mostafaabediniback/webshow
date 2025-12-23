@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import SearchInput from "./SearchInput";
+import useLogin from "../hooks/useLogin";
 import {
   Menu,
   SearchNormal1,
@@ -8,15 +9,34 @@ import {
   Notification,
   User,
   CloseCircle,
+  Logout,
 } from "iconsax-react";
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { LogOut, isLoggingOut } = useLogin();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // بررسی وضعیت لاگین
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    setIsAuthenticated(!!token);
+  }, []);
 
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
+
+  const handleLogout = async () => {
+    try {
+      await LogOut();
+      setIsAuthenticated(false);
+      closeSidebar();
+    } catch (error) {
+      // خطا در useLogin مدیریت می‌شود
+    }
+  };
 
   // Prevent body scroll when sidebar is open
   useEffect(() => {
@@ -73,19 +93,33 @@ function Navbar() {
                 <Notification size={22} color="#0f172a" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button> */}
-              <Link
-                to="/dashboard"
-                className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
-              >
-                مدیریت کانال‌ها
-              </Link>
-              {/* <Link
-                to="/login"
-                className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
-              >
-                <User size={18} color="#0f172a" />
-                ورود
-              </Link> */}
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to="/dashboard"
+                    className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                  >
+                    مدیریت کانال‌ها
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="h-10 px-4 rounded-full border border-red-300 bg-white hover:bg-red-50 active:bg-red-100 text-sm font-medium flex items-center gap-2 text-red-600 transition-colors shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="خروج از حساب کاربری"
+                  >
+                    <Logout size={18} color="#dc2626" />
+                    {isLoggingOut ? "در حال خروج..." : "خروج"}
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                >
+                  <User size={18} color="#0f172a" />
+                  ورود
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -188,16 +222,27 @@ function Navbar() {
           </div>
 
           {/* Sidebar Footer */}
-          {/* <div className="border-t border-gray-200 p-4">
-            <Link
-              to="/login"
-              onClick={closeSidebar}
-              className="w-full h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
-            >
-              <User size={20} color="#ffffff" />
-              ورود به حساب کاربری
-            </Link>
-          </div> */}
+          <div className="border-t border-gray-200 p-4">
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="w-full h-12 rounded-lg bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Logout size={20} color="#ffffff" />
+                {isLoggingOut ? "در حال خروج..." : "خروج از حساب کاربری"}
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={closeSidebar}
+                className="w-full h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
+              >
+                <User size={20} color="#ffffff" />
+                ورود به حساب کاربری
+              </Link>
+            )}
+          </div>
         </div>
       </aside>
     </>

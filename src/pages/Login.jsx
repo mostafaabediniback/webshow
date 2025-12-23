@@ -6,8 +6,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 function Login() {
-  const { LogIn } = useLogin();
-  const [loading, setLoading] = useState(false);
+  const { LogIn, isLoading } = useLogin();
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false); // مدیریت نمایش رمز عبور
 
@@ -20,20 +19,15 @@ function Login() {
       .required("رمز عبور الزامی است"),
   });
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     setError("");
-    setLoading(true);
 
-    LogIn(
-      { phone_number: values.phone, password: values.password },
-      {
-        onSuccess: () => setLoading(false),
-        onError: () => {
-          setLoading(false);
-          setError("ورود ناموفق بود");
-        },
-      }
-    );
+    try {
+      await LogIn({ phone_number: values.phone, password: values.password });
+      // onSuccess در useLogin مدیریت می‌شود و redirect انجام می‌شود
+    } catch (err) {
+      setError("ورود ناموفق بود. لطفاً شماره موبایل و رمز عبور را بررسی کنید.");
+    }
   };
 
   return (
@@ -113,9 +107,9 @@ function Login() {
                 <button
                   type="submit"
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:scale-95 text-white font-medium text-sm shadow-md transition-all"
-                  disabled={isSubmitting || loading}
+                  disabled={isSubmitting || isLoading}
                 >
-                  {loading ? "در حال ورود..." : "ورود"}
+                  {isLoading ? "در حال ورود..." : "ورود"}
                 </button>
               </Form>
             )}
