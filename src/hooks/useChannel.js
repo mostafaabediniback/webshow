@@ -4,6 +4,7 @@ import {
   createChannel,
   updateChannel,
   deleteChannel,
+  changeChannelImage,
 } from "../services/channelApi";
 import { QueryKeys } from "../enums";
 import { toast } from "react-toastify";
@@ -51,6 +52,14 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}) {
     },
   });
 
+  // [05] - Change channel image
+  const changeChannelImageMutation = useMutation({
+    mutationFn: ({ id, file }) => changeChannelImage(id, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries([QueryKeys.channel]);
+    },
+  });
+
   return {
     channels,
     isLoadingChannels,
@@ -60,6 +69,8 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}) {
     updateChannel: (id, payload) =>
       updateChannelMutation.mutate({ id, payload }),
     deleteChannel: deleteChannelMutation.mutate,
+    changeChannelImage: (id, file) =>
+      changeChannelImageMutation.mutate({ id, file }),
   };
 }
 

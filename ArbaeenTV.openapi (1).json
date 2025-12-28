@@ -226,15 +226,23 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
                   "name": {
+                    "example": "Test",
                     "type": "string"
                   },
                   "user_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "image": {
+                    "format": "binary",
+                    "type": "string",
+                    "description": "Image with valid format and lower than 4 MB",
+                    "example": ""
                   }
                 },
                 "required": [
@@ -242,10 +250,7 @@
                   "user_id"
                 ]
               },
-              "example": {
-                "name": "Test Channel 3",
-                "user_id": 1
-              }
+              "examples": {}
             }
           }
         },
@@ -478,16 +483,32 @@
                   "status": "success",
                   "data": [
                     {
-                      "id": 1,
-                      "name": "Test Channel 2",
-                      "created_at": "2025-12-02 20:23:52",
-                      "updated_at": "2025-12-02 20:23:52"
-                    },
-                    {
                       "id": 2,
                       "name": "Test Channel",
-                      "created_at": "2025-12-03 12:45:22",
-                      "updated_at": "2025-12-03 12:45:22"
+                      "image": "",
+                      "created_at": "2025-12-21 13:32:06",
+                      "updated_at": "2025-12-21 13:32:06"
+                    },
+                    {
+                      "id": 4,
+                      "name": "Test Channel 2",
+                      "image": "",
+                      "created_at": "2025-12-22 17:01:00",
+                      "updated_at": "2025-12-22 17:01:00"
+                    },
+                    {
+                      "id": 5,
+                      "name": "Test Channel 3",
+                      "image": "",
+                      "created_at": "2025-12-22 17:01:07",
+                      "updated_at": "2025-12-22 17:01:07"
+                    },
+                    {
+                      "id": 6,
+                      "name": "Test",
+                      "image": "localhost:80/storage/7/Screenshot-2025-12-27-at-3.28.52 PM.png",
+                      "created_at": "2025-12-27 12:00:22",
+                      "updated_at": "2025-12-27 12:00:22"
                     }
                   ],
                   "links": {
@@ -522,8 +543,8 @@
                     ],
                     "path": "http://localhost/api/channel",
                     "per_page": 25,
-                    "to": 2,
-                    "total": 2
+                    "to": 4,
+                    "total": 4
                   }
                 }
               }
@@ -806,6 +827,76 @@
                 "example": {
                   "status": "success",
                   "message": "کانال با موفقیت حذف شد"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/change-image/{channel_id}": {
+      "post": {
+        "summary": "Change Image",
+        "deprecated": false,
+        "description": "Change existing channel image. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "format": "binary",
+                    "type": "string",
+                    "description": "Image in valid format and lower than 4 MB. ",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "image"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 6,
+                    "name": "Test",
+                    "image": "localhost:80/storage/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                    "created_at": "2025-12-27 12:00:22",
+                    "updated_at": "2025-12-27 12:00:22"
+                  }
                 }
               }
             },
@@ -1432,7 +1523,7 @@
   },
   "servers": [
     {
-      "url": "localhost:80",
+      "url": "https://artest.liara.run",
       "description": "ArbaeenTV"
     }
   ],
