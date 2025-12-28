@@ -8,6 +8,10 @@ const useVideoUpload = () => {
     mutationFn: async (vars) => {
       const { channelId, title, description, videoFile, coverFile } = vars
       
+      if (!coverFile) {
+        throw new Error('تصویر بندانگشتی الزامی است')
+      }
+      
       // مرحله 1: آپلود ویدیو
       const uploaded = await uploadVideo(videoFile)
       

@@ -109,7 +109,7 @@ function Upload() {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                تصویر بندانگشتی (اختیاری)
+                تصویر بندانگشتی <span className="text-red-500">*</span>
               </label>
               <div
                 className={`rounded-xl border-2 transition-all ${thumbDrag ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300 hover:border-gray-400'} p-6 flex flex-col items-center justify-center text-center cursor-pointer min-h-[150px]`}
@@ -152,8 +152,8 @@ function Upload() {
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <button 
             onClick={async () => {
-              if (!title || !videoFile || !chanId) {
-                alert('لطفاً عنوان، فایل ویدیو و کانال را انتخاب کنید')
+              if (!title || !videoFile || !chanId || !thumbFile) {
+                alert('لطفاً عنوان، فایل ویدیو، تصویر بندانگشتی و کانال را انتخاب کنید')
                 return
               }
               try {
@@ -168,7 +168,7 @@ function Upload() {
                 // خطا در useVideoUpload مدیریت می‌شود
               }
             }}
-            disabled={!title || !videoFile || !chanId || isPending}
+            disabled={!title || !videoFile || !chanId || !thumbFile || isPending}
             className="w-full h-12 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isPending ? (

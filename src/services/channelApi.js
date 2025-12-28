@@ -11,11 +11,19 @@ export const createChannel = async (payload) => {
   const uidRaw =
     typeof window !== "undefined" ? sessionStorage.getItem("user_id") : null;
   const user_id = uidRaw ? Number(uidRaw) : undefined;
-  const res = await axiosInstanceNew.post(
-    "/channel/create",
-    { ...payload, user_id },
-    {}
-  );
+  const formData = new FormData();
+  formData.append("name", payload?.name || "");
+  if (typeof user_id !== "undefined") {
+    formData.append("user_id", String(user_id));
+  }
+  if (payload?.image) {
+    formData.append("image", payload.image);
+  }
+  const res = await axiosInstanceNew.post("/channel/create", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
 
@@ -37,5 +45,16 @@ export const deleteChannel = async (id) => {
 
 export const getChannelById = async (id) => {
   const res = await axiosInstanceNew.get(`/channel/${id}`);
+  return res.data;
+};
+
+export const changeChannelImage = async (id, imageFile) => {
+  const formData = new FormData();
+  formData.append("image", imageFile);
+  const res = await axiosInstanceNew.post(`/channel/change-image/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
