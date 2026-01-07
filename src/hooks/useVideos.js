@@ -1,10 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { getVideos } from '../services/api'
+import { getLanding } from '../services/videoApi'
 
 export const useVideos = () => {
   return useQuery({
-    queryKey: ['videos'],
-    queryFn: getVideos
+    queryKey: ['landing'],
+    queryFn: async () => {
+      const data = await getLanding();
+      return data;
+    }
   })
 }
 

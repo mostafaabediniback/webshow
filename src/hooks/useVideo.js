@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { getVideoById } from '../services/api'
+import { getVideoDetail } from '../services/videoApi'
 
 export const useVideo = (id) => {
   return useQuery({
     queryKey: ['video', id],
-    queryFn: () => getVideoById(id),
+    queryFn: () => getVideoDetail(id),
     enabled: !!id
   })
 }

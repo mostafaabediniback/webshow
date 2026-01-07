@@ -196,6 +196,172 @@
         ]
       }
     },
+    "/api/landing": {
+      "get": {
+        "summary": "Landing",
+        "deprecated": false,
+        "description": "Endpoint to get landing info.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": {
+                    "channels": [
+                      {
+                        "id": 2,
+                        "name": "Test Channel",
+                        "image": ""
+                      },
+                      {
+                        "id": 4,
+                        "name": "Test Channel 2",
+                        "image": ""
+                      },
+                      {
+                        "id": 5,
+                        "name": "Test Channel 3",
+                        "image": ""
+                      },
+                      {
+                        "id": 6,
+                        "name": "Test",
+                        "image": "localhost:80/storage/8/Screenshot-2025-12-27-at-4.26.46 PM.png"
+                      }
+                    ],
+                    "videos": [
+                      [
+                        {
+                          "channel": "Test Channel",
+                          "videos": [
+                            []
+                          ]
+                        }
+                      ],
+                      [
+                        {
+                          "channel": "Test Channel 2",
+                          "videos": [
+                            []
+                          ]
+                        }
+                      ],
+                      [
+                        {
+                          "channel": "Test Channel 3",
+                          "videos": [
+                            []
+                          ]
+                        }
+                      ],
+                      [
+                        {
+                          "channel": "Test",
+                          "videos": [
+                            [
+                              {
+                                "id": 4,
+                                "channel_name": "Test",
+                                "video_link": "localhost:80/storage/9/695cc20311220.mp4",
+                                "cover_link": "",
+                                "title": "test title",
+                                "description": "test description"
+                              },
+                              {
+                                "id": 5,
+                                "channel_name": "Test",
+                                "video_link": "",
+                                "cover_link": "localhost:80/storage/10/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                                "title": "test title",
+                                "description": "test description"
+                              },
+                              {
+                                "id": 6,
+                                "channel_name": "Test",
+                                "video_link": "localhost:80/storage/12/695cc266dacf8.mp4",
+                                "cover_link": "localhost:80/storage/11/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                                "title": "test title",
+                                "description": "test description"
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    ]
+                  },
+                  "links": {
+                    "first": "http://localhost/api/landing?page=1",
+                    "last": "http://localhost/api/landing?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/landing?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/landing",
+                    "per_page": 25,
+                    "to": 4,
+                    "total": 4
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
     "/api/channel/create": {
       "post": {
         "summary": "New Channel",
@@ -910,6 +1076,115 @@
         ]
       }
     },
+    "/api/search/{search}": {
+      "get": {
+        "summary": "Search",
+        "deprecated": false,
+        "description": "With this endpoint you can search in channel by name and videos by title. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": {
+                    "channels": [
+                      {
+                        "id": 2,
+                        "name": "Test Channel",
+                        "image": "",
+                        "created_at": "2025-12-21 13:32:06",
+                        "updated_at": "2025-12-21 13:32:06"
+                      },
+                      {
+                        "id": 4,
+                        "name": "Test Channel 2",
+                        "image": "",
+                        "created_at": "2025-12-22 17:01:00",
+                        "updated_at": "2025-12-22 17:01:00"
+                      },
+                      {
+                        "id": 5,
+                        "name": "Test Channel 3",
+                        "image": "",
+                        "created_at": "2025-12-22 17:01:07",
+                        "updated_at": "2025-12-22 17:01:07"
+                      },
+                      {
+                        "id": 6,
+                        "name": "Test",
+                        "image": "localhost:80/storage/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                        "created_at": "2025-12-27 12:00:22",
+                        "updated_at": "2025-12-27 12:00:22"
+                      }
+                    ],
+                    "videos": [
+                      {
+                        "id": 4,
+                        "channel_name": "Test",
+                        "cover_link": "localhost:80/storage/9/695cc20311220.mp4",
+                        "title": "test title"
+                      },
+                      {
+                        "id": 5,
+                        "channel_name": "Test",
+                        "cover_link": "localhost:80/storage/10/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                        "title": "test title"
+                      },
+                      {
+                        "id": 6,
+                        "channel_name": "Test",
+                        "cover_link": "localhost:80/storage/11/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                        "title": "test title"
+                      }
+                    ]
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
     "/api/video/{channel_id}/store-video": {
       "post": {
         "summary": "Store Video",
@@ -1523,7 +1798,7 @@
   },
   "servers": [
     {
-      "url": "https://artest.liara.run",
+      "url": "http://81.16.114.126:8080/back",
       "description": "ArbaeenTV"
     }
   ],
