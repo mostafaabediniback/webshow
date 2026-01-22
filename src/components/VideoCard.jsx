@@ -33,7 +33,7 @@ function VideoCard({ video }) {
             {video.title}
           </h3>
           <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">{channel}</p>
-          <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">{views} بازدید</p>
+          {/* <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">{views} بازدید</p> */}
         </div>
       </div>
     </Link>

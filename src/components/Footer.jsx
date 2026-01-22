@@ -4,7 +4,7 @@ function Footer() {
   return (
     <footer className="mt-12 sm:mt-16 border-t border-gray-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
+        {/* <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="col-span-2 sm:col-span-1">
             <h3 className="text-base sm:text-lg font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3 sm:mb-4">
               وب‌شو
@@ -37,7 +37,7 @@ function Footer() {
               <li><Link to="/" className="text-gray-600 hover:text-blue-600 transition-colors">یوتیوب</Link></li>
             </ul>
           </div>
-        </div>
+        </div> */}
         <div className="pt-4 sm:pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
           <p className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
             © {new Date().getFullYear()} وب‌شو. تمامی حقوق محفوظ است.

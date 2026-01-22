@@ -54,8 +54,8 @@ function Video() {
               <video 
                 controls 
                 className="w-full h-full" 
-                poster={data.thumbnailUrl || data.cover_link || data.cover} 
-                src={data.videoUrl || data.video_link}
+                poster={data.data.thumbnailUrl || data.data.cover_link || data.data.cover} 
+                src={data.data.videoUrl || data.data.video_link}
               />
             </div>
             <h1 className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-tight px-1">
@@ -64,26 +64,27 @@ function Video() {
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <img 
-                  src={`https://i.pravatar.cc/48?u=${encodeURIComponent(data.channelName || data.channel_name || 'Channel')}`} 
-                  alt={data.channelName || data.channel_name}
+                  // src={`https://i.pravatar.cc/48?u=${encodeURIComponent(data.data.channelName || data.data.channel_name || 'Channel')}`} 
+                  src={data.data.cover_link } 
+                  alt={data.data.channelName || data.data.channel_name}
                   className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 ring-2 ring-gray-200 flex-shrink-0" 
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{data.channelName || data.channel_name}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{(data.views || 0).toLocaleString('fa-IR')} بازدید</p>
+                  <p className="text-sm font-semibold text-gray-900 truncate">{data.data.channel_name }</p>
+                  {/* <p className="text-xs text-gray-500 mt-0.5">{(data.views || 0).toLocaleString('fa-IR')} بازدید</p> */}
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                <button className="h-9 sm:h-10 px-4 sm:px-5 rounded-full bg-black hover:bg-gray-800 active:scale-95 text-white text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 sm:gap-2 touch-manipulation">
+                {/* <button className="h-9 sm:h-10 px-4 sm:px-5 rounded-full bg-black hover:bg-gray-800 active:scale-95 text-white text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 sm:gap-2 touch-manipulation">
                   <Like1 size={16} className="sm:w-[18px] sm:h-[18px]" />
                   <span className="hidden xs:inline">پسندیدم</span>
-                </button>
-                <button className="h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-full border border-gray-300 hover:bg-gray-50 active:scale-95 text-gray-700 text-sm font-medium transition-all duration-200 flex items-center justify-center touch-manipulation">
+                </button> */}
+                {/* <button className="h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-full border border-gray-300 hover:bg-gray-50 active:scale-95 text-gray-700 text-sm font-medium transition-all duration-200 flex items-center justify-center touch-manipulation">
                   <Share size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
-                <button className="h-9 sm:h-10 w-9 sm:w-10 rounded-full border border-gray-300 hover:bg-gray-50 active:scale-95 text-gray-700 transition-all duration-200 flex items-center justify-center touch-manipulation">
+                </button> */}
+                {/* <button className="h-9 sm:h-10 w-9 sm:w-10 rounded-full border border-gray-300 hover:bg-gray-50 active:scale-95 text-gray-700 transition-all duration-200 flex items-center justify-center touch-manipulation">
                   <More size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">

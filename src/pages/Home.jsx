@@ -9,11 +9,13 @@ function Home() {
 
   return (
     <Layout>
+
+
       <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-4 sm:py-6">
         <div className="sticky top-[57px] sm:top-[61px] md:top-[73px] z-10 bg-slate-50/95 backdrop-blur-sm pb-3 pt-2 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6">
-          <CategoryChips />
+          <CategoryChips channels={data?.channels || []} />
         </div>
-        <h2 className="sr-only">ویدیوهای پیشنهادی</h2>
+        {/* <h2 className="sr-only">ویدیوهای پیشنهادی</h2> */}
         
         {isLoading ? (
           <div className="mt-4 sm:mt-6">
