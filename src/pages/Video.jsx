@@ -59,13 +59,13 @@ function Video() {
               />
             </div>
             <h1 className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-tight px-1">
-              {data.title}
+              {data.data.title}
             </h1>
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <img 
                   // src={`https://i.pravatar.cc/48?u=${encodeURIComponent(data.data.channelName || data.data.channel_name || 'Channel')}`} 
-                  src={data.data.cover_link } 
+                  src={data.data.channel_image } 
                   alt={data.data.channelName || data.data.channel_name}
                   className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 ring-2 ring-gray-200 flex-shrink-0" 
                 />
@@ -75,6 +75,7 @@ function Video() {
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
+                
                 {/* <button className="h-9 sm:h-10 px-4 sm:px-5 rounded-full bg-black hover:bg-gray-800 active:scale-95 text-white text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 sm:gap-2 touch-manipulation">
                   <Like1 size={16} className="sm:w-[18px] sm:h-[18px]" />
                   <span className="hidden xs:inline">پسندیدم</span>
@@ -88,7 +89,7 @@ function Video() {
               </div>
             </div>
             <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
-              <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 whitespace-pre-line">{data.description}</p>
+              <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 whitespace-pre-line">{data.data.description}</p>
             </div>
           </div>
           <aside className="hidden lg:block">
