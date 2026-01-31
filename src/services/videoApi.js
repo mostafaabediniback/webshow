@@ -46,9 +46,15 @@ export const getAllVideos = async (pageNumber = 1, pageSize = 25) => {
   return res.data?.data || [];
 };
 
-export const getLanding = async () => {
-  const res = await axiosInstanceNew.get("/landing");
+export const getLanding = async (channelId) => {
+  const url = channelId ? `/landing/${channelId}` : "/landing";
+  const res = await axiosInstanceNew.get(url);
   return res.data?.data || {};
+};
+
+export const getSearch = async (q) => {
+  const res = await axiosInstanceNew.get(`/search/${encodeURIComponent(q)}`);
+  return res.data;
 };
 
 export const deleteVideo = async (videoId) => {
@@ -63,5 +69,6 @@ export default {
   getVideoDetail,
   getAllVideos,
   getLanding,
+  getSearch,
   deleteVideo,
 };

@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom'
+import defaultCover from '../assets/img/cover.jpg'
 
 function VideoCard({ video }) {
-  // Map API fields to component expectations
-  const thumbnail = video.thumbnailUrl || video.cover_link || video.cover;
+  const normalizeUrl = (u) => {
+    if (typeof u !== 'string') return ''
+    return u.replace(/[`'"]/g, '').trim()
+  }
+  const thumbnailRaw = video.thumbnailUrl || video.cover_link || video.cover
+  const thumbnail = normalizeUrl(thumbnailRaw) || defaultCover
   const channel = video.channelName || video.channel_name;
   const views = video.views ? video.views.toLocaleString('fa-IR') : '۰';
   const duration = video.duration || '00:00';
@@ -15,7 +20,7 @@ function VideoCard({ video }) {
           alt={video.title} 
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
           loading="lazy"
-          onError={(e) => { e.target.src = "https://picsum.photos/seed/default/160/90"; }}
+          onError={(e) => { e.target.src = defaultCover; }}
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
         <span className="absolute bottom-1.5 sm:bottom-2 right-1.5 sm:right-2 text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-black/85 backdrop-blur-sm text-white">
@@ -23,11 +28,11 @@ function VideoCard({ video }) {
         </span>
       </div>
       <div className="mt-2 sm:mt-3 flex gap-2 sm:gap-3">
-        <img 
+        {/* <img 
           src={`https://i.pravatar.cc/40?u=${encodeURIComponent(channel)}`} 
           alt={channel} 
           className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex-shrink-0 ring-2 ring-gray-200 group-hover:ring-gray-300 transition-all" 
-        />
+        /> */}
         <div className="flex-1 min-w-0">
           <h3 className="text-sm sm:text-base font-semibold line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors leading-snug">
             {video.title}

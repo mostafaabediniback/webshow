@@ -11,18 +11,15 @@ import {
   CloseCircle,
   Logout,
 } from "iconsax-react";
+import logo from "../assets/logo/logo-01-01.png";
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { LogOut, isLoggingOut } = useLogin();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("token"));
 
   // بررسی وضعیت لاگین
-  useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    setIsAuthenticated(!!token);
-  }, []);
 
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -65,9 +62,9 @@ function Navbar() {
             <Link
               to="/"
               onClick={closeSidebar}
-              className="text-xl sm:text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-90 transition-opacity"
+              className="flex items-center gap-2"
             >
-              وب‌شو
+              <img src={logo} alt="اربعین تی وی" className="h-8 sm:h-9 md:h-10 w-auto" />
             </Link>
             <div className="hidden md:block flex-1 max-w-2xl mx-8">
               <SearchInput />

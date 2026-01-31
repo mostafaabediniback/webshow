@@ -11,11 +11,13 @@ import Channels from './pages/Channels'
 import Upload from './pages/Upload'
 import Videos from './pages/Videos'
 import VideoEdit from './pages/VideoEdit'
+import Search from './pages/Search'
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/search/:q" element={<Search />} />
       <Route path="/v/:id" element={<Video />} />
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />

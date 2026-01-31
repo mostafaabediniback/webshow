@@ -196,13 +196,22 @@
         ]
       }
     },
-    "/api/landing": {
+    "/api/landing/{channel_id}": {
       "get": {
         "summary": "Landing",
         "deprecated": false,
         "description": "Endpoint to get landing info.",
         "tags": [],
         "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "just send for get specific channel videos",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
           {
             "name": "Accept",
             "in": "header",
@@ -233,126 +242,178 @@
                   "type": "object",
                   "properties": {}
                 },
-                "example": {
-                  "data": {
-                    "channels": [
-                      {
-                        "id": 2,
-                        "name": "Test Channel",
-                        "image": ""
-                      },
-                      {
-                        "id": 4,
-                        "name": "Test Channel 2",
-                        "image": ""
-                      },
-                      {
-                        "id": 5,
-                        "name": "Test Channel 3",
-                        "image": ""
-                      },
-                      {
-                        "id": 6,
-                        "name": "Test",
-                        "image": "localhost:80/storage/8/Screenshot-2025-12-27-at-4.26.46 PM.png"
-                      }
-                    ],
-                    "videos": [
-                      [
-                        {
-                          "channel": "Test Channel",
-                          "videos": [
-                            []
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "data": {
+                        "channels": [
+                          {
+                            "id": 2,
+                            "name": "Test Channel",
+                            "image": ""
+                          },
+                          {
+                            "id": 4,
+                            "name": "Test Channel 2",
+                            "image": ""
+                          },
+                          {
+                            "id": 5,
+                            "name": "Test Channel 3",
+                            "image": ""
+                          },
+                          {
+                            "id": 6,
+                            "name": "Test",
+                            "image": "localhost:80/storage/8/Screenshot-2025-12-27-at-4.26.46 PM.png"
+                          }
+                        ],
+                        "videos": [
+                          [
+                            {
+                              "channel": "Test Channel",
+                              "videos": [
+                                []
+                              ]
+                            }
+                          ],
+                          [
+                            {
+                              "channel": "Test Channel 2",
+                              "videos": [
+                                []
+                              ]
+                            }
+                          ],
+                          [
+                            {
+                              "channel": "Test Channel 3",
+                              "videos": [
+                                []
+                              ]
+                            }
+                          ],
+                          [
+                            {
+                              "channel": "Test",
+                              "videos": [
+                                [
+                                  {
+                                    "id": 4,
+                                    "channel_name": "Test",
+                                    "video_link": "localhost:80/storage/9/695cc20311220.mp4",
+                                    "cover_link": "",
+                                    "title": "test title",
+                                    "description": "test description"
+                                  },
+                                  {
+                                    "id": 5,
+                                    "channel_name": "Test",
+                                    "video_link": "",
+                                    "cover_link": "localhost:80/storage/10/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                                    "title": "test title",
+                                    "description": "test description"
+                                  },
+                                  {
+                                    "id": 6,
+                                    "channel_name": "Test",
+                                    "video_link": "localhost:80/storage/12/695cc266dacf8.mp4",
+                                    "cover_link": "localhost:80/storage/11/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                                    "title": "test title",
+                                    "description": "test description"
+                                  }
+                                ]
+                              ]
+                            }
                           ]
-                        }
-                      ],
-                      [
-                        {
-                          "channel": "Test Channel 2",
-                          "videos": [
-                            []
-                          ]
-                        }
-                      ],
-                      [
-                        {
-                          "channel": "Test Channel 3",
-                          "videos": [
-                            []
-                          ]
-                        }
-                      ],
-                      [
-                        {
-                          "channel": "Test",
-                          "videos": [
-                            [
-                              {
-                                "id": 4,
-                                "channel_name": "Test",
-                                "video_link": "localhost:80/storage/9/695cc20311220.mp4",
-                                "cover_link": "",
-                                "title": "test title",
-                                "description": "test description"
-                              },
-                              {
-                                "id": 5,
-                                "channel_name": "Test",
-                                "video_link": "",
-                                "cover_link": "localhost:80/storage/10/Screenshot-2026-01-06-at-11.35.08 AM.png",
-                                "title": "test title",
-                                "description": "test description"
-                              },
-                              {
-                                "id": 6,
-                                "channel_name": "Test",
-                                "video_link": "localhost:80/storage/12/695cc266dacf8.mp4",
-                                "cover_link": "localhost:80/storage/11/Screenshot-2026-01-06-at-11.35.08 AM.png",
-                                "title": "test title",
-                                "description": "test description"
-                              }
+                        ]
+                      },
+                      "links": {
+                        "first": "http://localhost/api/landing?page=1",
+                        "last": "http://localhost/api/landing?page=1",
+                        "prev": null,
+                        "next": null
+                      },
+                      "meta": {
+                        "current_page": 1,
+                        "from": 1,
+                        "last_page": 1,
+                        "links": [
+                          {
+                            "url": null,
+                            "label": "&laquo; Previous",
+                            "page": null,
+                            "active": false
+                          },
+                          {
+                            "url": "http://localhost/api/landing?page=1",
+                            "label": "1",
+                            "page": 1,
+                            "active": true
+                          },
+                          {
+                            "url": null,
+                            "label": "Next &raquo;",
+                            "page": null,
+                            "active": false
+                          }
+                        ],
+                        "path": "http://localhost/api/landing",
+                        "per_page": 25,
+                        "to": 4,
+                        "total": 4
+                      },
+                      "status": "success"
+                    }
+                  },
+                  "2": {
+                    "summary": "Success Search",
+                    "value": {
+                      "data": {
+                        "channels": {
+                          "id": 6,
+                          "name": "Test",
+                          "image": "localhost:80/storage/8/Screenshot-2025-12-27-at-4.26.46 PM.png"
+                        },
+                        "videos": [
+                          {
+                            "channel": "Test",
+                            "image": "localhost:80/storage/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                            "videos": [
+                              [
+                                {
+                                  "id": 4,
+                                  "channel_name": "Test",
+                                  "video_link": "localhost:80/storage/9/695cc20311220.mp4",
+                                  "cover_link": "",
+                                  "title": "test title",
+                                  "description": "test description"
+                                },
+                                {
+                                  "id": 5,
+                                  "channel_name": "Test",
+                                  "video_link": "",
+                                  "cover_link": "localhost:80/storage/10/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                                  "title": "test title",
+                                  "description": "test description"
+                                },
+                                {
+                                  "id": 6,
+                                  "channel_name": "Test",
+                                  "video_link": "localhost:80/storage/12/695cc266dacf8.mp4",
+                                  "cover_link": "localhost:80/storage/11/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                                  "title": "test title",
+                                  "description": "test description"
+                                }
+                              ]
                             ]
-                          ]
-                        }
-                      ]
-                    ]
-                  },
-                  "links": {
-                    "first": "http://localhost/api/landing?page=1",
-                    "last": "http://localhost/api/landing?page=1",
-                    "prev": null,
-                    "next": null
-                  },
-                  "meta": {
-                    "current_page": 1,
-                    "from": 1,
-                    "last_page": 1,
-                    "links": [
-                      {
-                        "url": null,
-                        "label": "&laquo; Previous",
-                        "page": null,
-                        "active": false
+                          }
+                        ]
                       },
-                      {
-                        "url": "http://localhost/api/landing?page=1",
-                        "label": "1",
-                        "page": 1,
-                        "active": true
-                      },
-                      {
-                        "url": null,
-                        "label": "Next &raquo;",
-                        "page": null,
-                        "active": false
-                      }
-                    ],
-                    "path": "http://localhost/api/landing",
-                    "per_page": 25,
-                    "to": 4,
-                    "total": 4
-                  },
-                  "status": "success"
+                      "status": "success"
+                    }
+                  }
                 }
               }
             },

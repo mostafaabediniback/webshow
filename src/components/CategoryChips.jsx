@@ -1,22 +1,20 @@
-import { useState } from 'react'
-
 function CategoryChips({ channels, activeChannelId, onSelect }) {
+  const list = Array.isArray(channels) ? channels : (channels ? [channels] : [])
   return (
     <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide">
-      
-      {/* همه */}
-      {/* <button
+      <button
         onClick={() => onSelect(null)}
-        className={`flex flex-col items-center gap-1 ${
-          activeChannelId === null ? 'scale-105' : 'opacity-70'
+        className={`flex flex-col items-center gap-1 flex-shrink-0 transition ${
+          activeChannelId === null ? 'scale-105' : 'opacity-70 hover:opacity-100'
         }`}
       >
-        <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
-          همه
+        <div className={`w-14 h-14 rounded-full overflow-hidden border-2 ${activeChannelId === null ? 'border-blue-600' : 'border-gray-300'} bg-gray-100 flex items-center justify-center`}>
+          <span className="text-sm text-gray-700">همه</span>
         </div>
-      </button> */}
+        <span className="text-xs truncate max-w-[56px]">همه</span>
+      </button>
 
-      {channels.map((channel) => {
+      {list.map((channel) => {
         const isActive = activeChannelId === channel.id
 
         return (

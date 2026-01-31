@@ -36,7 +36,7 @@ function Login() {
         <div className="max-w-md w-full mx-auto bg-white rounded-2xl border border-gray-200 shadow-lg p-6 sm:p-8 md:p-10">
           <div className="text-center mb-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              ورود به وب‌شو
+              ورود به اربعین تی وی
             </h1>
             <p className="mt-2 text-sm sm:text-base text-gray-600">
               با حساب خود وارد شوید تا ویدیوها و لیست‌هایتان را مدیریت کنید

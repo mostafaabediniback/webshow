@@ -7,7 +7,7 @@ function Footer() {
         {/* <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="col-span-2 sm:col-span-1">
             <h3 className="text-base sm:text-lg font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3 sm:mb-4">
-              وب‌شو
+              اربعین تی وی
             </h3>
             <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
               پلتفرم تماشای ویدیوهای آموزشی و سرگرمی
@@ -40,7 +40,7 @@ function Footer() {
         </div> */}
         <div className="pt-4 sm:pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
           <p className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
-            © {new Date().getFullYear()} وب‌شو. تمامی حقوق محفوظ است.
+            © {new Date().getFullYear()} اربعین تی وی. تمامی حقوق محفوظ است.
           </p>
           <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm text-gray-600">
             <Link to="/" className="hover:text-blue-600 transition-colors">حریم خصوصی</Link>
