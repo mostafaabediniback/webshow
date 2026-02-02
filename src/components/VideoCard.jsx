@@ -13,32 +13,29 @@ function VideoCard({ video }) {
   const duration = video.duration || '00:00';
 
   return (
-    <Link to={`/v/${video.id}`} className="block group cursor-pointer touch-manipulation">
-      <div className="relative aspect-video w-full overflow-hidden rounded-lg sm:rounded-xl bg-gray-200 shadow-sm group-hover:shadow-lg transition-all duration-300">
-        <img 
-          src={thumbnail} 
-          alt={video.title} 
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
+    <Link
+      to={`/v/${video.id}`}
+      className="block group/card cursor-pointer touch-manipulation isolate"
+    >
+      <div className="relative aspect-video w-full overflow-hidden rounded-lg sm:rounded-xl bg-gray-200 shadow-sm group-hover/card:shadow-lg transition-all duration-300">
+        <img
+          src={thumbnail}
+          alt={video.title}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover/card:scale-110"
           loading="lazy"
           onError={(e) => { e.target.src = defaultCover; }}
         />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+        <div className="absolute inset-0 bg-black/0 group-hover/card:bg-black/10 transition-colors duration-300" />
         <span className="absolute bottom-1.5 sm:bottom-2 right-1.5 sm:right-2 text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-black/85 backdrop-blur-sm text-white">
           {duration}
         </span>
       </div>
       <div className="mt-2 sm:mt-3 flex gap-2 sm:gap-3">
-        {/* <img 
-          src={`https://i.pravatar.cc/40?u=${encodeURIComponent(channel)}`} 
-          alt={channel} 
-          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex-shrink-0 ring-2 ring-gray-200 group-hover:ring-gray-300 transition-all" 
-        /> */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm sm:text-base font-semibold line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors leading-snug">
+          <h3 className="text-sm sm:text-base font-semibold line-clamp-2 text-gray-900 group-hover/card:text-blue-600 transition-colors leading-snug">
             {video.title}
           </h3>
           <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">{channel}</p>
-          {/* <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">{views} بازدید</p> */}
         </div>
       </div>
     </Link>
