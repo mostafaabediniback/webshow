@@ -4,6 +4,8 @@ import useVideoUpload from '../hooks/useVideoUpload'
 import { useState } from 'react'
 import { VideoAdd, DocumentUpload, Image, FolderAdd, TickCircle } from 'iconsax-react'
 import cover from '../assets/img/cover.jpg'
+import { useEffect, useRef } from "react"
+import VideoDropzone from "../components/VideoDropzone"
 
 function Upload() {
   const { channels: chans, isLoadingChannels } = useChannel()
@@ -15,6 +17,8 @@ function Upload() {
   const [thumbDrag, setThumbDrag] = useState(false)
   const [chanId, setChanId] = useState('')
   const { uploadAsync, isPending } = useVideoUpload()
+  const [tempPath, setTempPath] = useState(null)
+
 
   return (
     <DashboardLayout>
@@ -30,36 +34,36 @@ function Upload() {
               <label className="block text-sm font-semibold text-gray-900 mb-2">
                 عنوان ویدیو <span className="text-red-500">*</span>
               </label>
-              <input 
-                value={title} 
-                onChange={(e)=>setTitle(e.target.value)} 
-                placeholder="عنوان ویدیو را وارد کنید" 
-                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="عنوان ویدیو را وارد کنید"
+                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
                 توضیحات
               </label>
-              <textarea 
-                value={desc} 
-                onChange={(e)=>setDesc(e.target.value)} 
-                placeholder="توضیحات ویدیو را وارد کنید (اختیاری)" 
-                className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none" 
+              <textarea
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+                className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
               />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
                 انتخاب کانال <span className="text-red-500">*</span>
               </label>
-              <select 
-                value={chanId} 
-                onChange={(e)=>setChanId(e.target.value)} 
+              <select
+                value={chanId}
+                onChange={(e) => setChanId(e.target.value)}
                 disabled={isLoadingChannels}
                 className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
                 <option value="">انتخاب کانال</option>
-                {(chans||[]).map((c)=> (
+                {(chans || []).map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
@@ -74,20 +78,20 @@ function Upload() {
               <label className="block text-sm font-semibold text-gray-900 mb-2">
                 فایل ویدیو <span className="text-red-500">*</span>
               </label>
-              <div
+              {/* <div
                 className={`rounded-xl border-2 transition-all ${videoDrag ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300 hover:border-gray-400'} p-6 flex flex-col items-center justify-center text-center cursor-pointer min-h-[200px]`}
-                onDragOver={(e)=>{e.preventDefault(); setVideoDrag(true)}}
-                onDragLeave={()=>setVideoDrag(false)}
-                onDrop={(e)=>{e.preventDefault(); setVideoDrag(false); const f=e.dataTransfer.files?.[0]; if(f && f.type.startsWith('video/')) setVideoFile(f)}}
+                onDragOver={(e) => { e.preventDefault(); setVideoDrag(true) }}
+                onDragLeave={() => setVideoDrag(false)}
+                onDrop={(e) => { e.preventDefault(); setVideoDrag(false); const f = e.dataTransfer.files?.[0]; if (f && f.type.startsWith('video/')) setVideoFile(f) }}
               >
-                <input id="video-input" type="file" accept="video/*" className="sr-only" onChange={(e)=>setVideoFile(e.target.files?.[0]||null)} />
+                <input id="video-input" type="file" accept="video/*" className="sr-only" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} />
                 {videoFile ? (
                   <div className="w-full space-y-2">
                     <video controls className="w-full rounded-lg bg-black max-h-[300px]" src={URL.createObjectURL(videoFile)} />
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-gray-700 font-medium truncate">{videoFile.name}</p>
                       <button
-                        onClick={(e) => {e.stopPropagation(); setVideoFile(null)}}
+                        onClick={(e) => { e.stopPropagation(); setVideoFile(null) }}
                         className="text-red-500 hover:text-red-700 text-sm"
                       >
                         حذف
@@ -106,19 +110,22 @@ function Upload() {
                     </div>
                   </label>
                 )}
-              </div>
-            </div>
+              </div> */}
+              <VideoDropzone
+                onUploaded={setTempPath}
+                onProgress={(percent) => console.log("Upload progress:", percent)}
+              />            </div>
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
                 تصویر بندانگشتی (اختیاری)
               </label>
               <div
                 className={`rounded-xl border-2 transition-all ${thumbDrag ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300 hover:border-gray-400'} p-6 flex flex-col items-center justify-center text-center cursor-pointer min-h-[150px]`}
-                onDragOver={(e)=>{e.preventDefault(); setThumbDrag(true)}}
-                onDragLeave={()=>setThumbDrag(false)}
-                onDrop={(e)=>{e.preventDefault(); setThumbDrag(false); const f=e.dataTransfer.files?.[0]; if(f && f.type.startsWith('image/')) setThumbFile(f)}}
+                onDragOver={(e) => { e.preventDefault(); setThumbDrag(true) }}
+                onDragLeave={() => setThumbDrag(false)}
+                onDrop={(e) => { e.preventDefault(); setThumbDrag(false); const f = e.dataTransfer.files?.[0]; if (f && f.type.startsWith('image/')) setThumbFile(f) }}
               >
-                <input id="thumb-input" type="file" accept="image/*" className="sr-only" onChange={(e)=>setThumbFile(e.target.files?.[0]||null)} />
+                <input id="thumb-input" type="file" accept="image/*" className="sr-only" onChange={(e) => setThumbFile(e.target.files?.[0] || null)} />
                 {thumbFile ? (
                   <div className="w-full space-y-2">
                     <div className="relative w-full max-w-md mx-auto">
@@ -127,7 +134,7 @@ function Upload() {
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-gray-700 font-medium truncate">{thumbFile.name}</p>
                       <button
-                        onClick={(e) => {e.stopPropagation(); setThumbFile(null)}}
+                        onClick={(e) => { e.stopPropagation(); setThumbFile(null) }}
                         className="text-red-500 hover:text-red-700 text-sm"
                       >
                         حذف
@@ -151,15 +158,22 @@ function Upload() {
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <button 
+          <button
             onClick={async () => {
-              if (!title || !videoFile || !chanId ) {
+              if (!title || !tempPath || !chanId) {
                 alert('لطفاً عنوان، فایل ویدیو و کانال را انتخاب کنید')
                 return
               }
               try {
                 // await uploadAsync({ channelId: chanId, title, description: desc, videoFile, coverFile: thumbFile })
-                await uploadAsync({channelId: chanId,title,description: desc,videoFile,coverFile: thumbFile || cover})
+                // await uploadAsync({ channelId: chanId, title, description: desc, videoFile, coverFile: thumbFile || cover })
+                await uploadAsync({
+                  channelId: chanId,
+                  title,
+                  description: desc,
+                  temp_path: tempPath, // فقط temp_path که Dropzone داده
+                  coverFile: thumbFile || cover
+                })
                 // در صورت موفقیت، فرم را پاک می‌کنیم
                 setTitle('')
                 setDesc('')
@@ -170,12 +184,14 @@ function Upload() {
                 // خطا در useVideoUpload مدیریت می‌شود
               }
             }}
-            disabled={!title || !videoFile || !chanId || isPending}
+            disabled={!title || !tempPath || !chanId || isPending}
             className="w-full h-12 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isPending ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+                  {/* <div className="bg-blue-500 h-1" style={{ width: `${uploadProgress}%` }} /> */}
+                </div>
                 در حال آپلود...
               </>
             ) : (

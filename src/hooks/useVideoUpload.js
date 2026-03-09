@@ -1,68 +1,60 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import { uploadVideo, storeVideo } from '../services/videoApi'
+import axiosInstanceNew from '../utils/axiosConfigNew'
 import defaultCover from '../assets/img/cover.jpg'
+
+const storeVideoAPI = async (channelId, { path, title, description, cover }) => {
+  const formData = new FormData()
+  formData.append("path", path)
+  formData.append("title", title)
+  formData.append("description", description || "")
+
+  if (cover) {
+    // اگر cover یک آدرس است، به فایل تبدیل شود
+    if (typeof cover === "string") {
+      const res = await fetch(cover)
+      const blob = await res.blob()
+      cover = new File([blob], "cover.jpg", { type: blob.type || "image/jpeg" })
+    }
+    formData.append("cover", cover)
+  }
+
+  const token = sessionStorage.getItem("token")
+  const res = await axiosInstanceNew.post(`/video/${channelId}/store-video`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`, // ارسال توکن
+    },
+  })
+  return res.data
+}
 
 const useVideoUpload = () => {
   const qc = useQueryClient()
   const m = useMutation({
-    mutationFn: async (vars) => {
-      const { channelId, title, description, videoFile, coverFile } = vars
-      
-      // مرحله 1: آپلود ویدیو
-      const uploaded = await uploadVideo(videoFile)
-      
-      // بررسی response: {status: "completed", temp_path: "temp/693d1046f421f.avi"}
-      if (uploaded?.status !== 'completed') {
-        throw new Error('آپلود ویدیو ناموفق بود')
-      }
-      
-      const tempPath = uploaded?.temp_path || uploaded?.path || ''
-      if (!tempPath) {
-        throw new Error('مسیر فایل آپلود شده یافت نشد')
-      }
-      
-      // مرحله 2: آماده‌سازی تصویر بندانگشتی
-      let coverToSend = coverFile
-      if (!coverToSend) {
-        coverToSend = defaultCover
-      }
-      // اگر cover یک آدرس است، آن را به Blob تبدیل کنیم
-      if (typeof coverToSend === 'string') {
-        try {
-          const res = await fetch(coverToSend)
-          const blob = await res.blob()
-          coverToSend = new File([blob], 'cover.jpg', { type: blob.type || 'image/jpeg' })
-        } catch {
-          coverToSend = undefined
-        }
-      }
-      
-      // مرحله 3: ذخیره ویدیو در کانال
-      return storeVideo(channelId, { 
-        path: tempPath, 
-        title, 
-        description: description || '', 
-        cover: coverToSend 
+    mutationFn: async ({ channelId, title, description, temp_path, coverFile }) => {
+      if (!temp_path) throw new Error("ویدیو آپلود نشده است")
+
+      return storeVideoAPI(channelId, {
+        path: temp_path,
+        title,
+        description,
+        cover: coverFile || defaultCover
       })
     },
     onSuccess: (_, vars) => {
       toast.success('ویدیو با موفقیت آپلود شد', { position: 'top-right', theme: 'colored' })
-      // invalidate queries برای refresh لیست ویدیوها
       qc.invalidateQueries({ queryKey: ['channelVideos', vars.channelId] })
       qc.invalidateQueries({ queryKey: ['channelVideos', 'all'] })
     },
     onError: (error) => {
-      const errorMessage = error?.response?.data?.message || error?.message || 'خطا در آپلود ویدیو'
-      toast.error(errorMessage, { position: 'top-right', theme: 'colored' })
+      const msg = error?.response?.data?.message || error?.message || 'خطا در آپلود ویدیو'
+      toast.error(msg, { position: 'top-right', theme: 'colored' })
     }
   })
-  return { 
-    upload: m.mutate, 
+
+  return {
     uploadAsync: m.mutateAsync,
-    status: m.status, 
-    data: m.data, 
-    error: m.error,
     isPending: m.isPending
   }
 }
