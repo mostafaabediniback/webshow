@@ -1,12 +1,13 @@
 import Navbar from '../components/Navbar'
 import { Link, useLocation } from 'react-router-dom'
-import { FolderAdd, VideoAdd, VideoPlay, Home2 } from 'iconsax-react'
+import { FolderAdd, VideoAdd, VideoPlay, Home2, People } from 'iconsax-react'
 
 const NAV = [
   { to: '/dashboard', label: 'داشبورد', icon: Home2 },
   { to: '/dashboard/channels', label: 'کانال‌ها', icon: FolderAdd },
   { to: '/dashboard/upload', label: 'آپلود ویدیو', icon: VideoAdd },
-  { to: '/dashboard/videos', label: 'ویدیوهای آپلودشده', icon: VideoPlay }
+  { to: '/dashboard/videos', label: 'ویدیوهای آپلودشده', icon: VideoPlay },
+  { to: '/dashboard/users', label: 'کاربران', icon: People }
 ]
 
 function DashboardLayout({ children }) {

@@ -12,6 +12,7 @@ import Upload from './pages/Upload'
 import Videos from './pages/Videos'
 import VideoEdit from './pages/VideoEdit'
 import Search from './pages/Search'
+import Users from './pages/Users'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       <Route path="/dashboard/upload" element={<RequireAuth><Upload /></RequireAuth>} />
       <Route path="/dashboard/videos" element={<RequireAuth><Videos /></RequireAuth>} />
       <Route path="/dashboard/videos/:id" element={<RequireAuth><VideoEdit /></RequireAuth>} />
+      <Route path="/dashboard/users" element={<RequireAuth><Users /></RequireAuth>} />
     </Routes>
   )
 }
