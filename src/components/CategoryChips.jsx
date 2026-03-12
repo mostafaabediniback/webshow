@@ -1,7 +1,7 @@
 function CategoryChips({ channels, activeChannelId, onSelect }) {
   const list = Array.isArray(channels) ? channels : (channels ? [channels] : [])
   return (
-    <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
+    <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1 p-2">
       <button
         onClick={() => onSelect(null)}
         className={`flex flex-col items-center gap-2 flex-shrink-0 transition-all duration-200 ${
