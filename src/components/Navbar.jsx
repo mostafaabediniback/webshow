@@ -64,7 +64,7 @@ function Navbar() {
               onClick={closeSidebar}
               className="flex items-center gap-2"
             >
-              <img src={logo} alt="اربعین تی وی" className="h-8 sm:h-9 md:h-10 w-auto" />
+              <img src={logo} alt="اربعین تی وی" className="h-8 sm:h-9 md:h-20 w-auto" />
             </Link>
             <div className="hidden md:block flex-1 max-w-2xl mx-8">
               <SearchInput />
@@ -82,15 +82,15 @@ function Navbar() {
                 title="آپلود ویدیو"
               >
                 <VideoAdd size={22} color="#0f172a" />
-              </button> */}
-              {/* <button
+              </button>
+             <button
                 className="p-2.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900 relative"
                 title="اعلان‌ها"
               >
                 <Notification size={22} color="#0f172a" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button> */}
-              {isAuthenticated ? (
+              </button>  */}
+               {isAuthenticated ? (
                 <>
                   <Link
                     to="/dashboard"
@@ -109,13 +109,14 @@ function Navbar() {
                   </button>
                 </>
               ) : (
-                <Link
-                  to="/login"
-                  className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
-                >
-                  <User size={18} color="#0f172a" />
-                  ورود
-                </Link>
+                <></>
+                // <Link
+                //   to="/login"
+                //   className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                // >
+                //   <User size={18} color="#0f172a" />
+                //   ورود
+                // </Link>
               )}
             </div>
           </div>
@@ -230,14 +231,15 @@ function Navbar() {
                 {isLoggingOut ? "در حال خروج..." : "خروج از حساب کاربری"}
               </button>
             ) : (
-              <Link
-                to="/login"
-                onClick={closeSidebar}
-                className="w-full h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
-              >
-                <User size={20} color="#ffffff" />
-                ورود به حساب کاربری
-              </Link>
+              <></>
+              // <Link
+              //   to="/login"
+              //   onClick={closeSidebar}
+              //   className="w-full h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
+              // >
+              //   <User size={20} color="#ffffff" />
+              //   ورود به حساب کاربری
+              // </Link>
             )}
           </div>
         </div>
