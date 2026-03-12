@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
 import DashboardLayout from '../layouts/DashboardLayout'
 import useChannel from '../hooks/useChannel'
 import { Add, SearchNormal1, User, Call, Lock } from 'iconsax-react'
 import { toast } from 'react-toastify'
-import { createAttachUser, searchUserByPhone } from '../services/userApi'
+import { useCreateUser, useUsersList } from '../hooks/users'
 
 const INITIAL_FORM = {
   full_name: '',
@@ -17,32 +16,22 @@ function Users() {
   const { channels, isLoadingChannels } = useChannel()
   const [form, setForm] = useState(INITIAL_FORM)
   const [searchInput, setSearchInput] = useState('')
-  const [searchResult, setSearchResult] = useState([])
+  const [searchPhoneNumber, setSearchPhoneNumber] = useState('')
 
-  const createMutation = useMutation({
-    mutationFn: createAttachUser,
+  const {
+    users,
+    isLoadingUsers,
+    isFetchingUsers,
+  } = useUsersList(searchPhoneNumber)
+
+  const {
+    createUser,
+    isCreatingUser,
+  } = useCreateUser({
     onSuccess: () => {
-      toast.success('کاربر با موفقیت ایجاد شد')
       setForm(INITIAL_FORM)
-    },
-  })
-
-const searchMutation = useMutation({
-  mutationFn: searchUserByPhone,
-  onSuccess: (res) => {
-
-    if (!res || !res.data) {
-      setSearchResult([])
-      return
     }
-
-    setSearchResult(res.data)
-  },
-  onError: () => {
-    toast.error('کاربری پیدا نشد')
-    setSearchResult([])
-  }
-})
+  })
 
   const isValidCreate = useMemo(() => {
     return form.channel_id && form.phone_number && form.password && form.full_name
@@ -54,7 +43,7 @@ const searchMutation = useMutation({
       return
     }
 
-    await createMutation.mutateAsync({
+    await createUser({
       channel_id: Number(form.channel_id),
       phone_number: form.phone_number,
       password: form.password,
@@ -68,7 +57,7 @@ const searchMutation = useMutation({
       return
     }
 
-    await searchMutation.mutateAsync(searchInput.trim())
+    setSearchPhoneNumber(searchInput.trim())
   }
 
   const handleFormChange = (key, value) => {
@@ -147,11 +136,11 @@ const searchMutation = useMutation({
 
           <button
             onClick={handleCreate}
-            disabled={!isValidCreate || createMutation.isPending}
+            disabled={!isValidCreate || isCreatingUser}
             className="mt-5 h-11 px-5 rounded-lg bg-black text-white hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm font-semibold inline-flex items-center gap-2"
           >
             <Add size={18} />
-            {createMutation.isPending ? 'در حال ثبت...' : 'ایجاد کاربر'}
+            {isCreatingUser ? 'در حال ثبت...' : 'ایجاد کاربر'}
           </button>
         </div>
 
@@ -168,13 +157,17 @@ const searchMutation = useMutation({
             />
             <button
               onClick={handleSearch}
-              disabled={!searchInput.trim() || searchMutation.isPending}
+              disabled={!searchInput.trim()}
               className="h-11 px-5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm font-semibold inline-flex items-center justify-center gap-2"
             >
               <SearchNormal1 size={18} />
-              {searchMutation.isPending ? 'در حال جستجو...' : 'جستجو'}
+              {isFetchingUsers ? 'در حال جستجو...' : 'جستجو'}
             </button>
           </div>
+
+          {isLoadingUsers && (
+            <p className="mt-3 text-sm text-gray-500">در حال دریافت لیست کاربران...</p>
+          )}
 
           <div className="mt-5 overflow-x-auto">
             <table className="w-full min-w-[640px] text-sm">
@@ -186,12 +179,12 @@ const searchMutation = useMutation({
                 </tr>
               </thead>
               <tbody>
-                {searchResult.length === 0 ? (
+                {users.length === 0 ? (
                   <tr>
                     <td colSpan={3} className="py-8 text-center text-gray-500">نتیجه‌ای برای نمایش وجود ندارد.</td>
                   </tr>
                 ) : (
-                  searchResult.map((user, index) => (
+                  users.map((user, index) => (
                     <tr key={user.id || index} className="border-b border-gray-100 last:border-b-0">
                       <td className="py-4 font-medium text-gray-900">{user.full_name || '-'}</td>
                       <td className="py-4 text-gray-700" dir="ltr">{user.phone_number || '-'}</td>

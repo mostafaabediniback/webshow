@@ -9,7 +9,7 @@ export const createAttachUser = async (payload) => {
 //   const res = await axiosInstanceNew.get(`/user/search/${encodeURIComponent(phoneNumber)}`)
 //   return res.data
 // }
-export const searchUserByPhone = async (phoneNumber) => {
+export const getUsersByPhone = async (phoneNumber = '') => {
   const url = phoneNumber
     ? `/user/search/${encodeURIComponent(phoneNumber)}`
     : `/user/search`
@@ -18,3 +18,5 @@ export const searchUserByPhone = async (phoneNumber) => {
 
   return res.data
 }
+
+export const searchUserByPhone = getUsersByPhone
