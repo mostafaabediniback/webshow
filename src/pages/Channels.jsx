@@ -1,9 +1,11 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import useChannel from "../hooks/useChannel";
-import { Trash, FolderAdd, TickCircle, Edit2 } from "iconsax-react";
+import { Trash, FolderAdd, TickCircle, Edit2, SearchNormal1 } from "iconsax-react";
 import ConfirmModal from "../components/ConfirmModal";
 import { toast } from "react-toastify";
+import { getSearch } from "../services/videoApi";
 
 function Channels() {
   const {
@@ -20,6 +22,25 @@ function Channels() {
   const [editing, setEditing] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [thumbDrag, setThumbDrag] = useState(false);
+
+  const [searchInput, setSearchInput] = useState("");
+  const [searchChannels, setSearchChannels] = useState(null);
+
+  const searchMutation = useMutation({
+    mutationFn: getSearch,
+    onSuccess: (res) => {
+      const payload = res?.data;
+      let foundChannels = [];
+
+      if (Array.isArray(payload?.channels)) {
+        foundChannels = payload.channels;
+      } else if (Array.isArray(payload)) {
+        foundChannels = payload;
+      }
+
+      setSearchChannels(foundChannels);
+    },
+  });
 
   const handleSubmit = async () => {
     if (!name.trim()) return;
@@ -71,6 +92,23 @@ function Channels() {
       toast.error("حذف کانال موفقیت‌آمیز نبود");
     }
   };
+
+
+
+  const handleSearch = async () => {
+    if (!searchInput.trim()) {
+      setSearchChannels(null);
+      return;
+    }
+
+    try {
+      await searchMutation.mutateAsync(searchInput.trim());
+    } catch {
+      setSearchChannels([]);
+    }
+  };
+
+  const channelsToRender = searchChannels === null ? channels : searchChannels;
 
   const handleChangeImage = async (id, file) => {
     try {
@@ -233,6 +271,26 @@ function Channels() {
           </div>
         </div>
 
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">جستجوی کانال‌ها</h2>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
+            <input
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="نام کانال را وارد کنید"
+              className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={handleSearch}
+              disabled={searchMutation.isPending}
+              className="h-11 px-5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm font-semibold inline-flex items-center justify-center gap-2"
+            >
+              <SearchNormal1 size={18} />
+              {searchMutation.isPending ? 'در حال جستجو...' : 'جستجو'}
+            </button>
+          </div>
+        </div>
+
         {/* لیست کانال‌ها */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-4">
@@ -245,7 +303,7 @@ function Channels() {
                 <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
               ))}
             </div>
-          ) : !channels?.length ? (
+          ) : !channelsToRender?.length ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
                 <FolderAdd size={32} className="text-gray-400" />
@@ -254,7 +312,7 @@ function Channels() {
             </div>
           ) : (
             <div className="space-y-3">
-              {channels.map((c) => (
+              {(channelsToRender || []).map((c) => (
                 <div
                   key={c.id}
                   className="flex items-center justify-between p-4 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
