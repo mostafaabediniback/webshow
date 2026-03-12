@@ -38,6 +38,7 @@ const useLogin = () => {
       // ساختار پاسخ API: { status: "success", data: { token: "...", user: {...} } }
       const token = res?.data?.token || null;
       const user = res?.data?.user || null;
+      console.log(res);
       
       if (token) {
         sessionStorage.setItem("token", token);
@@ -45,7 +46,7 @@ const useLogin = () => {
           sessionStorage.setItem("user_id", user.id.toString());
         }
 
-        const role = user?.role?.name || user?.role || (Array.isArray(user?.roles) ? user.roles[0]?.name || user.roles[0] : null);
+        const role = user?.role || user?.role || (Array.isArray(user?.role) ? user.role[0]?.name || user.role[0] : null);
         const roleName = role ? String(role).toLowerCase() : "";
         if (roleName) {
           sessionStorage.setItem("role", roleName);
@@ -57,7 +58,7 @@ const useLogin = () => {
         }
 
         toast.success("ورود با موفقیت انجام شد", { position: "top-right", theme: "colored" });
-        window.location.href = roleName === "user" ? "/dashboard/user-videos" : "/dashboard/channels";
+        window.location.href = roleName === "admin" ? "/dashboard/user-videos" : "/dashboard/channels";
       } else {
         setVerifyPhoneNumber(false);
         setcodeOtp(false);

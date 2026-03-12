@@ -51,7 +51,7 @@ function Dashboard() {
         </div>
 
         {/* لینک‌های سریع */}
-        {role === 'user' ? (
+        {role === 'admin' ? (
           <div className="grid grid-cols-1 gap-4">
             <Link 
               to="/dashboard/user-videos" 

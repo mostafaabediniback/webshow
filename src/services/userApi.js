@@ -5,7 +5,16 @@ export const createAttachUser = async (payload) => {
   return res.data
 }
 
+// export const searchUserByPhone = async (phoneNumber) => {
+//   const res = await axiosInstanceNew.get(`/user/search/${encodeURIComponent(phoneNumber)}`)
+//   return res.data
+// }
 export const searchUserByPhone = async (phoneNumber) => {
-  const res = await axiosInstanceNew.get(`/user/search/${encodeURIComponent(phoneNumber)}`)
+  const url = phoneNumber
+    ? `/user/search/${encodeURIComponent(phoneNumber)}`
+    : `/user/search`
+
+  const res = await axiosInstanceNew.get(url)
+
   return res.data
 }

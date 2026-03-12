@@ -80,7 +80,7 @@ function VideoDropzone({ onUploaded, onProgress }) {
         <div className="space-y-3">
             <div
                 ref={dropzoneRef}
-                className={`dropzone rounded-xl border-2 p-6 sm:p-8 text-center cursor-pointer min-h-[180px] flex items-center justify-center transition-all ${
+                className={`rounded-xl border-2 p-6 sm:p-8 text-center cursor-pointer min-h-[180px] flex items-center justify-center transition-all ${
                     isDragActive
                         ? "border-blue-500 bg-blue-50"
                         : "border-dashed border-gray-300 hover:border-gray-400 bg-gray-50/40"

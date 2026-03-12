@@ -17,7 +17,7 @@ const USER_NAV = [
 function DashboardLayout({ children }) {
   const { pathname } = useLocation()
   const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
-  const navItems = role === 'user' ? USER_NAV : ADMIN_NAV
+  const navItems = role === 'admin' ? USER_NAV : ADMIN_NAV
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">

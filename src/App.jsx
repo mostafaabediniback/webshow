@@ -7,13 +7,13 @@ const RequireAuth = ({ children }) => {
 
 const RequireUserRole = ({ children }) => {
   const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
-  if (role === 'user') return children
+  if (role === 'admin') return children
   return <Navigate to="/dashboard" replace />
 }
 
 const RequireAdminRole = ({ children }) => {
   const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
-  if (role === 'user') return <Navigate to="/dashboard/user-videos" replace />
+  if (role === 'admin') return <Navigate to="/dashboard/user-videos" replace />
   return children
 }
 

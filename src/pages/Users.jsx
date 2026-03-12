@@ -27,19 +27,22 @@ function Users() {
     },
   })
 
-  const searchMutation = useMutation({
-    mutationFn: searchUserByPhone,
-    onSuccess: (res) => {
-      const payload = res?.data
-      if (Array.isArray(payload)) {
-        setSearchResult(payload)
-      } else if (payload) {
-        setSearchResult([payload])
-      } else {
-        setSearchResult([])
-      }
+const searchMutation = useMutation({
+  mutationFn: searchUserByPhone,
+  onSuccess: (res) => {
+
+    if (!res || !res.data) {
+      setSearchResult([])
+      return
     }
-  })
+
+    setSearchResult(res.data)
+  },
+  onError: () => {
+    toast.error('کاربری پیدا نشد')
+    setSearchResult([])
+  }
+})
 
   const isValidCreate = useMemo(() => {
     return form.channel_id && form.phone_number && form.password && form.full_name
