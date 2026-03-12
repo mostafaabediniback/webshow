@@ -3,4 +3,5 @@ export const QueryKeys = {
   channelDetail: "channelDetail",
   video: "video",
   dashboard: "dashboard",
+  user: 'user',
 };
