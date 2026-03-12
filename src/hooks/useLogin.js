@@ -14,6 +14,8 @@ const useLogin = () => {
     onSuccess: (res) => {
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("role");
+      sessionStorage.removeItem("channel_id");
       const message = res?.message || "با موفقیت از حساب کاربری خارج شدید";
       toast.success(message, { position: "top-right", theme: "colored" });
       window.location.href = "/login";
@@ -23,6 +25,8 @@ const useLogin = () => {
       // حتی در صورت خطا، token را پاک می‌کنیم
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("role");
+      sessionStorage.removeItem("channel_id");
       toast.error("خطا در خروج از حساب کاربری", { position: "top-right", theme: "colored" });
       window.location.href = "/login";
     },
@@ -40,8 +44,20 @@ const useLogin = () => {
         if (user?.id) {
           sessionStorage.setItem("user_id", user.id.toString());
         }
+
+        const role = user?.role?.name || user?.role || (Array.isArray(user?.roles) ? user.roles[0]?.name || user.roles[0] : null);
+        const roleName = role ? String(role).toLowerCase() : "";
+        if (roleName) {
+          sessionStorage.setItem("role", roleName);
+        }
+
+        const channelId = user?.channel_id || user?.channel?.id;
+        if (channelId) {
+          sessionStorage.setItem("channel_id", String(channelId));
+        }
+
         toast.success("ورود با موفقیت انجام شد", { position: "top-right", theme: "colored" });
-        window.location.href = "/dashboard/channels";
+        window.location.href = roleName === "user" ? "/dashboard/user-videos" : "/dashboard/channels";
       } else {
         setVerifyPhoneNumber(false);
         setcodeOtp(false);
