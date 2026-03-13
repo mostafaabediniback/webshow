@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
-import { TickCircle, Play } from 'iconsax-react'
+import { useEffect, useState } from 'react'
+import { Pagination } from '@mui/material'
+import { Play, TickCircle } from 'iconsax-react'
 import { toast } from 'react-toastify'
 import DashboardLayout from '../layouts/DashboardLayout'
 import useChannel from '../hooks/useChannel'
@@ -11,11 +12,18 @@ import VideoRow from '../components/VideoRow'
 import VideoModal from '../components/VideoModal'
 import ConfirmModal from '../components/ConfirmModal'
 import cover from '../assets/img/cover.jpg'
+import { usePaginationParams } from '../hooks/usePaginationParams'
+
+const PAGE_SIZE = 25
 
 function UserVideos() {
-  const { channels, isLoadingChannels } = useChannel()
+  const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
+  const isAdmin = String(role || '').toLowerCase() === 'admin'
+
+  const { channels, isLoadingChannels } = useChannel(1, PAGE_SIZE, {}, { enabled: isAdmin })
   const { uploadAsync, isPending } = useVideoUpload()
   const { deleteVideo, isDeleting } = useDeleteVideo()
+  const { page, setPage } = usePaginationParams(1)
 
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
@@ -25,30 +33,28 @@ function UserVideos() {
   const [selectedVideoId, setSelectedVideoId] = useState(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
 
-  const preferredChannelId = useMemo(() => {
-    const fromSession = typeof window !== 'undefined' ? sessionStorage.getItem('channel_id') : null
-    if (fromSession) return String(fromSession)
-    if (channels?.[0]?.id) return String(channels[0].id)
-    return ''
-  }, [channels])
-
-  const { data: videos, isLoading: isLoadingVideos, isError } = useChannelVideos(preferredChannelId)
+  const { data: videos, isLoading: isLoadingVideos, isError } = useChannelVideos({
+    pageNumber: page,
+    pageSize: PAGE_SIZE,
+  })
 
   useEffect(() => {
-    if (!isLoadingChannels && !preferredChannelId) {
+    if (isAdmin && !isLoadingChannels && !channels?.length) {
       toast.warning('برای آپلود ویدیو باید ابتدا کانال برای شما تعریف شود')
     }
-  }, [isLoadingChannels, preferredChannelId])
+  }, [isAdmin, isLoadingChannels, channels])
 
   const handleUpload = async () => {
-    if (!title || !tempPath || !preferredChannelId) {
+    const channelIdFromSession = typeof window !== 'undefined' ? sessionStorage.getItem('channel_id') : null
+
+    if (!title || !tempPath || !channelIdFromSession) {
       toast.error('لطفاً عنوان و ویدیو را کامل کنید')
       return
     }
 
     try {
       await uploadAsync({
-        channelId: preferredChannelId,
+        channelId: channelIdFromSession,
         title,
         description: desc,
         temp_path: tempPath,
@@ -69,6 +75,8 @@ function UserVideos() {
       setDeleteConfirmId(null)
     }
   }
+
+  const videosList = Array.isArray(videos?.items) ? videos.items : []
 
   return (
     <DashboardLayout>
@@ -137,7 +145,7 @@ function UserVideos() {
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <button
             onClick={handleUpload}
-            disabled={!title || !tempPath || !preferredChannelId || isPending}
+            disabled={!title || !tempPath || isPending}
             className="w-full h-12 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
           >
             <TickCircle size={20} />
@@ -151,7 +159,7 @@ function UserVideos() {
             <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-20 bg-gray-100 rounded-lg animate-pulse" />)}</div>
           ) : isError ? (
             <div className="text-center py-12 text-red-500">خطا در بارگذاری ویدیوها</div>
-          ) : (videos || []).length === 0 ? (
+          ) : videosList.length === 0 ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
                 <Play size={32} className="text-gray-400" />
@@ -159,17 +167,31 @@ function UserVideos() {
               <p className="text-sm text-gray-500">هنوز ویدیویی آپلود نشده است</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {(videos || []).map((v) => (
-                <VideoRow
-                  key={v.id}
-                  item={v}
-                  onDelete={(id) => setDeleteConfirmId(id)}
-                  onShow={(id) => setSelectedVideoId(id)}
-                  isDeleting={isDeleting}
-                />
-              ))}
-            </div>
+            <>
+              <div className="space-y-3">
+                {videosList.map((v) => (
+                  <VideoRow
+                    key={v.id}
+                    item={v}
+                    onDelete={(id) => setDeleteConfirmId(id)}
+                    onShow={(id) => setSelectedVideoId(id)}
+                    isDeleting={isDeleting}
+                  />
+                ))}
+              </div>
+
+              {videos?.totalPages > 1 && (
+                <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
+                  <Pagination
+                    count={videos.totalPages}
+                    page={page}
+                    onChange={(_, value) => setPage(value)}
+                    shape="rounded"
+                    color="primary"
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

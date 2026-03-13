@@ -2,13 +2,13 @@ import Layout from '../layouts/Layout'
 import { useParams, Link } from 'react-router-dom'
 import { useVideo } from '../hooks/useVideo'
 import useChannelVideos from '../hooks/useChannelVideos'
-import { Like1, Share, More } from 'iconsax-react'
+import { Dislike, Eye, Like1 } from 'iconsax-react'
 
 function Video() {
   const { id } = useParams()
   const { data, isLoading } = useVideo(id)
   // Use channel_id from video data to fetch related videos
-  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos(data?.channel_id)
+  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({ channelId: data?.data?.channel_id, pageNumber: 1, pageSize: 25 })
 
   if (isLoading) {
     return (
@@ -71,22 +71,24 @@ function Video() {
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-900 truncate">{data.data.channel_name }</p>
-                  {/* <p className="text-xs text-gray-500 mt-0.5">{(data.views || 0).toLocaleString('fa-IR')} بازدید</p> */}
+                  <p className="text-xs text-gray-500 mt-0.5">{(data.data.view_count || 0).toLocaleString('fa-IR')} بازدید</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                
-                {/* <button className="h-9 sm:h-10 px-4 sm:px-5 rounded-full bg-black hover:bg-gray-800 active:scale-95 text-white text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 sm:gap-2 touch-manipulation">
-                  <Like1 size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="hidden xs:inline">پسندیدم</span>
-                </button> */}
-                {/* <button className="h-9 sm:h-10 w-9 sm:w-auto sm:px-4 rounded-full border border-gray-300 hover:bg-gray-50 active:scale-95 text-gray-700 text-sm font-medium transition-all duration-200 flex items-center justify-center touch-manipulation">
-                  <Share size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button> */}
-                {/* <button className="h-9 sm:h-10 w-9 sm:w-10 rounded-full border border-gray-300 hover:bg-gray-50 active:scale-95 text-gray-700 transition-all duration-200 flex items-center justify-center touch-manipulation">
-                  <More size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button> */}
+              <div className="flex items-center gap-2 flex-wrap text-gray-600">
+                <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
+                  <Eye size={16} />
+                  {(data.data.view_count || 0).toLocaleString('fa-IR')}
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
+                  <Like1 size={16} />
+                  {(data.data.likes || 0).toLocaleString('fa-IR')}
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
+                  <Dislike size={16} />
+                  {(data.data.dislikes || 0).toLocaleString('fa-IR')}
+                </span>
               </div>
+
             </div>
             <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
               <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 whitespace-pre-line">{data.data.description}</p>
@@ -106,7 +108,7 @@ function Video() {
                   </div>
                  ))
               ) : (
-                  relatedVideos?.filter(v => String(v.id) !== String(id)).slice(0, 10).map((video) => (
+                  (relatedVideos?.items || []).filter(v => String(v.id) !== String(id)).slice(0, 10).map((video) => (
                     <Link to={`/v/${video.id}`} key={video.id} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
                       <div className="w-40 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
                          <img 
@@ -126,7 +128,7 @@ function Video() {
                     </Link>
                   ))
               )}
-               {!isRelatedLoading && (!relatedVideos || relatedVideos.length === 0) && (
+               {!isRelatedLoading && (!(relatedVideos?.items || []).length) && (
                  <p className="text-gray-500 text-sm">ویدیوی مرتبطی یافت نشد</p>
                )}
             </div>
