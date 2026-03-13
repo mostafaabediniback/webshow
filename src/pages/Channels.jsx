@@ -271,7 +271,7 @@ function Channels() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-4">جستجوی کانال‌ها</h2>
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
             <input
@@ -289,7 +289,7 @@ function Channels() {
               {searchMutation.isPending ? 'در حال جستجو...' : 'جستجو'}
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* لیست کانال‌ها */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">

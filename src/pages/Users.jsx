@@ -186,9 +186,9 @@ function Users() {
                 ) : (
                   users.map((user, index) => (
                     <tr key={user.id || index} className="border-b border-gray-100 last:border-b-0">
-                      <td className="py-4 font-medium text-gray-900">{user.full_name || '-'}</td>
-                      <td className="py-4 text-gray-700" dir="ltr">{user.phone_number || '-'}</td>
-                      <td className="py-4 text-gray-700">{user.channel_id || '-'}</td>
+                      <td className="py-4 font-medium text-gray-900">{user.name || '-'}</td>
+                      <td className="py-4 text-gray-700" >{user.phone_number || '-'}</td>
+                      <td className="py-4 text-gray-700">{user.channel.name || '-'}</td>
                     </tr>
                   ))
                 )}
