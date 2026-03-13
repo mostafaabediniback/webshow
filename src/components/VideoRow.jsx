@@ -39,7 +39,7 @@ function VideoRow({ item, onDelete, onShow, isDeleting }) {
             </p>
           )}
           <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-            <Eye size={14} />
+            <Eye size={14}  color="#4a5565" />
             {Number(viewCount || 0).toLocaleString('fa-IR')} بازدید
           </p>
         </div>

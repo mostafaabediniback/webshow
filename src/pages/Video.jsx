@@ -51,10 +51,10 @@ function Video() {
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
           <div>
             <div className="relative aspect-video w-full overflow-hidden rounded-lg sm:rounded-xl bg-black shadow-lg">
-              <video 
-                controls 
-                className="w-full h-full" 
-                poster={data.data.thumbnailUrl || data.data.cover_link || data.data.cover} 
+              <video
+                controls
+                className="w-full h-full"
+                poster={data.data.thumbnailUrl || data.data.cover_link || data.data.cover}
                 src={data.data.videoUrl || data.data.video_link}
               />
             </div>
@@ -63,28 +63,28 @@ function Video() {
             </h1>
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <img 
+                <img
                   // src={`https://i.pravatar.cc/48?u=${encodeURIComponent(data.data.channelName || data.data.channel_name || 'Channel')}`} 
-                  src={data.data.channel_image } 
+                  src={data.data.channel_image}
                   alt={data.data.channelName || data.data.channel_name}
-                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 ring-2 ring-gray-200 flex-shrink-0" 
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 ring-2 ring-gray-200 flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{data.data.channel_name }</p>
+                  <p className="text-sm font-semibold text-gray-900 truncate">{data.data.channel_name}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{(data.data.view_count || 0).toLocaleString('fa-IR')} بازدید</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-wrap text-gray-600">
                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
-                  <Eye size={16} />
+                  <Eye size={16} color="#4a5565" />
                   {(data.data.view_count || 0).toLocaleString('fa-IR')}
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
-                  <Like1 size={16} />
+                  <Like1 size={16} color="#4a5565" />
                   {(data.data.likes || 0).toLocaleString('fa-IR')}
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
-                  <Dislike size={16} />
+                  <Dislike size={16} color="#4a5565" />
                   {(data.data.dislikes || 0).toLocaleString('fa-IR')}
                 </span>
               </div>
@@ -98,7 +98,7 @@ function Video() {
             <div className="sticky top-24 space-y-3">
               <h3 className="text-lg font-bold text-gray-900 mb-4">ویدیوهای مرتبط</h3>
               {isRelatedLoading ? (
-                 Array.from({ length: 5 }).map((_, i) => (
+                Array.from({ length: 5 }).map((_, i) => (
                   <div key={i} className="flex gap-3 p-2 rounded-lg">
                     <div className="w-40 h-24 rounded-lg bg-gray-200 animate-pulse flex-shrink-0" />
                     <div className="flex-1 space-y-2 py-1">
@@ -106,31 +106,31 @@ function Video() {
                       <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse" />
                     </div>
                   </div>
-                 ))
+                ))
               ) : (
-                  (relatedVideos?.items || []).filter(v => String(v.id) !== String(id)).slice(0, 10).map((video) => (
-                    <Link to={`/v/${video.id}`} key={video.id} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
-                      <div className="w-40 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
-                         <img 
-                            src={video.thumbnailUrl || video.cover_link || video.cover} 
-                            alt={video.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => { e.target.src = "https://picsum.photos/seed/default/160/90"; }}
-                         />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-semibold line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors">
-                          {video.title}
-                        </h4>
-                        <p className="text-xs text-gray-500 mt-1">{video.channelName || video.channel_name}</p>
-                        <p className="text-xs text-gray-400 mt-1">{(video.views || 0).toLocaleString('fa-IR')} بازدید</p>
-                      </div>
-                    </Link>
-                  ))
+                (relatedVideos?.items || []).filter(v => String(v.id) !== String(id)).slice(0, 10).map((video) => (
+                  <Link to={`/v/${video.id}`} key={video.id} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
+                    <div className="w-40 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
+                      <img
+                        src={video.thumbnailUrl || video.cover_link || video.cover}
+                        alt={video.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => { e.target.src = "https://picsum.photos/seed/default/160/90"; }}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-semibold line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors">
+                        {video.title}
+                      </h4>
+                      <p className="text-xs text-gray-500 mt-1">{video.channelName || video.channel_name}</p>
+                      <p className="text-xs text-gray-400 mt-1">{(video.views || 0).toLocaleString('fa-IR')} بازدید</p>
+                    </div>
+                  </Link>
+                ))
               )}
-               {!isRelatedLoading && (!(relatedVideos?.items || []).length) && (
-                 <p className="text-gray-500 text-sm">ویدیوی مرتبطی یافت نشد</p>
-               )}
+              {!isRelatedLoading && (!(relatedVideos?.items || []).length) && (
+                <p className="text-gray-500 text-sm">ویدیوی مرتبطی یافت نشد</p>
+              )}
             </div>
           </aside>
         </div>

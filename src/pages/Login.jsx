@@ -89,9 +89,9 @@ function Login() {
                       onClick={() => setShowPassword((prev) => !prev)}
                     >
                       {showPassword ? (
-                        <Eye size={20} color="#64748b" />
+                        <Eye size={20} color="#4a5565" />
                       ) : (
-                        <EyeSlash size={20} color="#64748b" />
+                        <EyeSlash size={20} color="#4a5565" />
                       )}
                     </div>
                   </div>
