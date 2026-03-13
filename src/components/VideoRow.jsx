@@ -1,4 +1,4 @@
-import { Play, Trash } from "iconsax-react";
+import { Eye, Play, Trash } from "iconsax-react";
 
 /**
  * کامپوننت نمایش یک ردیف ویدیو در لیست
@@ -13,6 +13,7 @@ function VideoRow({ item, onDelete, onShow, isDeleting }) {
     "https://picsum.photos/seed/default/160/90";
   const channelName = item.channel_name || item.channelName || "";
   const title = item.title || String(item.id);
+  const viewCount = item.view_count ?? item.views ?? 0;
 
   return (
     <div className="flex items-center justify-between p-4 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
@@ -37,6 +38,10 @@ function VideoRow({ item, onDelete, onShow, isDeleting }) {
               {channelName}
             </p>
           )}
+          <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+            <Eye size={14} />
+            {Number(viewCount || 0).toLocaleString('fa-IR')} بازدید
+          </p>
         </div>
       </div>
       <div className="flex items-center gap-2 shrink-0">

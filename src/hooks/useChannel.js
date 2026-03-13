@@ -9,7 +9,7 @@ import {
 import { QueryKeys } from "../enums";
 import { toast } from "react-toastify";
 
-function useChannel(pageNumber = 1, pageSize = 10, filters = {}) {
+function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
   const queryClient = useQueryClient();
 
   // [01] - Get channels list
@@ -21,7 +21,7 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}) {
   } = useQuery({
     queryKey: [QueryKeys.channel, pageNumber, pageSize, filters],
     queryFn: () => getChannels(pageNumber, pageSize, filters),
-    enabled: true,
+    enabled: options.enabled ?? true,
   });
 
   // [02] - Create channel
