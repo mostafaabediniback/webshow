@@ -1,57 +1,75 @@
 import { ArrowLeft2, PlayCircle } from "iconsax-react";
-import { useState, useCallback } from "react"; // useCallback اضافه شد
+import { useCallback, useEffect, useRef, useState } from "react";
 import CategoryChips from "../components/CategoryChips";
 import VideoGrid from "../components/VideoGrid";
 import VideoSkeleton from "../components/VideoSkeleton";
-import { usePaginationParams } from "../hooks/usePaginationParams";
 import Layout from "../layouts/Layout";
 import { useLandingChannels } from "../hooks/useLandingChannels";
-import { useLandingVideos } from "../hooks/useLandingVideos";
-import PaginationComponent from "../components/PaginationComponent";
+import { useInfiniteLandingVideos } from "../hooks/useInfiniteLandingVideos";
 
 const PAGE_SIZE = 25;
 
 function Home() {
   const [activeChannelId, setActiveChannelId] = useState(null);
-  const { page, setPage } = usePaginationParams(1);
+  const loadMoreRef = useRef(null);
 
   const {
     data: channelsData,
     isLoading: channelsLoading,
-    isError: channelsError
-  } = useLandingChannels({ pageSize: 20 }); // بیشتر کانال لود کن
+  } = useLandingChannels({ pageSize: 20 });
 
   const {
     data: videosData,
     isLoading: videosLoading,
     isError: videosError,
-    refetch // برای refresh دستی
-  } = useLandingVideos(activeChannelId, page);
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    refetch,
+  } = useInfiniteLandingVideos(activeChannelId, PAGE_SIZE);
 
   const channelsList = Array.isArray(channelsData?.items) ? channelsData.items : [];
   const videosList = Array.isArray(videosData?.items) ? videosData.items : [];
-  const totalPages = videosData?.totalPages || 1;
-  const activeChannelName = channelsList.find(c => c.id === activeChannelId)?.name;
+  const activeChannelName = channelsList.find((channel) => channel.id === activeChannelId)?.name;
 
-  // Reset page handler با useCallback
   const handleChannelSelect = useCallback((id) => {
     setActiveChannelId(id);
-    setPage(1);
-  }, [setPage]);
+  }, []);
 
-  // Refresh handler
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     refetch();
-  };
-  // داخل Home component
-console.log("🔍 Debug:", { 
-  activeChannelId, 
-  page, 
-  videosData: videosData?.totalPages,
-  queryKey: ["landing-videos", activeChannelId, page] 
-});
+  }, [refetch]);
 
-  if (channelsLoading && !channelsData) { // فقط اولین بار
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+
+    if (!sentinel || !hasNextPage) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+
+        if (entry?.isIntersecting && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "300px 0px",
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, videosList.length]);
+
+  if (channelsLoading && !channelsData) {
     return (
       <Layout>
         <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
@@ -63,11 +81,12 @@ console.log("🔍 Debug:", {
     );
   }
 
+  const showInitialLoading = videosLoading && videosList.length === 0;
+
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-6 sm:py-8">
-          {/* Category Chips */}
           <div className="sticky top-[57px] sm:top-[61px] md:top-[73px] z-40 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 py-3 backdrop-blur-md border-b border-slate-200/80 mb-6">
             <CategoryChips
               channels={channelsList}
@@ -77,24 +96,16 @@ console.log("🔍 Debug:", {
             />
           </div>
 
-          {/* Breadcrumb */}
           {activeChannelId && (
             <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-indigo-50 border border-indigo-100 shadow-sm mb-6">
               <span className="text-sm text-slate-600 flex items-center gap-2">
                 <ArrowLeft2 size={16} className="text-slate-400" />
                 نمایش ویدیوهای <strong className="text-slate-900">{activeChannelName}</strong>
               </span>
-              {/* <button
-                onClick={handleRefresh}
-                className="text-sm text-indigo-600 hover:text-indigo-700 font-medium px-3 py-1 rounded-lg hover:bg-indigo-50 transition-all"
-              >
-                به‌روزرسانی
-              </button> */}
             </div>
           )}
 
-          {/* Videos Content */}
-          {videosLoading ? (
+          {showInitialLoading ? (
             <div className="mt-6">
               <VideoSkeleton count={PAGE_SIZE} />
             </div>
@@ -120,35 +131,30 @@ console.log("🔍 Debug:", {
                 {activeChannelId ? "ویدیویی یافت نشد" : "شروع کنید!"}
               </h3>
               <p className="text-slate-600 text-center max-w-md">
-                {activeChannelId 
+                {activeChannelId
                   ? "در این کانال فعلاً ویدیویی موجود نیست."
                   : "کانالی انتخاب کنید تا ویدیوهایش را ببینید."
                 }
               </p>
             </div>
           ) : (
-            <>
-              {/* Videos Grid */}
-              <section className="">
+            <section>
+              <div className="pb-8">
+                <VideoGrid items={videosList} />
+              </div>
 
-
-                <div className=" pb-12">
-                  <VideoGrid items={videosList} />
-                </div>
-              </section>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="mt-8 pt-8 border-t border-slate-200">
-                  <PaginationComponent
-                    totalPages={totalPages}
-                    currentPage={page}
-                    onPageChange={setPage}
-                    showInfo // نمایش اطلاعات صفحه
-                  />
-                </div>
-              )}
-            </>
+              <div ref={loadMoreRef} className="flex justify-center py-4 min-h-16">
+                {isFetchingNextPage ? (
+                  <div className="w-full">
+                    <VideoSkeleton count={Math.min(8, PAGE_SIZE)} />
+                  </div>
+                ) : hasNextPage ? (
+                  <span className="text-sm text-slate-500">برای بارگذاری ویدیوهای بیشتر اسکرول کنید.</span>
+                ) : (
+                  <span className="text-sm text-slate-400">همه ویدیوها نمایش داده شدند.</span>
+                )}
+              </div>
+            </section>
           )}
         </div>
       </div>

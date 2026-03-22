@@ -1,5 +1,5 @@
-import { TickCircle } from 'iconsax-react'
-import { useEffect, useState } from 'react'
+import { CloseCircle, TickCircle } from 'iconsax-react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import cover from '../assets/img/cover.jpg'
 import CoverPicker from '../components/Upload/CoverPicker'
@@ -7,7 +7,6 @@ import VideoDropzone from "../components/VideoDropzone"
 import useChannel from '../hooks/useChannel'
 import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
-import { CloseCircle } from 'iconsax-react'
 
 function Upload() {
   const { channels: chans, isLoadingChannels } = useChannel()
@@ -20,15 +19,14 @@ function Upload() {
   const { uploadAsync, isPending } = useVideoUpload()
   const [tempPath, setTempPath] = useState(null)
   const [videoStatus, setVideoStatus] = useState('idle')
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [thumbnails, setThumbnails] = useState([])
   const navigate = useNavigate()
-
 
   const handleCancelAndRefresh = () => {
     window.location.reload()
   }
 
-  // helper: capture frame from URL
   const captureFrameFromUrl = (videoUrl, timeInSeconds = 0) => {
     return new Promise((resolve, reject) => {
       const video = document.createElement('video')
@@ -72,7 +70,6 @@ function Upload() {
     })
   }
 
-  // wrapper: capture frame from File
   const captureFrameFromFile = async (file, timeInSeconds = 0) => {
     const url = URL.createObjectURL(file)
     try {
@@ -83,9 +80,17 @@ function Upload() {
     }
   }
 
-  // دریافت نتیجه VideoDropzone
+  const handleVideoSelected = (file) => {
+    setVideoFile(file || null)
+    setTempPath(null)
+    setVideoStatus(file ? 'uploading' : 'idle')
+    setUploadProgress(0)
+    setThumbFile(null)
+  }
+
   const handleVideoUploaded = (payload) => {
     if (!payload) return
+
     if (typeof payload === 'string') {
       setTempPath(payload)
       setVideoStatus('success')
@@ -94,9 +99,10 @@ function Upload() {
       setVideoFile(payload.file || null)
       setVideoStatus('success')
     }
+
+    setUploadProgress(100)
   }
 
-  // تولید thumbnails (همان منطق قبلی)
   useEffect(() => {
     let canceled = false
     const createdUrls = []
@@ -169,7 +175,6 @@ function Upload() {
     }
   }, [videoFile, tempPath])
 
-  // ساخت preview برای thumbFile
   useEffect(() => {
     if (!thumbFile) {
       if (thumbPreviewUrl) {
@@ -222,8 +227,8 @@ function Upload() {
           }
         }
       )
-    } catch (error) {
-      // خطاها در hook مدیریت می‌شوند
+    } catch (_error) {
+      // handled in hook
     }
   }
 
@@ -237,6 +242,7 @@ function Upload() {
     setTempPath(null)
     setThumbnails([])
     setVideoStatus('idle')
+    setUploadProgress(0)
   }
 
   useEffect(() => {
@@ -248,7 +254,13 @@ function Upload() {
     }
   }, [])
 
-  const isFormDisabled = videoStatus !== 'success' // غیرفعال شدن وقتی ویدیو آپلود نشده
+  const canEditMetadata = Boolean(videoFile || tempPath)
+  const isUploadReady = videoStatus === 'success' && Boolean(tempPath)
+  const uploadStatusText = useMemo(() => {
+    if (videoStatus === 'success') return 'آپلود ویدیو کامل شده و آماده انتشار است.'
+    if (videoStatus === 'uploading') return 'آپلود ویدیو در حال انجام است. می‌توانید اطلاعات ویدیو را هم‌زمان تکمیل کنید.'
+    return 'ابتدا فایل ویدیو را انتخاب کنید. پس از انتخاب فایل، می‌توانید بلافاصله اطلاعات ویدیو را وارد کنید.'
+  }, [videoStatus])
 
   return (
     <DashboardLayout>
@@ -256,127 +268,117 @@ function Upload() {
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-2">
-              {/* فایل ویدیو <span className="text-red-500">*</span> */}
             </label>
             <VideoDropzone
+              onFileSelected={handleVideoSelected}
               onUploaded={handleVideoUploaded}
-              onProgress={(percent) => console.log("Upload progress:", percent)}
+              onProgress={(percent) => {
+                setUploadProgress(percent)
+                if (percent > 0 && percent < 100) {
+                  setVideoStatus('uploading')
+                }
+              }}
             />
           </div>
-          {isFormDisabled && (
 
-            <p className='text-sm mt-4'>لطفا پیش از بارگذاری ویدیو <span className='text-blue-500'>قوانین اربعین تی وی</span> را مطالعه کنید </p>
-          )}
+          <div className="mt-4 space-y-2">
+            <p className='text-sm'>لطفا پیش از بارگذاری ویدیو <span className='text-blue-500'>قوانین اربعین تی وی</span> را مطالعه کنید </p>
+            <div className={`rounded-lg border px-3 py-2 text-sm ${videoStatus === 'success' ? 'border-green-200 bg-green-50 text-green-700' : canEditMetadata ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-slate-50 text-slate-600'}`}>
+              {uploadStatusText}
+              {videoStatus === 'uploading' && uploadProgress > 0 ? ` (${Math.round(uploadProgress)}%)` : ''}
+            </div>
+          </div>
         </div>
 
-        {!isFormDisabled && (
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2">
-            <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${isFormDisabled ? 'opacity-60 pointer-events-none ' : 'w-full'}`}>
-              <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    عنوان ویدیو <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="عنوان ویدیو را وارد کنید"
-                    disabled={isFormDisabled}
-                    className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    توضیحات
-                  </label>
-                  <textarea
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                    placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                    disabled={isFormDisabled}
-                    className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    انتخاب کانال <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={chanId}
-                    onChange={(e) => setChanId(e.target.value)}
-                    disabled={isLoadingChannels || isFormDisabled}
-                    className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    <option value="">انتخاب کانال</option>
-                    {(chans || []).map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
-                </div>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2">
+          <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${canEditMetadata ? 'w-full' : 'w-full opacity-70'}`}>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  عنوان ویدیو <span className="text-red-500">*</span>
+                </label>
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="عنوان ویدیو را وارد کنید"
+                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
               </div>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
-              <div className="space-y-4">
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    تصویر کاور (اجباری)
-                  </label>
-                  <div className="relative">
-                    {/* CoverPicker اصلی */}
-                    <div className={isFormDisabled ? 'opacity-60 pointer-events-none' : ''}>
-                      <CoverPicker
-                        value={thumbFile}
-                        onChange={(file) => setThumbFile(file)}
-                        onConfirm={(file) => {
-                          // اگر خواستی کاری اضافه انجام بدی (مثلاً نشان دادن تیک یا Toast)
-                          setThumbFile(file)
-                          // می‌تونی یک state confirmedCover هم ست کنی
-                        }}
-                        defaultCovers={[
-                          cover,
-                          '/covers/default2.jpg',
-                          '/covers/default3.jpg',
-                        ]}
-                        videoFile={videoFile}
-                        videoUrl={tempPath}
-                        videoThumbnails={thumbnails}
-                      />
-                    </div>
-                  </div>
-                </div>
-
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  توضیحات
+                </label>
+                <textarea
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                  placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+                  className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                />
               </div>
-
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  انتخاب کانال <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={chanId}
+                  onChange={(e) => setChanId(e.target.value)}
+                  disabled={isLoadingChannels}
+                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">انتخاب کانال</option>
+                  {(chans || []).map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
-
-        )}
-        {!isFormDisabled && (
-
-          <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <button
-              onClick={handleUpload}
-              disabled={!title || !tempPath || videoStatus !== 'success' || !chanId || isPending || !thumbFile}
-              className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"            >
-              {isPending ? (
-                <>در حال انتشار...</>
-              ) : (
-                <><TickCircle size={20} color="#ffffff" />انتشار ویدیو</>
-              )}
-            </button>
-        <button
-          onClick={handleCancelAndRefresh}
-          className={`px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50 `}
-        >
-          <CloseCircle size={16} color="#fb2c36" />
-        انصراف
-        </button>
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
+                <CoverPicker
+                  value={thumbFile}
+                  onChange={(file) => setThumbFile(file)}
+                  onConfirm={(file) => {
+                    setThumbFile(file)
+                  }}
+                  defaultCovers={[
+                    cover,
+                    '/covers/default2.jpg',
+                    '/covers/default3.jpg',
+                  ]}
+                  videoFile={videoFile}
+                  videoUrl={tempPath}
+                  videoThumbnails={thumbnails}
+                />
+              </div>
+            </div>
           </div>
-        )}
+        </div>
+
+        <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <button
+            onClick={handleUpload}
+            disabled={!title.trim() || !tempPath || !isUploadReady || !chanId || isPending || !thumbFile}
+            className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+          >
+            {isPending ? (
+              <>در حال آپلود...</>
+            ) : (
+              <><TickCircle size={20} color="#ffffff" />انتشار ویدیو</>
+            )}
+          </button>
+          <button
+            onClick={handleCancelAndRefresh}
+            className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50"
+          >
+            <CloseCircle size={16} color="#fb2c36" />
+            انصراف
+          </button>
+        </div>
       </div>
     </DashboardLayout>
   )

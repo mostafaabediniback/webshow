@@ -5,13 +5,14 @@ import axiosInstanceNew from "../utils/axiosConfigNew"
 
 Dropzone.autoDiscover = false
 
-function VideoDropzone({ onUploaded, onProgress }) {
+function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
   const dropzoneRef = useRef(null)
   const dzRef = useRef(null)
   const fileInputRef = useRef(null)
 
   const onUploadedRef = useRef(onUploaded)
   const onProgressRef = useRef(onProgress)
+  const onFileSelectedRef = useRef(onFileSelected)
 
   const currentFileRef = useRef(null)
 
@@ -25,6 +26,7 @@ function VideoDropzone({ onUploaded, onProgress }) {
 
   useEffect(() => { onUploadedRef.current = onUploaded }, [onUploaded])
   useEffect(() => { onProgressRef.current = onProgress }, [onProgress])
+  useEffect(() => { onFileSelectedRef.current = onFileSelected }, [onFileSelected])
 
   useEffect(() => {
     const dz = new Dropzone(dropzoneRef.current, {
@@ -61,6 +63,10 @@ function VideoDropzone({ onUploaded, onProgress }) {
           setUploadedFileName(file.name)
           setErrorMessage("")
           setProgress(0)
+
+          if (onFileSelectedRef.current) {
+            onFileSelectedRef.current(file)
+          }
         })
 
         this.on("dragenter", () => setIsDragActive(true))
