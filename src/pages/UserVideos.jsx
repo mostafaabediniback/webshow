@@ -223,6 +223,10 @@ function UserVideos() {
     setVideoStatus('idle')
     setThumbnails([])
   }
+    const handleCancelAndRefresh = () => {
+    window.location.reload()
+  }
+
 
   const handleUpload = async () => {
     if (!title || !title.trim()) {
@@ -351,7 +355,7 @@ function UserVideos() {
         )}
 
         {!isFormDisabled && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             <button
               onClick={handleUpload}
               disabled={!title || !tempPath || videoStatus !== 'success' || isPending || !thumbFile}
@@ -362,6 +366,13 @@ function UserVideos() {
                 <><TickCircle size={20} color="#ffffff" />انتشار ویدیو</>
               )}
             </button>
+                    <button
+                      onClick={handleCancelAndRefresh}
+                      className={`px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50 `}
+                    >
+                      <CloseCircle size={16} color="#fb2c36" />
+                    انصراف
+                    </button>
           </div>
         )}
       </div>

@@ -41,7 +41,7 @@ function VideoCard({ video }) {
         {/* Play Button */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/90 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-2xl shadow-black/20 scale-75 opacity-0 group-hover/card:scale-100 group-hover/card:opacity-100 transition-all duration-500 delay-100 shadow-indigo-500/25">
-            <PlayCircle size={28} sm={36} className="text-indigo-600 drop-shadow-lg" />
+            <PlayCircle size={28} sm={36} color='#f58a06' className="text-indigo-600 drop-shadow-lg" />
           </div>
         </div>
 

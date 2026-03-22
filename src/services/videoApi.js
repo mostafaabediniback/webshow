@@ -20,6 +20,7 @@ const mapPaginatedResponse = (data) => {
   return { items, totalPages, totalItems };
 };
 
+
 // آپلود فایل ویدیو
 export const uploadVideo = async (file) => {
   const fd = new FormData();
@@ -113,6 +114,8 @@ export const getLandingVideos = async ({
 
   const url = `/landing/videos?${params}`;
   const res = await axiosInstanceNew.get(url);
+  
+  // استفاده از mapPaginatedResponse موجود
   return mapPaginatedResponse(res.data);
 };
 

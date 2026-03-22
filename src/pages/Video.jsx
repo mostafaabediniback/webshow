@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import Layout from '../layouts/Layout'
-import { useParams, Link } from 'react-router-dom'
-import { useVideo } from '../hooks/useVideo'
-import useChannelVideos from '../hooks/useChannelVideos'
-import { Dislike, Eye, Like1 } from 'iconsax-react'
 import axios from 'axios'
+import { Eye } from 'iconsax-react'
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import useChannelVideos from '../hooks/useChannelVideos'
+import { useVideo } from '../hooks/useVideo'
+import Layout from '../layouts/Layout'
 
 const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
   <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 3v12" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M8 11l4 4 4-4" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M21 21H3" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 3v12" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8 11l4 4 4-4" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M21 21H3" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
 
@@ -200,7 +200,9 @@ function Video() {
               </div>
             </div>
             <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
-              <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 whitespace-pre-line">{data.data.description}</p>
+              <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 break-all">
+                {data.data.description}
+              </p>
             </div>
           </div>
           <aside className="hidden lg:block">

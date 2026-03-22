@@ -1,5 +1,5 @@
 import { ArrowLeft2, PlayCircle } from "iconsax-react";
-import { useState } from "react";
+import { useState, useCallback } from "react"; // useCallback اضافه شد
 import CategoryChips from "../components/CategoryChips";
 import VideoGrid from "../components/VideoGrid";
 import VideoSkeleton from "../components/VideoSkeleton";
@@ -15,25 +15,43 @@ function Home() {
   const [activeChannelId, setActiveChannelId] = useState(null);
   const { page, setPage } = usePaginationParams(1);
 
-  // دریافت لیست کانال‌ها
   const {
     data: channelsData,
     isLoading: channelsLoading,
     isError: channelsError
-  } = useLandingChannels();
+  } = useLandingChannels({ pageSize: 20 }); // بیشتر کانال لود کن
 
-  // دریافت ویدیوها بر اساس کانال انتخابی
   const {
     data: videosData,
     isLoading: videosLoading,
-    isError: videosError
+    isError: videosError,
+    refetch // برای refresh دستی
   } = useLandingVideos(activeChannelId, page);
 
   const channelsList = Array.isArray(channelsData?.items) ? channelsData.items : [];
   const videosList = Array.isArray(videosData?.items) ? videosData.items : [];
   const totalPages = videosData?.totalPages || 1;
+  const activeChannelName = channelsList.find(c => c.id === activeChannelId)?.name;
 
-  if (channelsLoading) {
+  // Reset page handler با useCallback
+  const handleChannelSelect = useCallback((id) => {
+    setActiveChannelId(id);
+    setPage(1);
+  }, [setPage]);
+
+  // Refresh handler
+  const handleRefresh = () => {
+    refetch();
+  };
+  // داخل Home component
+console.log("🔍 Debug:", { 
+  activeChannelId, 
+  page, 
+  videosData: videosData?.totalPages,
+  queryKey: ["landing-videos", activeChannelId, page] 
+});
+
+  if (channelsLoading && !channelsData) { // فقط اولین بار
     return (
       <Layout>
         <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
@@ -50,27 +68,28 @@ function Home() {
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-6 sm:py-8">
           {/* Category Chips */}
-          <div className="sticky top-[57px] sm:top-[61px] md:top-[73px] z-40 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 py-3  backdrop-blur-md border-b border-slate-200/80 mb-6 ">
+          <div className="sticky top-[57px] sm:top-[61px] md:top-[73px] z-40 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 py-3 backdrop-blur-md border-b border-slate-200/80 mb-6">
             <CategoryChips
               channels={channelsList}
               activeChannelId={activeChannelId}
-              onSelect={(id) => {
-                setActiveChannelId(id);
-                setPage(1); // ریست صفحه به 1
-              }}
+              onSelect={handleChannelSelect}
+              isLoading={channelsLoading}
             />
           </div>
 
           {/* Breadcrumb */}
           {activeChannelId && (
             <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-indigo-50 border border-indigo-100 shadow-sm mb-6">
-              <span className="text-sm text-slate-600">
-                نمایش ویدیوهای{" "}
-                <strong className="text-slate-900">
-                  {channelsList.find((c) => c.id === activeChannelId)?.name || activeChannelId}
-                </strong>
+              <span className="text-sm text-slate-600 flex items-center gap-2">
+                <ArrowLeft2 size={16} className="text-slate-400" />
+                نمایش ویدیوهای <strong className="text-slate-900">{activeChannelName}</strong>
               </span>
-
+              {/* <button
+                onClick={handleRefresh}
+                className="text-sm text-indigo-600 hover:text-indigo-700 font-medium px-3 py-1 rounded-lg hover:bg-indigo-50 transition-all"
+              >
+                به‌روزرسانی
+              </button> */}
             </div>
           )}
 
@@ -84,44 +103,50 @@ function Home() {
               <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mb-4">
                 <span className="text-2xl">⚠</span>
               </div>
-              <p className="text-red-600 font-medium">خطا در دریافت ویدیوها</p>
+              <p className="text-red-600 font-medium mb-2">خطا در دریافت ویدیوها</p>
+              <button
+                onClick={handleRefresh}
+                className="text-indigo-600 hover:text-indigo-700 font-medium px-4 py-2 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-all"
+              >
+                تلاش مجدد
+              </button>
             </div>
           ) : videosList.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 px-4 rounded-2xl bg-slate-50 border border-slate-200 border-dashed">
-              <div className="w-16 h-16 rounded-full bg-slate-200/80 flex items-center justify-center mb-4">
-                <PlayCircle size={32} className="text-slate-400" />
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center mb-6 shadow-lg">
+                <PlayCircle size={40} color="#f97316" />
               </div>
-              <p className="text-slate-600 font-medium">
-                {activeChannelId ? "ویدیویی در این کانال یافت نشد" : "ویدیویی یافت نشد"}
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                {activeChannelId ? "ویدیویی یافت نشد" : "شروع کنید!"}
+              </h3>
+              <p className="text-slate-600 text-center max-w-md">
+                {activeChannelId 
+                  ? "در این کانال فعلاً ویدیویی موجود نیست."
+                  : "کانالی انتخاب کنید تا ویدیوهایش را ببینید."
+                }
               </p>
             </div>
           ) : (
             <>
               {/* Videos Grid */}
-              <section className="group rounded-2xl ">
-                <div className="flex items-center gap-3 px-6 py-5 ">
+              <section className="">
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900">
-                      {activeChannelId &&
-                        (channelsList.find(c => c.id === activeChannelId)?.name)
-                      }
-                    </h3>
-                  </div>
-                </div>
 
-                <div className="p-6">
+                <div className=" pb-12">
                   <VideoGrid items={videosList} />
                 </div>
               </section>
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <PaginationComponent
-                  totalPages={totalPages}
-                  currentPage={page}
-                  onPageChange={setPage}
-                />
+                <div className="mt-8 pt-8 border-t border-slate-200">
+                  <PaginationComponent
+                    totalPages={totalPages}
+                    currentPage={page}
+                    onPageChange={setPage}
+                    showInfo // نمایش اطلاعات صفحه
+                  />
+                </div>
               )}
             </>
           )}
