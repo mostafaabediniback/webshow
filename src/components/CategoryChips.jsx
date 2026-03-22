@@ -19,9 +19,9 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
             همه
           </span>
         </div>
-        <span className={`text-xs font-medium truncate max-w-[56px] ${activeChannelId === null ? 'text-slate-900' : 'text-slate-600'}`}>
+        {/* <span className={`text-xs font-medium truncate max-w-[56px] ${activeChannelId === null ? 'text-slate-900' : 'text-slate-600'}`}>
           همه
-        </span>
+        </span> */}
       </button>
 
       {list.map((channel) => {
@@ -49,9 +49,9 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
               />
             </div>
 
-            <span className={`text-xs font-medium truncate max-w-[56px] ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>
+            {/* <span className={`text-xs font-medium truncate max-w-[56px] ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>
               {channel.name}
-            </span>
+            </span> */}
           </button>
         )
       })}

@@ -28,6 +28,7 @@ import VideoEdit from './pages/VideoEdit'
 import Search from './pages/Search'
 import Users from './pages/Users'
 import UserVideos from './pages/UserVideos'
+import UploadedVideos from './pages/UploadedVideos'
 
 function App() {
   return (
@@ -42,7 +43,8 @@ function App() {
       <Route path="/dashboard/videos" element={<RequireAuth><RequireAdminRole><Videos /></RequireAdminRole></RequireAuth>} />
       <Route path="/dashboard/videos/:id" element={<RequireAuth><RequireAdminRole><VideoEdit /></RequireAdminRole></RequireAuth>} />
       <Route path="/dashboard/users" element={<RequireAuth><RequireAdminRole><Users /></RequireAdminRole></RequireAuth>} />
-      <Route path="/dashboard/user-videos" element={<RequireAuth><RequireUserRole><UserVideos /></RequireUserRole></RequireAuth>} />
+      <Route path="/dashboard/user-upload" element={<RequireAuth><RequireUserRole><UserVideos /></RequireUserRole></RequireAuth>} />
+      <Route path="/dashboard/user-videos" element={<RequireAuth><RequireUserRole><UploadedVideos /></RequireUserRole></RequireAuth>} />
     </Routes>
   )
 }

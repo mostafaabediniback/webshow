@@ -41,10 +41,10 @@ function Videos() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2">ویدیوهای آپلودشده</h1>
           <p className="text-sm text-gray-600">مشاهده و مدیریت تمام ویدیوهای آپلود شده</p>
-        </div>
+        </div> */}
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <label className="block text-sm font-semibold text-gray-900 mb-2">

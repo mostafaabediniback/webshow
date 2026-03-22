@@ -129,7 +129,7 @@ function Modal({
                 className="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
                 aria-label="بستن"
               >
-                <CloseCircle size={24} className="text-gray-600" />
+                <CloseCircle size={24} color='#4a5565 ' className="text-gray-600" />
               </button>
             )}
           </div>

@@ -1,18 +1,17 @@
+import { TickCircle } from 'iconsax-react'
 import { useEffect, useState } from 'react'
-import { Pagination } from '@mui/material'
-import { Play, TickCircle } from 'iconsax-react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import DashboardLayout from '../layouts/DashboardLayout'
+import cover from '../assets/img/cover.jpg'
+import CoverPicker from '../components/Upload/CoverPicker'
+import VideoDropzone from '../components/VideoDropzone'
 import useChannel from '../hooks/useChannel'
-import useVideoUpload from '../hooks/useVideoUpload'
 import useChannelVideos from '../hooks/useChannelVideos'
 import useDeleteVideo from '../hooks/useDeleteVideo'
-import VideoDropzone from '../components/VideoDropzone'
-import VideoRow from '../components/VideoRow'
-import VideoModal from '../components/VideoModal'
-import ConfirmModal from '../components/ConfirmModal'
-import cover from '../assets/img/cover.jpg'
 import { usePaginationParams } from '../hooks/usePaginationParams'
+import useVideoUpload from '../hooks/useVideoUpload'
+import DashboardLayout from '../layouts/DashboardLayout'
+
 
 const PAGE_SIZE = 25
 
@@ -28,10 +27,16 @@ function UserVideos() {
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [thumbFile, setThumbFile] = useState(null)
+  const [thumbPreview, setThumbPreview] = useState(null)
   const [thumbDrag, setThumbDrag] = useState(false)
   const [tempPath, setTempPath] = useState(null)
+  const [videoFile, setVideoFile] = useState(null)
+  const [videoStatus, setVideoStatus] = useState('idle') // idle | success
+  const [thumbnails, setThumbnails] = useState([])
   const [selectedVideoId, setSelectedVideoId] = useState(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
+  const navigate = useNavigate()
+
 
   const { data: videos, isLoading: isLoadingVideos, isError } = useChannelVideos({
     pageNumber: page,
@@ -44,31 +49,224 @@ function UserVideos() {
     }
   }, [isAdmin, isLoadingChannels, channels])
 
-  const handleUpload = async () => {
-    const channelIdFromSession = typeof window !== 'undefined' ? sessionStorage.getItem('channel_id') : null
+  // helper: capture frame from URL
+  const captureFrameFromUrl = (videoUrl, timeInSeconds = 0) => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video')
+      video.crossOrigin = 'anonymous'
+      video.src = videoUrl
+      video.muted = true
+      video.playsInline = true
+      const cleanup = () => { try { video.src = '' } catch (e) { } }
+      const onError = () => {
+        cleanup()
+        reject(new Error('video load error / CORS or invalid url'))
+      }
+      video.addEventListener('loadedmetadata', () => {
+        if (!video.duration || isNaN(video.duration)) {
+          video.currentTime = 0
+        } else {
+          const t = Math.min(timeInSeconds, video.duration)
+          video.currentTime = t
+        }
+      })
+      video.addEventListener('seeked', () => {
+        try {
+          const w = video.videoWidth || 640
+          const h = video.videoHeight || 360
+          const canvas = document.createElement('canvas')
+          canvas.width = w
+          canvas.height = h
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(video, 0, 0, w, h)
+          canvas.toBlob((blob) => {
+            cleanup()
+            if (!blob) return reject(new Error('cannot capture frame'))
+            resolve(blob)
+          }, 'image/png')
+        } catch (err) {
+          cleanup()
+          reject(err)
+        }
+      })
+      video.addEventListener('error', onError)
+    })
+  }
 
-    if (!title || !tempPath || !channelIdFromSession) {
-      toast.error('لطفاً عنوان و ویدیو را کامل کنید')
+  // wrapper: capture frame from File
+  const captureFrameFromFile = async (file, timeInSeconds = 0) => {
+    const url = URL.createObjectURL(file)
+    try {
+      const blob = await captureFrameFromUrl(url, timeInSeconds)
+      return blob
+    } finally {
+      URL.revokeObjectURL(url)
+    }
+  }
+
+  // دریافت نتیجه VideoDropzone (مثل Upload)
+  const handleVideoUploaded = (payload) => {
+    if (!payload) return
+    if (typeof payload === 'string') {
+      setTempPath(payload)
+      setVideoStatus('success')
+    } else if (typeof payload === 'object') {
+      setTempPath(payload.temp_path || null)
+      setVideoFile(payload.file || null)
+      setVideoStatus('success')
+    }
+  }
+
+  // تولید thumbnails (همان منطق Upload)
+  useEffect(() => {
+    let canceled = false
+    const createdUrls = []
+
+    const generate = async () => {
+      setThumbnails([])
+      if (!videoFile && !tempPath) return
+
+      try {
+        let duration = 0
+        if (videoFile) {
+          const tmp = document.createElement('video')
+          const url = URL.createObjectURL(videoFile)
+          tmp.src = url
+          await new Promise((res, rej) => {
+            tmp.addEventListener('loadedmetadata', res)
+            tmp.addEventListener('error', rej)
+          })
+          duration = tmp.duration || 0
+          URL.revokeObjectURL(url)
+
+          const positions = [0.1, 0.5, 0.9].map(p => Math.min(duration * p, duration || 0))
+          const resArr = []
+          for (const t of positions) {
+            try {
+              const blob = await captureFrameFromFile(videoFile, t)
+              if (canceled) break
+              const u = URL.createObjectURL(blob)
+              createdUrls.push(u)
+              resArr.push({ time: t, blob, url: u })
+            } catch (err) {
+              console.warn('capture from file failed', err)
+            }
+          }
+          if (!canceled) setThumbnails(resArr)
+        } else if (tempPath) {
+          const tmp = document.createElement('video')
+          tmp.crossOrigin = 'anonymous'
+          tmp.src = tempPath
+          await new Promise((res, rej) => {
+            tmp.addEventListener('loadedmetadata', res)
+            tmp.addEventListener('error', rej)
+          })
+          duration = tmp.duration || 0
+          const positions = [0.1 * duration, 0.5 * duration, 0.9 * duration]
+          const resArr = []
+          for (const t of positions) {
+            try {
+              const blob = await captureFrameFromUrl(tempPath, t)
+              if (canceled) break
+              const u = URL.createObjectURL(blob)
+              createdUrls.push(u)
+              resArr.push({ time: t, blob, url: u })
+            } catch (err) {
+              console.warn('capture from url failed', err)
+            }
+          }
+          if (!canceled) setThumbnails(resArr)
+        }
+      } catch (err) {
+        console.warn('thumbnail generation overall error', err)
+      }
+    }
+
+    generate()
+
+    return () => {
+      canceled = true
+      createdUrls.forEach(u => URL.revokeObjectURL(u))
+    }
+  }, [videoFile, tempPath])
+
+  // create/revoke preview URL for thumbnail (existing behavior)
+  useEffect(() => {
+    if (!thumbFile) {
+      if (thumbPreview) {
+        try { URL.revokeObjectURL(thumbPreview) } catch (e) { }
+        setThumbPreview(null)
+      }
+      return
+    }
+    if (thumbFile instanceof File || thumbFile instanceof Blob) {
+      const u = URL.createObjectURL(thumbFile)
+      if (thumbPreview) {
+        try { URL.revokeObjectURL(thumbPreview) } catch (e) { }
+      }
+      setThumbPreview(u)
+    } else {
+      if (thumbPreview) {
+        try { URL.revokeObjectURL(thumbPreview) } catch (e) { }
+        setThumbPreview(null)
+      }
+    }
+  }, [thumbFile])
+
+  const resetForm = () => {
+    setTitle('')
+    setDesc('')
+    setThumbFile(null)
+    setThumbPreview(null)
+    setTempPath(null)
+    setVideoFile(null)
+    setVideoStatus('idle')
+    setThumbnails([])
+  }
+
+  const handleUpload = async () => {
+    if (!title || !title.trim()) {
+      toast.error('لطفاً عنوان ویدیو را وارد کنید')
+      return
+    }
+
+    if (!tempPath) {
+      toast.error('لطفاً ابتدا فایل ویدیو را آپلود کنید')
+      return
+    }
+
+    if (!thumbFile) {
+      toast.error('لطفاً یک تصویر کاور انتخاب کنید')
       return
     }
 
     try {
       await uploadAsync({
-        channelId: channelIdFromSession,
-        title,
+        title: title.trim(),
         description: desc,
         temp_path: tempPath,
-        coverFile: thumbFile || cover,
+        coverFile: thumbFile,
       })
-      setTitle('')
-      setDesc('')
-      setThumbFile(null)
-      setTempPath(null)
+      // وقتی promise کامل شد:
+      navigate('/dashboard/user-videos')
+      resetForm()
     } catch {
-      // handled in hook
+      // خطاها در هوک مدیریت می‌شوند
     }
   }
 
+  useEffect(() => {
+    return () => {
+      if (thumbPreview) {
+        try { URL.revokeObjectURL(thumbPreview) } catch (e) { }
+      }
+      thumbnails.forEach(t => { try { URL.revokeObjectURL(t.url) } catch (e) { } })
+    }
+  }, [])
+
+  const isFormDisabled = videoStatus !== 'success' // غیرفعال شدن وقتی ویدیو آپلود نشده
+
+  // existing delete confirm
   const handleConfirmDelete = () => {
     if (deleteConfirmId) {
       deleteVideo(deleteConfirmId)
@@ -82,132 +280,93 @@ function UserVideos() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">مدیریت ویدیوهای من</h1>
-          <p className="text-sm text-gray-600">آپلود و مشاهده ویدیوهای حساب کاربری</p>
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">عنوان ویدیو <span className="text-red-500">*</span></label>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="عنوان ویدیو را وارد کنید"
-                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">توضیحات</label>
-              <textarea
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              />
-            </div>
+          <div>
+            <VideoDropzone
+              onUploaded={handleVideoUploaded}
+              onProgress={() => { }}
+            />
           </div>
-        </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">فایل‌های ویدیو</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">فایل ویدیو <span className="text-red-500">*</span></label>
-              <VideoDropzone onUploaded={setTempPath} onProgress={() => {}} />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر بندانگشتی (اختیاری)</label>
-              <div
-                className={`rounded-xl border-2 transition-all ${thumbDrag ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300 hover:border-gray-400'} p-6 flex flex-col items-center justify-center text-center cursor-pointer min-h-[150px]`}
-                onDragOver={(e) => { e.preventDefault(); setThumbDrag(true) }}
-                onDragLeave={() => setThumbDrag(false)}
-                onDrop={(e) => { e.preventDefault(); setThumbDrag(false); const f = e.dataTransfer.files?.[0]; if (f && f.type.startsWith('image/')) setThumbFile(f) }}
-              >
-                <input id="thumb-input-user" type="file" accept="image/*" className="sr-only" onChange={(e) => setThumbFile(e.target.files?.[0] || null)} />
-                {thumbFile ? (
-                  <div className="w-full space-y-2">
-                    <img className="w-full h-48 rounded-lg object-cover border border-gray-200" src={URL.createObjectURL(thumbFile)} alt="Thumbnail" />
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-700 font-medium truncate">{thumbFile.name}</p>
-                      <button onClick={(e) => { e.stopPropagation(); setThumbFile(null) }} className="text-red-500 hover:text-red-700 text-sm">حذف</button>
-                    </div>
-                  </div>
-                ) : (
-                  <label htmlFor="thumb-input-user" className="cursor-pointer text-sm text-gray-600">برای انتخاب تصویر کلیک کنید یا تصویر را اینجا رها کنید</label>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <button
-            onClick={handleUpload}
-            disabled={!title || !tempPath || isPending}
-            className="w-full h-12 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
-          >
-            <TickCircle size={20} />
-            {isPending ? 'در حال آپلود...' : 'آپلود ویدیو'}
-          </button>
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">ویدیوهای آپلود شده من</h2>
-          {isLoadingVideos ? (
-            <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-20 bg-gray-100 rounded-lg animate-pulse" />)}</div>
-          ) : isError ? (
-            <div className="text-center py-12 text-red-500">خطا در بارگذاری ویدیوها</div>
-          ) : videosList.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <Play size={32} className="text-gray-400" />
-              </div>
-              <p className="text-sm text-gray-500">هنوز ویدیویی آپلود نشده است</p>
-            </div>
-          ) : (
-            <>
-              <div className="space-y-3">
-                {videosList.map((v) => (
-                  <VideoRow
-                    key={v.id}
-                    item={v}
-                    onDelete={(id) => setDeleteConfirmId(id)}
-                    onShow={(id) => setSelectedVideoId(id)}
-                    isDeleting={isDeleting}
-                  />
-                ))}
-              </div>
-
-              {videos?.totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
-                  <Pagination
-                    count={videos.totalPages}
-                    page={page}
-                    onChange={(_, value) => setPage(value)}
-                    shape="rounded"
-                    color="primary"
-                  />
-                </div>
-              )}
-            </>
+          {isFormDisabled && (
+            <p className='text-sm mt-4'>
+              لطفا پیش از بارگذاری ویدیو <span className='text-blue-500'>قوانین اربعین تی وی</span> را مطالعه کنید
+            </p>
           )}
         </div>
+
+        {!isFormDisabled && (
+          <div className='flex gap-6 justify-between'>
+
+            <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${isFormDisabled ? 'opacity-60 pointer-events-none ' : 'w-full'}`}>
+              <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">عنوان ویدیو <span className="text-red-500">*</span></label>
+                  <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="عنوان ویدیو را وارد کنید"
+                    disabled={isFormDisabled}
+                    className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">توضیحات</label>
+                  <textarea
+                    value={desc}
+                    onChange={(e) => setDesc(e.target.value)}
+                    placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+                    disabled={isFormDisabled}
+                    className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
+                  <div className={isFormDisabled ? 'opacity-60 pointer-events-none' : ''}>
+                    <CoverPicker
+                      value={thumbFile}
+                      onChange={(file) => setThumbFile(file)}
+                      onConfirm={(file) => {
+                        setThumbFile(file)
+                      }}
+                      defaultCovers={[
+                        cover,
+                        '/covers/default2.jpg',
+                        '/covers/default3.jpg',
+                      ]}
+                      videoFile={videoFile}
+                      videoUrl={tempPath}
+                      videoThumbnails={thumbnails}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!isFormDisabled && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <button
+              onClick={handleUpload}
+              disabled={!title || !tempPath || videoStatus !== 'success' || isPending || !thumbFile}
+              className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"            >
+              {isPending ? (
+                <>در حال آپلود...</>
+              ) : (
+                <><TickCircle size={20} color="#ffffff" />انتشار ویدیو</>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
-      <VideoModal videoId={selectedVideoId} isOpen={!!selectedVideoId} onClose={() => setSelectedVideoId(null)} />
-      <ConfirmModal
-        isOpen={!!deleteConfirmId}
-        onClose={() => setDeleteConfirmId(null)}
-        onConfirm={handleConfirmDelete}
-        title="حذف ویدیو"
-        message="آیا از حذف این ویدیو مطمئن هستید؟"
-        confirmText="حذف"
-        cancelText="انصراف"
-        variant="danger"
-        isLoading={isDeleting}
-      />
+
     </DashboardLayout>
   )
 }

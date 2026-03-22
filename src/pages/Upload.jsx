@@ -1,11 +1,12 @@
-import DashboardLayout from '../layouts/DashboardLayout'
+import { TickCircle } from 'iconsax-react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import cover from '../assets/img/cover.jpg'
+import CoverPicker from '../components/Upload/CoverPicker'
+import VideoDropzone from "../components/VideoDropzone"
 import useChannel from '../hooks/useChannel'
 import useVideoUpload from '../hooks/useVideoUpload'
-import { useState } from 'react'
-import { VideoAdd, DocumentUpload, Image, FolderAdd, TickCircle } from 'iconsax-react'
-import cover from '../assets/img/cover.jpg'
-import { useEffect, useRef } from "react"
-import VideoDropzone from "../components/VideoDropzone"
+import DashboardLayout from '../layouts/DashboardLayout'
 
 function Upload() {
   const { channels: chans, isLoadingChannels } = useChannel()
@@ -13,196 +14,358 @@ function Upload() {
   const [desc, setDesc] = useState('')
   const [videoFile, setVideoFile] = useState(null)
   const [thumbFile, setThumbFile] = useState(null)
-  const [videoDrag, setVideoDrag] = useState(false)
-  const [thumbDrag, setThumbDrag] = useState(false)
+  const [thumbPreviewUrl, setThumbPreviewUrl] = useState(null)
   const [chanId, setChanId] = useState('')
   const { uploadAsync, isPending } = useVideoUpload()
   const [tempPath, setTempPath] = useState(null)
+  const [videoStatus, setVideoStatus] = useState('idle')
+  const [thumbnails, setThumbnails] = useState([])
+  const navigate = useNavigate()
 
+
+  // helper: capture frame from URL
+  const captureFrameFromUrl = (videoUrl, timeInSeconds = 0) => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video')
+      video.crossOrigin = 'anonymous'
+      video.src = videoUrl
+      video.muted = true
+      video.playsInline = true
+      const cleanup = () => { try { video.src = '' } catch (e) { } }
+      const onError = () => {
+        cleanup()
+        reject(new Error('video load error / CORS or invalid url'))
+      }
+      video.addEventListener('loadedmetadata', () => {
+        if (!video.duration || isNaN(video.duration)) {
+          video.currentTime = 0
+        } else {
+          const t = Math.min(timeInSeconds, video.duration)
+          video.currentTime = t
+        }
+      })
+      video.addEventListener('seeked', () => {
+        try {
+          const w = video.videoWidth || 640
+          const h = video.videoHeight || 360
+          const canvas = document.createElement('canvas')
+          canvas.width = w
+          canvas.height = h
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(video, 0, 0, w, h)
+          canvas.toBlob((blob) => {
+            cleanup()
+            if (!blob) return reject(new Error('cannot capture frame'))
+            resolve(blob)
+          }, 'image/png')
+        } catch (err) {
+          cleanup()
+          reject(err)
+        }
+      })
+      video.addEventListener('error', onError)
+    })
+  }
+
+  // wrapper: capture frame from File
+  const captureFrameFromFile = async (file, timeInSeconds = 0) => {
+    const url = URL.createObjectURL(file)
+    try {
+      const blob = await captureFrameFromUrl(url, timeInSeconds)
+      return blob
+    } finally {
+      URL.revokeObjectURL(url)
+    }
+  }
+
+  // دریافت نتیجه VideoDropzone
+  const handleVideoUploaded = (payload) => {
+    if (!payload) return
+    if (typeof payload === 'string') {
+      setTempPath(payload)
+      setVideoStatus('success')
+    } else if (typeof payload === 'object') {
+      setTempPath(payload.temp_path || null)
+      setVideoFile(payload.file || null)
+      setVideoStatus('success')
+    }
+  }
+
+  // تولید thumbnails (همان منطق قبلی)
+  useEffect(() => {
+    let canceled = false
+    const createdUrls = []
+
+    const generate = async () => {
+      setThumbnails([])
+      if (!videoFile && !tempPath) return
+
+      try {
+        let duration = 0
+        if (videoFile) {
+          const tmp = document.createElement('video')
+          const url = URL.createObjectURL(videoFile)
+          tmp.src = url
+          await new Promise((res, rej) => {
+            tmp.addEventListener('loadedmetadata', res)
+            tmp.addEventListener('error', rej)
+          })
+          duration = tmp.duration || 0
+          URL.revokeObjectURL(url)
+
+          const positions = [0.1, 0.5, 0.9].map(p => Math.min(duration * p, duration || 0))
+          const resArr = []
+          for (const t of positions) {
+            try {
+              const blob = await captureFrameFromFile(videoFile, t)
+              if (canceled) break
+              const u = URL.createObjectURL(blob)
+              createdUrls.push(u)
+              resArr.push({ time: t, blob, url: u })
+            } catch (err) {
+              console.warn('capture from file failed', err)
+            }
+          }
+          if (!canceled) setThumbnails(resArr)
+        } else if (tempPath) {
+          const tmp = document.createElement('video')
+          tmp.crossOrigin = 'anonymous'
+          tmp.src = tempPath
+          await new Promise((res, rej) => {
+            tmp.addEventListener('loadedmetadata', res)
+            tmp.addEventListener('error', rej)
+          })
+          duration = tmp.duration || 0
+          const positions = [0.1 * duration, 0.5 * duration, 0.9 * duration]
+          const resArr = []
+          for (const t of positions) {
+            try {
+              const blob = await captureFrameFromUrl(tempPath, t)
+              if (canceled) break
+              const u = URL.createObjectURL(blob)
+              createdUrls.push(u)
+              resArr.push({ time: t, blob, url: u })
+            } catch (err) {
+              console.warn('capture from url failed', err)
+            }
+          }
+          if (!canceled) setThumbnails(resArr)
+        }
+      } catch (err) {
+        console.warn('thumbnail generation overall error', err)
+      }
+    }
+
+    generate()
+
+    return () => {
+      canceled = true
+      createdUrls.forEach(u => URL.revokeObjectURL(u))
+    }
+  }, [videoFile, tempPath])
+
+  // ساخت preview برای thumbFile
+  useEffect(() => {
+    if (!thumbFile) {
+      if (thumbPreviewUrl) {
+        try { URL.revokeObjectURL(thumbPreviewUrl) } catch (e) { }
+        setThumbPreviewUrl(null)
+      }
+      return
+    }
+    if (thumbFile instanceof File || thumbFile instanceof Blob) {
+      const u = URL.createObjectURL(thumbFile)
+      if (thumbPreviewUrl) {
+        try { URL.revokeObjectURL(thumbPreviewUrl) } catch (e) { }
+      }
+      setThumbPreviewUrl(u)
+    } else {
+      if (thumbPreviewUrl) {
+        try { URL.revokeObjectURL(thumbPreviewUrl) } catch (e) { }
+        setThumbPreviewUrl(null)
+      }
+    }
+  }, [thumbFile])
+
+  const handleUpload = async () => {
+    if (!tempPath) {
+      alert('لطفاً ابتدا فایل ویدیو را آپلود کنید')
+      return
+    }
+    if (!title.trim() || !chanId) {
+      alert('لطفاً عنوان و کانال را کامل کنید')
+      return
+    }
+    if (!thumbFile) {
+      alert('لطفاً یک تصویر کاور انتخاب کنید')
+      return
+    }
+
+    try {
+      await uploadAsync(
+        {
+          channelId: chanId,
+          title,
+          description: desc,
+          temp_path: tempPath,
+          coverFile: thumbFile
+        },
+        {
+          onSuccess: () => {
+            navigate('/dashboard/videos')
+            resetForm()
+          }
+        }
+      )
+    } catch (error) {
+      // خطاها در hook مدیریت می‌شوند
+    }
+  }
+
+  const resetForm = () => {
+    setTitle('')
+    setDesc('')
+    setVideoFile(null)
+    setThumbFile(null)
+    setThumbPreviewUrl(null)
+    setChanId('')
+    setTempPath(null)
+    setThumbnails([])
+    setVideoStatus('idle')
+  }
+
+  useEffect(() => {
+    return () => {
+      if (thumbPreviewUrl) {
+        try { URL.revokeObjectURL(thumbPreviewUrl) } catch (e) { }
+      }
+      thumbnails.forEach(t => { try { URL.revokeObjectURL(t.url) } catch (e) { } })
+    }
+  }, [])
+
+  const isFormDisabled = videoStatus !== 'success' // غیرفعال شدن وقتی ویدیو آپلود نشده
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">آپلود ویدیو</h1>
-          <p className="text-sm text-gray-600">آپلود ویدیوهای جدید و مدیریت محتوای خود</p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                عنوان ویدیو <span className="text-red-500">*</span>
-              </label>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="عنوان ویدیو را وارد کنید"
-                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                توضیحات
-              </label>
-              <textarea
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                انتخاب کانال <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={chanId}
-                onChange={(e) => setChanId(e.target.value)}
-                disabled={isLoadingChannels}
-                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="">انتخاب کانال</option>
-                {(chans || []).map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-            </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-900 mb-2">
+              {/* فایل ویدیو <span className="text-red-500">*</span> */}
+            </label>
+            <VideoDropzone
+              onUploaded={handleVideoUploaded}
+              onProgress={(percent) => console.log("Upload progress:", percent)}
+            />
           </div>
+          {isFormDisabled && (
+
+            <p className='text-sm mt-4'>لطفا پیش از بارگذاری ویدیو <span className='text-blue-500'>قوانین اربعین تی وی</span> را مطالعه کنید </p>
+          )}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">فایل‌های ویدیو</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                فایل ویدیو <span className="text-red-500">*</span>
-              </label>
-              {/* <div
-                className={`rounded-xl border-2 transition-all ${videoDrag ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300 hover:border-gray-400'} p-6 flex flex-col items-center justify-center text-center cursor-pointer min-h-[200px]`}
-                onDragOver={(e) => { e.preventDefault(); setVideoDrag(true) }}
-                onDragLeave={() => setVideoDrag(false)}
-                onDrop={(e) => { e.preventDefault(); setVideoDrag(false); const f = e.dataTransfer.files?.[0]; if (f && f.type.startsWith('video/')) setVideoFile(f) }}
-              >
-                <input id="video-input" type="file" accept="video/*" className="sr-only" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} />
-                {videoFile ? (
-                  <div className="w-full space-y-2">
-                    <video controls className="w-full rounded-lg bg-black max-h-[300px]" src={URL.createObjectURL(videoFile)} />
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-700 font-medium truncate">{videoFile.name}</p>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setVideoFile(null) }}
-                        className="text-red-500 hover:text-red-700 text-sm"
-                      >
-                        حذف
-                      </button>
-                    </div>
-                    <p className="text-xs text-gray-500">{(videoFile.size / (1024 * 1024)).toFixed(2)} MB</p>
-                  </div>
-                ) : (
-                  <label htmlFor="video-input" className="flex flex-col items-center gap-3 cursor-pointer">
-                    <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
-                      <DocumentUpload size={32} className="text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">برای انتخاب فایل کلیک کنید</p>
-                      <p className="text-xs text-gray-500 mt-1">یا فایل را اینجا بکشید و رها کنید</p>
-                    </div>
+        {!isFormDisabled && (
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2">
+            <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${isFormDisabled ? 'opacity-60 pointer-events-none ' : 'w-full'}`}>
+              <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    عنوان ویدیو <span className="text-red-500">*</span>
                   </label>
-                )}
-              </div> */}
-              <VideoDropzone
-                onUploaded={setTempPath}
-                onProgress={(percent) => console.log("Upload progress:", percent)}
-              />            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                تصویر بندانگشتی (اختیاری)
-              </label>
-              <div
-                className={`rounded-xl border-2 transition-all ${thumbDrag ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300 hover:border-gray-400'} p-6 flex flex-col items-center justify-center text-center cursor-pointer min-h-[150px]`}
-                onDragOver={(e) => { e.preventDefault(); setThumbDrag(true) }}
-                onDragLeave={() => setThumbDrag(false)}
-                onDrop={(e) => { e.preventDefault(); setThumbDrag(false); const f = e.dataTransfer.files?.[0]; if (f && f.type.startsWith('image/')) setThumbFile(f) }}
-              >
-                <input id="thumb-input" type="file" accept="image/*" className="sr-only" onChange={(e) => setThumbFile(e.target.files?.[0] || null)} />
-                {thumbFile ? (
-                  <div className="w-full space-y-2">
-                    <div className="relative w-full max-w-md mx-auto">
-                      <img className="w-full h-48 rounded-lg object-cover border border-gray-200" src={URL.createObjectURL(thumbFile)} alt="Thumbnail" />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-700 font-medium truncate">{thumbFile.name}</p>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setThumbFile(null) }}
-                        className="text-red-500 hover:text-red-700 text-sm"
-                      >
-                        حذف
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <label htmlFor="thumb-input" className="flex flex-col items-center gap-3 cursor-pointer">
-                    <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
-                      <Image size={32} className="text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">برای انتخاب تصویر کلیک کنید</p>
-                      <p className="text-xs text-gray-500 mt-1">یا تصویر را اینجا بکشید و رها کنید</p>
-                    </div>
+                  <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="عنوان ویدیو را وارد کنید"
+                    disabled={isFormDisabled}
+                    className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    توضیحات
                   </label>
-                )}
+                  <textarea
+                    value={desc}
+                    onChange={(e) => setDesc(e.target.value)}
+                    placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+                    disabled={isFormDisabled}
+                    className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    انتخاب کانال <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={chanId}
+                    onChange={(e) => setChanId(e.target.value)}
+                    disabled={isLoadingChannels || isFormDisabled}
+                    className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="">انتخاب کانال</option>
+                    {(chans || []).map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <button
-            onClick={async () => {
-              if (!title || !tempPath || !chanId) {
-                alert('لطفاً عنوان، فایل ویدیو و کانال را انتخاب کنید')
-                return
-              }
-              try {
-                // await uploadAsync({ channelId: chanId, title, description: desc, videoFile, coverFile: thumbFile })
-                // await uploadAsync({ channelId: chanId, title, description: desc, videoFile, coverFile: thumbFile || cover })
-                await uploadAsync({
-                  channelId: chanId,
-                  title,
-                  description: desc,
-                  temp_path: tempPath, // فقط temp_path که Dropzone داده
-                  coverFile: thumbFile || cover
-                })
-                // در صورت موفقیت، فرم را پاک می‌کنیم
-                setTitle('')
-                setDesc('')
-                setVideoFile(null)
-                setThumbFile(null)
-                setChanId('')
-              } catch (error) {
-                // خطا در useVideoUpload مدیریت می‌شود
-              }
-            }}
-            disabled={!title || !tempPath || !chanId || isPending}
-            className="w-full h-12 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
-          >
-            {isPending ? (
-              <>
-                <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
-                  {/* <div className="bg-blue-500 h-1" style={{ width: `${uploadProgress}%` }} /> */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
+              <div className="space-y-4">
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    تصویر کاور (اجباری)
+                  </label>
+                  <div className="relative">
+                    {/* CoverPicker اصلی */}
+                    <div className={isFormDisabled ? 'opacity-60 pointer-events-none' : ''}>
+                      <CoverPicker
+                        value={thumbFile}
+                        onChange={(file) => setThumbFile(file)}
+                        onConfirm={(file) => {
+                          // اگر خواستی کاری اضافه انجام بدی (مثلاً نشان دادن تیک یا Toast)
+                          setThumbFile(file)
+                          // می‌تونی یک state confirmedCover هم ست کنی
+                        }}
+                        defaultCovers={[
+                          cover,
+                          '/covers/default2.jpg',
+                          '/covers/default3.jpg',
+                        ]}
+                        videoFile={videoFile}
+                        videoUrl={tempPath}
+                        videoThumbnails={thumbnails}
+                      />
+                    </div>
+                  </div>
                 </div>
-                در حال آپلود...
-              </>
-            ) : (
-              <>
-                <TickCircle size={20} />
-                آپلود ویدیو
-              </>
-            )}
-          </button>
-          <p className="text-xs text-gray-500 mt-3 text-center">کیفیت ویدیو تغییر نمی‌کند و فایل در همین جلسه پخش می‌شود.</p>
-        </div>
+
+              </div>
+
+            </div>
+          </div>
+
+
+        )}
+        {!isFormDisabled && (
+
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <button
+              onClick={handleUpload}
+              disabled={!title || !tempPath || videoStatus !== 'success' || !chanId || isPending || !thumbFile}
+              className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"            >
+              {isPending ? (
+                <>در حال انتشار...</>
+              ) : (
+                <><TickCircle size={20} color="#ffffff" />انتشار ویدیو</>
+              )}
+            </button>
+          </div>
+        )}
+
       </div>
     </DashboardLayout>
   )

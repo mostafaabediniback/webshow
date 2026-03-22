@@ -1,10 +1,10 @@
-import DashboardLayout from "../layouts/DashboardLayout";
-import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import useChannel from "../hooks/useChannel";
-import { Trash, FolderAdd, TickCircle, Edit2, SearchNormal1 } from "iconsax-react";
-import ConfirmModal from "../components/ConfirmModal";
+import { Edit2, FolderAdd, TickCircle, Trash } from "iconsax-react";
+import { useState } from "react";
 import { toast } from "react-toastify";
+import ConfirmModal from "../components/ConfirmModal";
+import useChannel from "../hooks/useChannel";
+import DashboardLayout from "../layouts/DashboardLayout";
 import { getSearch } from "../services/videoApi";
 
 function Channels() {
@@ -123,12 +123,12 @@ function Channels() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* header */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
             مدیریت کانال‌ها
           </h1>
           <p className="text-sm text-gray-600">ایجاد و مدیریت کانال‌های خود</p>
-        </div>
+        </div> */}
 
         {/* فرم ایجاد / ویرایش */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -140,11 +140,10 @@ function Channels() {
             {/* آپلود تصویر */}
             <div>
               <div
-                className={`rounded-xl border-2 transition-all ${
-                  thumbDrag
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-dashed border-gray-300 hover:border-gray-400"
-                } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[140px]`}
+                className={`rounded-xl border-2 transition-all ${thumbDrag
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-dashed border-gray-300 hover:border-gray-400"
+                  } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[140px]`}
                 onDragOver={(e) => {
                   e.preventDefault();
                   setThumbDrag(true);
@@ -315,9 +314,10 @@ function Channels() {
               {(channelsToRender || []).map((c) => (
                 <div
                   key={c.id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <div className="flex items-center gap-3">
+                  {/* محتوای چپ (تصویر + اطلاعات) */}
+                  <div className="flex items-center gap-3 w-full sm:w-auto mb-3 sm:mb-0">
                     {c.image ? (
                       <img
                         src={
@@ -326,25 +326,26 @@ function Channels() {
                             : `http://${c.image}`
                         }
                         alt={c.name}
-                        className="w-12 h-12 rounded-lg object-cover border border-gray-200"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-xs font-medium">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-xs font-medium flex-shrink-0">
                         بدون تصویر
                       </div>
                     )}
 
-                    <div>
-                      <span className="text-base font-semibold text-gray-900 block">
+                    <div className="min-w-0 flex-1">
+                      <span className="text-sm sm:text-base font-semibold text-gray-900 block line-clamp-1">
                         {c.name}
                       </span>
-                      <span className="block text-xs text-gray-500">
-                        ایجاد: {new Date(c.created_at).toLocaleDateString("fa-IR")} | ویرایش:{" "}
-                        {new Date(c.updated_at).toLocaleDateString("fa-IR")}
+                      <span className="block text-xs text-gray-500 mt-1">
+                        ایجاد: {new Date(c.created_at).toLocaleDateString("fa-IR")} |
+                        ویرایش: {new Date(c.updated_at).toLocaleDateString("fa-IR")}
                       </span>
                     </div>
                   </div>
 
+                  {/* input مخفی برای آپلود تصویر - روی دکمه قرار می‌گیرد */}
                   <input
                     id={`chan-img-${c.id}`}
                     type="file"
@@ -359,24 +360,25 @@ function Channels() {
                     }}
                   />
 
-                  <div className="flex items-center gap-2">
+                  {/* دکمه‌های اکشن */}
+                  <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-end">
                     <button
                       onClick={() => {
                         setEditing(c);
                         setName(c.name);
                         setImageFile(null);
                       }}
-                      className="h-9 px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-sm font-medium flex items-center gap-2"
+                      className="h-9 px-3 sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
                     >
-                      <Edit2 size={20} color="currentColor" />
+                      <Edit2 size={16} sm:size={20} color="currentColor" />
                       ویرایش
                     </button>
 
                     <button
                       onClick={() => setDeleteConfirmId(c.id)}
-                      className="h-9 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium flex items-center gap-2"
+                      className="h-9 px-3 sm:px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
                     >
-                      <Trash size={20} color="#fff" />
+                      <Trash size={16} sm:size={20} color="#fff" />
                       حذف
                     </button>
                   </div>
@@ -392,9 +394,8 @@ function Channels() {
         onClose={() => setDeleteConfirmId(null)}
         onConfirm={handleDelete}
         title="حذف کانال"
-        message={`آیا از حذف کانال "${
-          channels?.find((c) => c.id === deleteConfirmId)?.name || ""
-        }" مطمئن هستید؟ این عمل قابل بازگشت نیست.`}
+        message={`آیا از حذف کانال "${channels?.find((c) => c.id === deleteConfirmId)?.name || ""
+          }" مطمئن هستید؟ این عمل قابل بازگشت نیست.`}
         confirmText="حذف"
         cancelText="انصراف"
         variant="danger"

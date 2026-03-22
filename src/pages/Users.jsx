@@ -1,22 +1,25 @@
 import { useMemo, useState } from 'react'
 import DashboardLayout from '../layouts/DashboardLayout'
 import useChannel from '../hooks/useChannel'
-import { Add, SearchNormal1, User, Call, Lock } from 'iconsax-react'
+import { Add, SearchNormal1, User, Call, Lock, Eye, EyeSlash } from 'iconsax-react'
 import { toast } from 'react-toastify'
 import { useCreateUser, useUsersList } from '../hooks/users'
 
 const INITIAL_FORM = {
-  full_name: '',
+  name: '',
   phone_number: '',
   password: '',
-  channel_id: ''
+  channel_id: '',
+  username: ''
 }
+
 
 function Users() {
   const { channels, isLoadingChannels } = useChannel()
   const [form, setForm] = useState(INITIAL_FORM)
   const [searchInput, setSearchInput] = useState('')
   const [searchPhoneNumber, setSearchPhoneNumber] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     users,
@@ -34,8 +37,9 @@ function Users() {
   })
 
   const isValidCreate = useMemo(() => {
-    return form.channel_id && form.phone_number && form.password && form.full_name
-  }, [form])
+    return form.channel_id && form.phone_number && form.password && form.name && form.username;
+  }, [form]);
+
 
   const handleCreate = async () => {
     if (!isValidCreate) {
@@ -47,7 +51,10 @@ function Users() {
       channel_id: Number(form.channel_id),
       phone_number: form.phone_number,
       password: form.password,
-      full_name: form.full_name,
+      name: form.name,
+      username: form.username
+
+
     })
   }
 
@@ -63,15 +70,13 @@ function Users() {
   const handleFormChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">مدیریت کاربران</h1>
-          <p className="text-sm text-gray-600">ایجاد کاربر جدید و جستجو بر اساس شماره موبایل</p>
-        </div>
-
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-4">ساخت کاربر</h2>
 
@@ -81,8 +86,8 @@ function Users() {
               <div className="relative">
                 <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  value={form.full_name}
-                  onChange={(e) => handleFormChange('full_name', e.target.value)}
+                  value={form.name}
+                  onChange={(e) => handleFormChange('name', e.target.value)}
                   className="h-11 w-full rounded-lg border border-gray-300 pr-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="مثلاً علی محمدی"
                 />
@@ -104,17 +109,53 @@ function Users() {
             </label>
 
             <label className="space-y-2">
+              <span className="text-sm font-semibold text-gray-900">نام کاربری</span>
+              <div className="relative">
+                <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  value={form.username}
+                  onChange={(e) => {
+                    const value = e.target.value.toLowerCase(); // اجباری کردن lowercase
+                    const regex = /^[a-z0-9_]*$/;
+
+                    if (regex.test(value)) {
+                      handleFormChange("username", value);
+                    }
+                  }}
+                  className="h-11 w-full rounded-lg border border-gray-300 pr-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="مثلاً ali_m123"
+                />
+              </div>
+              <p className="text-xs text-gray-500">فقط حروف کوچک انگلیسی، اعداد و _ مجاز است.</p>
+            </label>
+
+
+
+            <label className="space-y-2">
               <span className="text-sm font-semibold text-gray-900">رمز عبور</span>
               <div className="relative">
                 <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"} 
+                
                   value={form.password}
                   onChange={(e) => handleFormChange('password', e.target.value)}
-                  className="h-11 w-full rounded-lg border border-gray-300 pr-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="h-11 w-full rounded-lg border border-gray-300 pr-12 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="******"
                   dir="ltr"
                 />
+                {/* 👈 آیکون چشم */}
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeSlash size={18} color="#6B7280" />
+                  ) : (
+                    <Eye size={18} color="#6B7280" />
+                  )}
+                </button>
               </div>
             </label>
 
@@ -139,7 +180,7 @@ function Users() {
             disabled={!isValidCreate || isCreatingUser}
             className="mt-5 h-11 px-5 rounded-lg bg-black text-white hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm font-semibold inline-flex items-center gap-2"
           >
-            <Add size={18} />
+            <Add size={18} color='#ffffff' />
             {isCreatingUser ? 'در حال ثبت...' : 'ایجاد کاربر'}
           </button>
         </div>
@@ -153,14 +194,14 @@ function Users() {
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="شماره موبایل کاربر را وارد کنید"
               className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              dir="ltr"
+
             />
             <button
               onClick={handleSearch}
               disabled={!searchInput.trim()}
               className="h-11 px-5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm font-semibold inline-flex items-center justify-center gap-2"
             >
-              <SearchNormal1 size={18} />
+              <SearchNormal1 size={18} color='#6B7280' />
               {isFetchingUsers ? 'در حال جستجو...' : 'جستجو'}
             </button>
           </div>

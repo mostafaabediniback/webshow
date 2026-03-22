@@ -1,17 +1,15 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import SearchInput from "./SearchInput";
-import useLogin from "../hooks/useLogin";
 import {
-  Menu,
-  SearchNormal1,
-  VideoAdd,
-  Notification,
-  User,
   CloseCircle,
   Logout,
+  Menu,
+  SearchNormal1,
+  User
 } from "iconsax-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import logo from "../assets/logo/logo-01-01.png";
+import useLogin from "../hooks/useLogin";
+import SearchInput from "./SearchInput";
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -64,7 +62,7 @@ function Navbar() {
               onClick={closeSidebar}
               className="flex items-center gap-2"
             >
-              <img src={logo} alt="اربعین تی وی" className="h-8 sm:h-9 md:h-20 w-auto" />
+              <img src={logo} alt="اربعین تی وی" className="h-8 sm:h-9 md:h-10 w-auto" />
             </Link>
             <div className="hidden md:block flex-1 max-w-2xl mx-8">
               <SearchInput />
@@ -90,7 +88,7 @@ function Navbar() {
                 <Notification size={22} color="#0f172a" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>  */}
-               {isAuthenticated ? (
+              {isAuthenticated ? (
                 <>
                   <Link
                     to="/dashboard"
@@ -109,14 +107,13 @@ function Navbar() {
                   </button>
                 </>
               ) : (
-                <></>
-                // <Link
-                //   to="/login"
-                //   className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
-                // >
-                //   <User size={18} color="#0f172a" />
-                //   ورود
-                // </Link>
+                <Link
+                  to="/login"
+                  className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                >
+                  <User size={18} color="#0f172a" />
+                  ورود
+                </Link>
               )}
             </div>
           </div>
@@ -140,14 +137,13 @@ function Navbar() {
 
       {/* Mobile Sidebar */}
       <aside
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
-          isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isSidebarOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h2 className="text-xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h2 className="text-xl font-extrabold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
               منو
             </h2>
             <button
@@ -169,28 +165,30 @@ function Navbar() {
               >
                 <span>خانه</span>
               </Link>
-              <Link
+              {/* <Link
                 to="/"
                 onClick={closeSidebar}
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
               >
                 <span>ویدیوهای محبوب</span>
-              </Link>
-              <Link
+              </Link> */}
+              {/* <Link
                 to="/"
                 onClick={closeSidebar}
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
               >
                 <span>دسته‌بندی‌ها</span>
-              </Link>
-              <Link
-                to="/dashboard/channels"
-                onClick={closeSidebar}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
-              >
-                <span>مدیریت کانال‌ها</span>
-              </Link>
-              <Link
+              </Link> */}
+              {isAuthenticated && (
+                <Link
+                  to="/dashboard/channels"
+                  onClick={closeSidebar}
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+                >
+                  <span>مدیریت کانال‌ها</span>
+                </Link>
+              )}
+              {/* <Link
                 to="/dashboard/upload"
                 onClick={closeSidebar}
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
@@ -203,7 +201,7 @@ function Navbar() {
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
               >
                 <span>ویدیوهای آپلودشده</span>
-              </Link>
+              </Link> */}
             </nav>
 
             <div className="border-t border-gray-200 p-4 space-y-2">
@@ -231,15 +229,14 @@ function Navbar() {
                 {isLoggingOut ? "در حال خروج..." : "خروج از حساب کاربری"}
               </button>
             ) : (
-              <></>
-              // <Link
-              //   to="/login"
-              //   onClick={closeSidebar}
-              //   className="w-full h-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
-              // >
-              //   <User size={20} color="#ffffff" />
-              //   ورود به حساب کاربری
-              // </Link>
+              <Link
+                to="/login"
+                onClick={closeSidebar}
+                className="w-full h-12 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
+              >
+                <User size={20} color="#ffffff" />
+                ورود به حساب کاربری
+              </Link>
             )}
           </div>
         </div>

@@ -7,5 +7,17 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    host: "0.0.0.0",
+    port: 3008,
+    // proxy: {
+    //   '/api': {
+    //     target: 'https://panel.makeenacademy.ir',
+    //     changeOrigin: true,
+    //     secure: false,
+    //     rewrite: (path) => path.replace(/^\/api/, '/api')
+    //   }
+    // }
+  }
   // base: 'http://bk.arbaeentv.com/api/',
 })

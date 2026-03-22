@@ -1,62 +1,53 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'react-toastify'
-import axiosInstanceNew from '../utils/axiosConfigNew'
-import defaultCover from '../assets/img/cover.jpg'
+// src/hooks/useVideoUpload.js
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import defaultCover from "../assets/img/cover.jpg";
+import { storeVideo } from "../services/videoApi";
 
-const storeVideoAPI = async (channelId, { path, title, description, cover }) => {
-  const formData = new FormData()
-  formData.append("path", path)
-  formData.append("title", title)
-  formData.append("description", description || "")
-
-  if (cover) {
-    // اگر cover یک آدرس است، به فایل تبدیل شود
-    if (typeof cover === "string") {
-      const res = await fetch(cover)
-      const blob = await res.blob()
-      cover = new File([blob], "cover.jpg", { type: blob.type || "image/jpeg" })
-    }
-    formData.append("cover", cover)
-  }
-
-  const token = sessionStorage.getItem("token")
-  const res = await axiosInstanceNew.post(`/video/${channelId}/store-video`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`, // ارسال توکن
-    },
-  })
-  return res.data
-}
+const fileFromUrl = async (url) => {
+  const res = await fetch(url);
+  const blob = await res.blob();
+  return new File([blob], "cover.jpg", { type: blob.type || "image/jpeg" });
+};
 
 const useVideoUpload = () => {
-  const qc = useQueryClient()
-  const m = useMutation({
-    mutationFn: async ({ channelId, title, description, temp_path, coverFile }) => {
-      if (!temp_path) throw new Error("ویدیو آپلود نشده است")
+  const qc = useQueryClient();
 
-      return storeVideoAPI(channelId, {
+  const mutation = useMutation({
+    mutationFn: async ({ channelId, title, description, temp_path, coverFile }) => {
+      if (!temp_path) throw new Error("ویدیو آپلود نشده است");
+
+      let finalCover = coverFile;
+      if (!finalCover) finalCover = defaultCover;
+      if (typeof finalCover === "string") {
+        finalCover = await fileFromUrl(finalCover);
+      }
+
+      return storeVideo(channelId, {
         path: temp_path,
         title,
         description,
-        cover: coverFile || defaultCover
-      })
+        cover: finalCover,
+      });
     },
+
     onSuccess: (_, vars) => {
-      toast.success('ویدیو با موفقیت آپلود شد', { position: 'top-right', theme: 'colored' })
-      qc.invalidateQueries({ queryKey: ['channelVideos', vars.channelId] })
-      qc.invalidateQueries({ queryKey: ['channelVideos', 'all'] })
+      toast.success("ویدیو با موفقیت آپلود شد", { theme: "colored" });
+
+      qc.invalidateQueries({ queryKey: ["channelVideos", vars?.channelId || "all"] });
+      qc.invalidateQueries({ queryKey: ["channelVideos", "all"] });
     },
-    onError: (error) => {
-      const msg = error?.response?.data?.message || error?.message || 'خطا در آپلود ویدیو'
-      toast.error(msg, { position: 'top-right', theme: 'colored' })
+
+    onError: (e) => {
+      const msg = e?.response?.data?.message || e?.message || "خطا در آپلود ویدیو";
+      toast.error(msg, { theme: "colored" });
     }
-  })
+  });
 
   return {
-    uploadAsync: m.mutateAsync,
-    isPending: m.isPending
-  }
-}
+    uploadAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+  };
+};
 
-export default useVideoUpload
+export default useVideoUpload;
