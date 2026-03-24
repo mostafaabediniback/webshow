@@ -1,6 +1,5 @@
 
 export default function DefaultCoversModal({ open, onClose, defaultCovers = [], onSelect }) {
-    console.log(defaultCovers);
   if (!open) return null
 
   return (

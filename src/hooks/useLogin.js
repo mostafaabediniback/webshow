@@ -38,7 +38,6 @@ const useLogin = () => {
       // ساختار پاسخ API: { status: "success", data: { token: "...", user: {...} } }
       const token = res?.data?.token || null;
       const user = res?.data?.user || null;
-      console.log(res);
       
       if (token) {
         sessionStorage.setItem("token", token);

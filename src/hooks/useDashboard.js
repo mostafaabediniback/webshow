@@ -28,7 +28,6 @@ function useDashboard() {
   
   const channels = channelsData || [];
   const videos = videosData || [];
-  console.log(videos.totalItems);
 
   return {
     channels,

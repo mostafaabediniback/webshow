@@ -72,7 +72,7 @@ function VideoCard({ video }) {
               }}
             />
             {/* Online Indicator */}
-            <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-400 border-2 border-white rounded-full shadow-md ring-2 ring-white/50 animate-pulse" />
+            {/* <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-400 border-2 border-white rounded-full shadow-md ring-2 ring-white/50 animate-pulse" /> */}
           </div>
           
           {/* Channel Name & Description */}

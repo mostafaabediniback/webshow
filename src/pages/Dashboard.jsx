@@ -5,7 +5,6 @@ import { VideoPlay, FolderAdd, VideoAdd } from 'iconsax-react'
 
 function Dashboard() {
   const { totalChannels, totalVideos, isLoading } = useDashboard()
-  console.log(totalVideos);
   const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
 
   return (

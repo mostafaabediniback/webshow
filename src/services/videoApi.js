@@ -21,7 +21,6 @@ const mapPaginatedResponse = (data) => {
 };
 
 
-// آپلود فایل ویدیو
 export const uploadVideo = async (file) => {
   const fd = new FormData();
   fd.append("file", file);
@@ -72,32 +71,25 @@ export const getAllVideos = async (page = 1, per_page = 25) => {
   return mapPaginatedResponse(res.data);
 };
 
-// export const getLanding = async (channelId) => {
-//   const url = channelId ? `/landing/${channelId}` : "/landing";
-//   const res = await axiosInstanceNew.get(url);
-//   return res.data?.data || {};
-// };
-
-// دریافت لیست کانال‌های Landing با Pagination
-export const getLandingChannels = async ({ pageNumber = 1, pageSize = 10 } = {}) => {
+export const getLandingChannels = async ({ 
+  pageNumber = 1, 
+  pageSize = 10 
+} = {}) => {
+  const page = Number(pageNumber) || 1;
+  const perPage = Number(pageSize) || 10;
+  
+  
   const params = new URLSearchParams({
-    page: pageNumber,
-    per_page: pageSize,
+    page: page.toString(),
+    per_page: perPage.toString(),
   });
-  const res = await axiosInstanceNew.get(`/landing/channels?${params}`);
+  
+  const queryString = params.toString();
+  
+  const res = await axiosInstanceNew.get(`/landing/channels?${queryString}`);
   return mapPaginatedResponse(res.data);
 };
 
-// // دریافت لیست ویدیوها
-// export const getLandingVideos = async (channelId) => {
-//   const url = channelId
-//     ? `/landing/videos?channel_id=${channelId}`
-//     : `/landing/videos`;
-
-//   const res = await axiosInstanceNew.get(url);
-//   return res.data?.data || [];
-// };
-// دریافت ویدیوهای Landing با Pagination و فیلتر کانال
 export const getLandingVideos = async ({ 
   channelId, 
   pageNumber = 1, 

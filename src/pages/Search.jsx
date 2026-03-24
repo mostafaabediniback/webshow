@@ -1,28 +1,58 @@
-import Layout from '../layouts/Layout'
-import { useParams, Link } from 'react-router-dom'
-import useSearch from '../hooks/useSearch'
+import { ArrowLeft2 } from 'iconsax-react'
+import { Link, useParams } from 'react-router-dom'
 import VideoGrid from '../components/VideoGrid'
 import VideoSkeleton from '../components/VideoSkeleton'
-import { ArrowLeft2 } from 'iconsax-react'
+import useSearch from '../hooks/useSearch'
+import Layout from '../layouts/Layout'
 
 function Search() {
   const { q } = useParams()
   const { data, isLoading, isError } = useSearch(q)
 
   const payload = data?.data
-  let videos = []
-  if (Array.isArray(payload)) {
-    videos = payload
-  } else if (payload?.videos) {
-    if (Array.isArray(payload.videos)) {
+
+  const extractVideosWithChannelImages = (payload) => {
+    if (!payload) return []
+
+
+
+    let videos = []
+
+    // Case 1: Direct array
+    if (Array.isArray(payload)) {
+      videos = payload
+    }
+    // Case 2: payload.videos exists
+    else if (payload?.videos && Array.isArray(payload.videos)) {
       const sample = payload.videos[0]
       if (sample && Array.isArray(sample.videos)) {
-        videos = payload.videos.flatMap((v) => (Array.isArray(v.videos) ? v.videos.flat() : []))
+        // Nested structure
+        videos = payload.videos.flatMap((v) =>
+          Array.isArray(v.videos) ? v.videos.flat() : []
+        )
       } else {
+        // Flat videos
         videos = payload.videos
       }
     }
+
+    // 🆕 MAGIC: Merge channels.image → videos.channel_image
+    if (payload.channels && Array.isArray(payload.channels) && videos.length > 0) {
+
+      payload.channels.forEach((channel) => {
+        if (channel.id && channel.image && channel.name) {
+          // برای همه ویدیوهایی که channel_name == channel.name
+          videos.forEach((video) => {
+            if (video.channel_name === channel.name) {
+              video.channel_image = channel.image
+            }
+          })
+        }
+      })
+    }
+    return videos
   }
+    const videos = extractVideosWithChannelImages(payload)
 
   return (
     <Layout>
