@@ -3,7 +3,9 @@ import DashboardLayout from '../layouts/DashboardLayout'
 import useChannel from '../hooks/useChannel'
 import { Add, SearchNormal1, User, Call, Lock, Eye, EyeSlash } from 'iconsax-react'
 import { toast } from 'react-toastify'
-import { useCreateUser, useUsersList } from '../hooks/users'
+import ConfirmModal from '../components/ConfirmModal'
+import Modal from '../components/Modal'
+import { useCreateUser, useDeleteUser, useUpdateUser, useUpdateUserPassword, useUsersList } from '../hooks/users'
 
 const INITIAL_FORM = {
   name: '',
@@ -13,6 +15,18 @@ const INITIAL_FORM = {
   username: ''
 }
 
+const INITIAL_EDIT_FORM = {
+  user_id: '',
+  name: '',
+  phone_number: '',
+  username: '',
+}
+
+const INITIAL_PASSWORD_FORM = {
+  user_id: '',
+  password: '',
+}
+
 
 function Users() {
   const { channels, isLoadingChannels } = useChannel()
@@ -20,6 +34,11 @@ function Users() {
   const [searchInput, setSearchInput] = useState('')
   const [searchPhoneNumber, setSearchPhoneNumber] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [editForm, setEditForm] = useState(INITIAL_EDIT_FORM)
+  const [passwordForm, setPasswordForm] = useState(INITIAL_PASSWORD_FORM)
+  const [deleteUserId, setDeleteUserId] = useState(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
 
   const {
     users,
@@ -34,6 +53,23 @@ function Users() {
     onSuccess: () => {
       setForm(INITIAL_FORM)
     }
+  })
+  const { updateUser, isUpdatingUser } = useUpdateUser({
+    onSuccess: () => {
+      setEditForm(INITIAL_EDIT_FORM)
+      setIsEditModalOpen(false)
+    },
+  })
+  const { deleteUser, isDeletingUser } = useDeleteUser({
+    onSuccess: () => {
+      setDeleteUserId(null)
+    },
+  })
+  const { updateUserPassword, isUpdatingUserPassword } = useUpdateUserPassword({
+    onSuccess: () => {
+      setPasswordForm(INITIAL_PASSWORD_FORM)
+      setIsPasswordModalOpen(false)
+    },
   })
 
   const isValidCreate = useMemo(() => {
@@ -70,6 +106,60 @@ function Users() {
   const handleFormChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
+
+  const getUserId = (user) => Number(user?.id ?? user?.user_id ?? 0)
+
+  const openEditModal = (user) => {
+    const userId = getUserId(user)
+    setEditForm({
+      user_id: userId,
+      name: user?.name || '',
+      phone_number: user?.phone_number || '',
+      username: user?.username || '',
+    })
+    setIsEditModalOpen(true)
+  }
+
+  const openPasswordModal = (user) => {
+    const userId = getUserId(user)
+    setPasswordForm({
+      user_id: String(userId),
+      password: '',
+    })
+    setIsPasswordModalOpen(true)
+  }
+
+  const handleUpdateUser = async () => {
+    if (!editForm.user_id || !editForm.name || !editForm.phone_number || !editForm.username) {
+      toast.error('لطفاً همه فیلدهای ویرایش کاربر را کامل کنید')
+      return
+    }
+
+    await updateUser({
+      user_id: Number(editForm.user_id),
+      name: editForm.name,
+      phone_number: editForm.phone_number,
+      username: editForm.username,
+    })
+  }
+
+  const handleDeleteUser = async () => {
+    if (!deleteUserId) return
+    await deleteUser(deleteUserId)
+  }
+
+  const handleUpdatePassword = async () => {
+    if (!passwordForm.user_id || !passwordForm.password) {
+      toast.error('برای تغییر رمز عبور، همه فیلدها الزامی هستند')
+      return
+    }
+
+    await updateUserPassword({
+      Password: passwordForm.password,
+      user_id: passwordForm.user_id,
+    })
+  }
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword)
   }
@@ -216,20 +306,45 @@ function Users() {
                 <tr className="text-right text-gray-500 border-b border-gray-100">
                   <th className="pb-3 font-semibold">نام</th>
                   <th className="pb-3 font-semibold">شماره موبایل</th>
+                  <th className="pb-3 font-semibold">نام کاربری</th>
                   <th className="pb-3 font-semibold">شناسه کانال</th>
+                  <th className="pb-3 font-semibold">عملیات</th>
                 </tr>
               </thead>
               <tbody>
                 {users.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="py-8 text-center text-gray-500">نتیجه‌ای برای نمایش وجود ندارد.</td>
+                    <td colSpan={5} className="py-8 text-center text-gray-500">نتیجه‌ای برای نمایش وجود ندارد.</td>
                   </tr>
                 ) : (
                   users.map((user, index) => (
                     <tr key={user.id || index} className="border-b border-gray-100 last:border-b-0">
                       <td className="py-4 font-medium text-gray-900">{user.name || '-'}</td>
                       <td className="py-4 text-gray-700" >{user.phone_number || '-'}</td>
-                      <td className="py-4 text-gray-700">{user.channel.name || '-'}</td>
+                      <td className="py-4 text-gray-700" >{user.username || '-'}</td>
+                      <td className="py-4 text-gray-700">{user.channel?.name || '-'}</td>
+                      <td className="py-4">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => openEditModal(user)}
+                            className="h-9 px-3 rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 text-xs font-semibold"
+                          >
+                            ویرایش
+                          </button>
+                          <button
+                            onClick={() => openPasswordModal(user)}
+                            className="h-9 px-3 rounded-lg border border-yellow-200 text-yellow-700 hover:bg-yellow-50 text-xs font-semibold"
+                          >
+                            تغییر رمز
+                          </button>
+                          <button
+                            onClick={() => setDeleteUserId(getUserId(user))}
+                            className="h-9 px-3 rounded-lg border border-red-200 text-red-700 hover:bg-red-50 text-xs font-semibold"
+                          >
+                            حذف
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -238,6 +353,121 @@ function Users() {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="ویرایش کاربر"
+        size="md"
+        footer={(
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={() => setIsEditModalOpen(false)}
+              disabled={isUpdatingUser}
+              className="h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-60"
+            >
+              انصراف
+            </button>
+            <button
+              onClick={handleUpdateUser}
+              disabled={isUpdatingUser}
+              className="h-10 px-4 rounded-lg bg-black text-white hover:bg-gray-800 disabled:bg-gray-400"
+            >
+              {isUpdatingUser ? 'در حال بروزرسانی...' : 'ذخیره تغییرات'}
+            </button>
+          </div>
+        )}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label className="space-y-2">
+            <span className="text-sm font-semibold text-gray-900">نام</span>
+            <input
+              value={editForm.name}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
+              className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="نام کاربر"
+            />
+          </label>
+          <label className="space-y-2">
+            <span className="text-sm font-semibold text-gray-900">شماره موبایل</span>
+            <input
+              value={editForm.phone_number}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, phone_number: e.target.value }))}
+              className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="0912xxxxxxx"
+              dir="ltr"
+            />
+          </label>
+          <label className="space-y-2 md:col-span-2">
+            <span className="text-sm font-semibold text-gray-900">نام کاربری</span>
+            <input
+              value={editForm.username}
+              onChange={(e) => {
+                const value = e.target.value.toLowerCase()
+                const regex = /^[a-z0-9_]*$/
+                if (regex.test(value)) {
+                  setEditForm((prev) => ({ ...prev, username: value }))
+                }
+              }}
+              className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="username"
+              dir="ltr"
+            />
+          </label>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        title="تغییر رمز عبور کاربر"
+        size="sm"
+        footer={(
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={() => setIsPasswordModalOpen(false)}
+              disabled={isUpdatingUserPassword}
+              className="h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-60"
+            >
+              انصراف
+            </button>
+            <button
+              onClick={handleUpdatePassword}
+              disabled={isUpdatingUserPassword}
+              className="h-10 px-4 rounded-lg bg-black text-white hover:bg-gray-800 disabled:bg-gray-400"
+            >
+              {isUpdatingUserPassword ? 'در حال تغییر...' : 'ثبت رمز جدید'}
+            </button>
+          </div>
+        )}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">شناسه کاربر: {passwordForm.user_id || '-'}</p>
+          <label className="space-y-2 block">
+            <span className="text-sm font-semibold text-gray-900">رمز عبور جدید</span>
+            <input
+              type="password"
+              value={passwordForm.password}
+              onChange={(e) => setPasswordForm((prev) => ({ ...prev, password: e.target.value }))}
+              className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="رمز عبور جدید را وارد کنید"
+              dir="ltr"
+            />
+          </label>
+        </div>
+      </Modal>
+
+      <ConfirmModal
+        isOpen={!!deleteUserId}
+        onClose={() => setDeleteUserId(null)}
+        onConfirm={handleDeleteUser}
+        title="حذف کاربر"
+        message="آیا از حذف این کاربر مطمئن هستید؟"
+        confirmText="حذف کاربر"
+        cancelText="انصراف"
+        variant="danger"
+        isLoading={isDeletingUser}
+      />
     </DashboardLayout>
   )
 }

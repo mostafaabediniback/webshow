@@ -20,3 +20,18 @@ export const getUsersByPhone = async (phoneNumber = '') => {
 }
 
 export const searchUserByPhone = getUsersByPhone
+
+export const updateUser = async (payload) => {
+  const res = await axiosInstanceNew.put('/user/update', payload)
+  return res.data
+}
+
+export const deleteUser = async (userId) => {
+  const res = await axiosInstanceNew.delete(`/user/delete/${userId}`)
+  return res.data
+}
+
+export const updateUserPassword = async (payload) => {
+  const res = await axiosInstanceNew.put('/user/update-password', payload)
+  return res.data
+}
