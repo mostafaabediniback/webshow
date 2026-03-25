@@ -1,4 +1,4 @@
-import { TickCircle } from 'iconsax-react'
+import { CloseCircle, TickCircle } from 'iconsax-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -298,10 +298,10 @@ function UserVideos() {
           )}
         </div>
 
-        {!isFormDisabled && (
+        
           <div className='flex gap-6 justify-between'>
 
-            <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${isFormDisabled ? 'opacity-60 pointer-events-none ' : 'w-full'}`}>
+            <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full `}>
               <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
               <div className="space-y-4">
                 <div>
@@ -310,7 +310,7 @@ function UserVideos() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="عنوان ویدیو را وارد کنید"
-                    disabled={isFormDisabled}
+                    // disabled={isFormDisabled}
                     className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
                   />
                 </div>
@@ -320,7 +320,7 @@ function UserVideos() {
                     value={desc}
                     onChange={(e) => setDesc(e.target.value)}
                     placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                    disabled={isFormDisabled}
+                    // disabled={isFormDisabled}
                     className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
                   />
                 </div>
@@ -352,9 +352,8 @@ function UserVideos() {
               </div>
             </div>
           </div>
-        )}
 
-        {!isFormDisabled && (
+       
           <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             <button
               onClick={handleUpload}
@@ -374,7 +373,6 @@ function UserVideos() {
                     انصراف
                     </button>
           </div>
-        )}
       </div>
 
 

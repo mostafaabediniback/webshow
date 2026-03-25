@@ -2,6 +2,7 @@ import { Eye, PlayCircle } from 'iconsax-react'
 import { Link } from 'react-router-dom'
 
 function VideoCard({ video }) {
+  // console.log(video);
   const normalizeUrl = (u) => {
     if (typeof u !== 'string') return ''
     return u.replace(/[`'"]/g, '').trim()

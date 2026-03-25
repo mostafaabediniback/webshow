@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Eye } from 'iconsax-react'
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams,useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import useChannelVideos from '../hooks/useChannelVideos'
 import { useVideo } from '../hooks/useVideo'
@@ -155,6 +155,11 @@ function Video() {
             </h1>
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
+               <Link
+                to="/"
+                state={{ channelId: id }}
+                className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
+              >
                 <img
                   src={data.data.channel_image}
                   alt={data.data.channelName || data.data.channel_name}
@@ -164,6 +169,7 @@ function Video() {
                   <p className="text-sm font-semibold text-gray-900 truncate">{data.data.channel_name}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{(data.data.view_count || 0).toLocaleString('fa-IR')} بازدید</p>
                 </div>
+              </Link>
               </div>
               <div className="flex items-center gap-2 flex-wrap text-gray-600">
                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
