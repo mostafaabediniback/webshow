@@ -155,7 +155,7 @@ function Users() {
     }
 
     await updateUserPassword({
-      Password: passwordForm.password,
+      password: passwordForm.password,
       user_id: passwordForm.user_id,
     })
   }

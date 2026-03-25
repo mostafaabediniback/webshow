@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function CategoryChips({ channels, activeChannelId, onSelect }) {
+  const navigate = useNavigate();
+
   console.log(onSelect);
   console.log(activeChannelId);
   const list = Array.isArray(channels) ? channels : (channels ? [channels] : [])
@@ -15,13 +17,14 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
         className={`flex flex-col items-center gap-2 flex-shrink-0 transition-all duration-200 ${activeChannelId === null ? 'scale-105' : 'opacity-75 hover:opacity-100 hover:scale-[1.02]'
           }`}
       >
-        <div
+        <div 
+        onClick={() => navigate("/")}
           className={`w-14 h-14 rounded-xl overflow-hidden border-2 shadow-sm flex items-center justify-center transition-all duration-200 ${activeChannelId === null
               ? 'border-indigo-500 bg-indigo-50'
               : 'border-slate-200 bg-slate-100 hover:border-slate-300'
             }`}
         >
-          <span className={`text-sm font-medium ${activeChannelId === null ? 'text-indigo-600' : 'text-slate-600'}`}>
+          <span  className={`text-sm font-medium ${activeChannelId === null ? 'text-indigo-600' : 'text-slate-600'}`}>
             همه
           </span>
         </div>

@@ -6,11 +6,15 @@ import VideoSkeleton from "../components/VideoSkeleton";
 import Layout from "../layouts/Layout";
 import { useLandingChannels } from "../hooks/useLandingChannels";
 import { useInfiniteLandingVideos } from "../hooks/useInfiniteLandingVideos";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const PAGE_SIZE = 25;
 
 function Home() {
+  const { username } = useParams();
+  // const navigate = useNavigate();
+
+
   const location = useLocation(); // استفاده از useLocation
   console.log(location);
 
@@ -53,6 +57,12 @@ function Home() {
       setActiveChannelId(location.state.channelId);
     }
   }, [location.state]);
+
+  // useEffect(() => {
+  //   if (username && !location.state?.channelId) {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [username]);
 
   useEffect(() => {
     const sentinel = loadMoreRef.current;

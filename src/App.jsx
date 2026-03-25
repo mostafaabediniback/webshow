@@ -33,7 +33,8 @@ import UploadedVideos from './pages/UploadedVideos'
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      {/* <Route path="/" element={<Home />} /> */}
+      <Route path="/:username?" element={<Home />} />
       <Route path="/search/:q" element={<Search />} />
       <Route path="/v/:id" element={<Video />} />
       <Route path="/login" element={<Login />} />

@@ -261,7 +261,7 @@ function Upload() {
     if (videoStatus === 'uploading') return 'آپلود ویدیو در حال انجام است. می‌توانید اطلاعات ویدیو را هم‌زمان تکمیل کنید.'
     return 'ابتدا فایل ویدیو را انتخاب کنید. پس از انتخاب فایل، می‌توانید بلافاصله اطلاعات ویدیو را وارد کنید.'
   }, [videoStatus])
-
+  const isFormDisabled = videoStatus !== 'success'
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -337,7 +337,7 @@ function Upload() {
 
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
             <div className="space-y-4">
-              <div>
+              <div className={isFormDisabled ? 'opacity-60 pointer-events-none' : ''}>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
                 <CoverPicker
                   value={thumbFile}
