@@ -112,7 +112,7 @@ function Login() {
 
                 <button
                   type="submit"
-className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 active:scale-95 text-white font-medium text-sm shadow-md transition-all"                  disabled={isSubmitting || isLoading}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 active:scale-95 text-white font-medium text-sm shadow-md transition-all" disabled={isSubmitting || isLoading}
                 >
                   {isLoading ? "در حال ورود..." : "ورود"}
                 </button>

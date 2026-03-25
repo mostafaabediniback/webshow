@@ -44,6 +44,7 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
               }`}
           >
             <div
+            onClick={() => navigate("/")}
               className={`w-14 h-14 rounded-xl overflow-hidden border-2 shadow-sm transition-all duration-200 ${isActive
                   ? 'border-indigo-500 ring-2 ring-indigo-200'
                   : 'border-slate-200 hover:border-slate-300'

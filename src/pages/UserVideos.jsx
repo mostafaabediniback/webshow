@@ -223,7 +223,7 @@ function UserVideos() {
     setVideoStatus('idle')
     setThumbnails([])
   }
-    const handleCancelAndRefresh = () => {
+  const handleCancelAndRefresh = () => {
     window.location.reload()
   }
 
@@ -298,81 +298,82 @@ function UserVideos() {
           )}
         </div>
 
-        
-          <div className='flex gap-6 justify-between'>
 
-            <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full `}>
-              <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">عنوان ویدیو <span className="text-red-500">*</span></label>
-                  <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="عنوان ویدیو را وارد کنید"
-                    // disabled={isFormDisabled}
-                    className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">توضیحات</label>
-                  <textarea
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                    placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                    // disabled={isFormDisabled}
-                    className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
-                  />
-                </div>
+        <div className='flex gap-6 justify-between'>
+
+          <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full `}>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">عنوان ویدیو <span className="text-red-500">*</span></label>
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="عنوان ویدیو را وارد کنید"
+                  // disabled={isFormDisabled}
+                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
+                />
               </div>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
-                  <div className={isFormDisabled ? 'opacity-60 pointer-events-none' : ''}>
-                    <CoverPicker
-                      value={thumbFile}
-                      onChange={(file) => setThumbFile(file)}
-                      onConfirm={(file) => {
-                        setThumbFile(file)
-                      }}
-                      defaultCovers={[
-                        cover,
-                        '/covers/default2.jpg',
-                        '/covers/default3.jpg',
-                      ]}
-                      videoFile={videoFile}
-                      videoUrl={tempPath}
-                      videoThumbnails={thumbnails}
-                    />
-                  </div>
-                </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">توضیحات</label>
+                <textarea
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                  placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+                  // disabled={isFormDisabled}
+                  className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
+                />
               </div>
             </div>
           </div>
 
-       
-          <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <button
-              onClick={handleUpload}
-              disabled={!title || !tempPath || videoStatus !== 'success' || isPending || !thumbFile}
-              className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"            >
-              {isPending ? (
-                <>در حال آپلود...</>
-              ) : (
-                <><TickCircle size={20} color="#ffffff" />انتشار ویدیو</>
-              )}
-            </button>
-                    <button
-                      onClick={handleCancelAndRefresh}
-                      className={`px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50 `}
-                    >
-                      <CloseCircle size={16} color="#fb2c36" />
-                    انصراف
-                    </button>
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
+                <div>
+                  <CoverPicker
+                    isFormDisabled={isFormDisabled}
+                    value={thumbFile}
+                    onChange={(file) => setThumbFile(file)}
+                    onConfirm={(file) => {
+                      setThumbFile(file)
+                    }}
+                    defaultCovers={[
+                      cover,
+                      '/covers/default2.jpg',
+                      '/covers/default3.jpg',
+                    ]}
+                    videoFile={videoFile}
+                    videoUrl={tempPath}
+                    videoThumbnails={thumbnails}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+
+
+        <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <button
+            onClick={handleUpload}
+            disabled={!title || !tempPath || videoStatus !== 'success' || isPending || !thumbFile}
+            className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"            >
+            {isPending ? (
+              <>در حال آپلود...</>
+            ) : (
+              <><TickCircle size={20} color="#ffffff" />انتشار ویدیو</>
+            )}
+          </button>
+          <button
+            onClick={handleCancelAndRefresh}
+            className={`px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50 `}
+          >
+            <CloseCircle size={16} color="#fb2c36" />
+            انصراف
+          </button>
+        </div>
       </div>
 
 

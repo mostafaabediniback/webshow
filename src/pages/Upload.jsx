@@ -337,9 +337,10 @@ function Upload() {
 
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
             <div className="space-y-4">
-              <div className={isFormDisabled ? 'opacity-60 pointer-events-none' : ''}>
+              <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
                 <CoverPicker
+                isFormDisabled={isFormDisabled}
                   value={thumbFile}
                   onChange={(file) => setThumbFile(file)}
                   onConfirm={(file) => {

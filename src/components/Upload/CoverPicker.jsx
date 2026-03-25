@@ -8,7 +8,8 @@ export default function CoverPicker({
   onChange, // (file) => void
   defaultCovers = [], // array of URLs (e.g., ['/covers/d1.png', ...])
   videoFile = null,
-  videoUrl = null
+  videoUrl = null,
+  isFormDisabled
 }) {
   const [thumbDrag, setThumbDrag] = useState(false)
   const [showDefaultModal, setShowDefaultModal] = useState(false)
@@ -20,7 +21,7 @@ export default function CoverPicker({
   useEffect(() => {
     if (!value) {
       if (prevUrlRef.current) {
-        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
+        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
         prevUrlRef.current = null
       }
       setPreviewUrl(null)
@@ -36,14 +37,14 @@ export default function CoverPicker({
     // File or Blob
     const u = URL.createObjectURL(value)
     if (prevUrlRef.current) {
-      try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
+      try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
     }
     prevUrlRef.current = u
     setPreviewUrl(u)
 
     return () => {
       if (prevUrlRef.current) {
-        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
+        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
         prevUrlRef.current = null
       }
     }
@@ -52,7 +53,7 @@ export default function CoverPicker({
   useEffect(() => {
     return () => {
       if (prevUrlRef.current) {
-        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
+        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
       }
     }
   }, [])
@@ -97,8 +98,13 @@ export default function CoverPicker({
       <div className="flex gap-3 mt-3">
         {/* <button onClick={() => setShowDefaultModal(true)} className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
           انتخاب کاورهای دیفالت
+          {isFormDisabled ? 'opacity-60 pointer-events-none' : ''}
         </button> */}
-        <button onClick={() => setShowFrameModal(true)} className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+        <button onClick={() => setShowFrameModal(true)} className={`flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50 
+  ${isFormDisabled
+            ? 'opacity-60 pointer-events-none'
+            : 'hover:bg-gray-50'
+          }`}>
           انتخاب کاور از فریم ویدیو
         </button>
       </div>
