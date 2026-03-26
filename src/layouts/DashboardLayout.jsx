@@ -1,6 +1,7 @@
 import { FolderAdd, Home2, People, Personalcard, VideoAdd, VideoPlay } from 'iconsax-react'
 import { Link, useLocation } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import Seo from '../components/Seo'
 
 const ADMIN_NAV = [
   { to: '/dashboard', label: 'داشبورد', icon: Home2 },
@@ -23,6 +24,7 @@ function DashboardLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
+      <Seo title="داشبورد | اربعین تی وی" description="پنل مدیریت اربعین تی وی" noIndex />
       <Navbar />
       <div className="flex-1 w-full">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-4 sm:py-6">

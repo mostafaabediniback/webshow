@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react'
-import { Pagination } from '@mui/material'
-import { Play } from 'iconsax-react'
+import { useState, useCallback } from 'react'
 import DashboardLayout from '../layouts/DashboardLayout'
 import useChannelVideos from '../hooks/useChannelVideos'
 import useDeleteVideo from '../hooks/useDeleteVideo'
-import VideoRow from '../components/VideoRow'
 import VideoModal from '../components/VideoModal'
 import ConfirmModal from '../components/ConfirmModal'
 import { usePaginationParams } from '../hooks/usePaginationParams'
+import VideoListSection from '../components/dashboard/VideoListSection'
+import Seo from '../components/Seo'
 
 const PAGE_SIZE = 25
 
@@ -23,60 +22,31 @@ export default function UploadedVideos() {
     pageSize: PAGE_SIZE,
   })
 
-  const handleConfirmDelete = () => {
-    if (deleteConfirmId) {
-      deleteVideo(deleteConfirmId)
-      setDeleteConfirmId(null)
-    }
-  }
-
-  const videosList = Array.isArray(videos?.items) ? videos.items : []
+  const handleConfirmDelete = useCallback(() => {
+    if (!deleteConfirmId) return
+    deleteVideo(deleteConfirmId)
+    setDeleteConfirmId(null)
+  }, [deleteConfirmId, deleteVideo])
 
   return (
     <DashboardLayout>
+      <Seo title="ویدیوهای من | اربعین تی وی" description="مدیریت ویدیوهای بارگذاری‌شده توسط کاربر." noIndex />
       <div className="space-y-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">ویدیوهای آپلود شده من</h2>
-
-          {isLoadingVideos ? (
-            <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-20 bg-gray-100 rounded-lg animate-pulse" />)}</div>
-          ) : isError ? (
-            <div className="text-center py-12 text-red-500">خطا در بارگذاری ویدیوها</div>
-          ) : videosList.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mx-auto mb-4">
-                <Play size={32} color='#F97316' className="text-gray-400" />
-              </div>
-              <p className="text-sm text-gray-500">هنوز ویدیویی آپلود نشده است</p>
-            </div>
-          ) : (
-            <>
-              <div className="space-y-3">
-                {videosList.map((v) => (
-                  <VideoRow
-                    key={v.id}
-                    item={v}
-                    onDelete={(id) => setDeleteConfirmId(id)}
-                    onShow={(id) => setSelectedVideoId(id)}
-                    isDeleting={isDeleting}
-                  />
-                ))}
-              </div>
-
-              {videos?.totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
-                  <Pagination
-                    count={videos.totalPages}
-                    page={page}
-                    onChange={(_, value) => setPage(value)}
-                    shape="rounded"
-                    color="primary"
-                  />
-                </div>
-              )}
-            </>
-          )}
-        </div>
+        <VideoListSection
+          title="ویدیوهای آپلود شده من"
+          items={videos?.items || []}
+          isLoading={isLoadingVideos}
+          isError={isError}
+          emptyText="هنوز ویدیویی آپلود نشده است"
+          emptyIconClassName="bg-orange-100"
+          emptyIconColor="#F97316"
+          totalPages={videos?.totalPages || 0}
+          page={page}
+          onPageChange={setPage}
+          onDelete={setDeleteConfirmId}
+          onShow={setSelectedVideoId}
+          isDeleting={isDeleting}
+        />
       </div>
 
       <VideoModal videoId={selectedVideoId} isOpen={!!selectedVideoId} onClose={() => setSelectedVideoId(null)} />

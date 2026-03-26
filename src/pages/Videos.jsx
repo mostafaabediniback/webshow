@@ -1,55 +1,39 @@
-import DashboardLayout from "../layouts/DashboardLayout";
-import { useEffect, useState } from "react";
-import useChannel from "../hooks/useChannel";
-import useChannelVideos from "../hooks/useChannelVideos";
-import useDeleteVideo from "../hooks/useDeleteVideo";
-import { Pagination } from "@mui/material";
-import { Play } from "iconsax-react";
-import VideoRow from "../components/VideoRow";
-import VideoModal from "../components/VideoModal";
-import ConfirmModal from "../components/ConfirmModal";
-import { usePaginationParams } from "../hooks/usePaginationParams";
+import { useEffect, useState, useCallback } from 'react'
+import DashboardLayout from '../layouts/DashboardLayout'
+import useChannel from '../hooks/useChannel'
+import useChannelVideos from '../hooks/useChannelVideos'
+import useDeleteVideo from '../hooks/useDeleteVideo'
+import VideoModal from '../components/VideoModal'
+import ConfirmModal from '../components/ConfirmModal'
+import { usePaginationParams } from '../hooks/usePaginationParams'
+import VideoListSection from '../components/dashboard/VideoListSection'
+import Seo from '../components/Seo'
 
 function Videos() {
-  const { channels: chans, isLoadingChannels } = useChannel();
-  const [chanId, setChanId] = useState("");
-  const { page, setPage } = usePaginationParams(1);
-  const { data, isLoading, isError } = useChannelVideos({ channelId: chanId, pageNumber: page, pageSize: 25 });
-  const { deleteVideo, isDeleting } = useDeleteVideo();
-  const [selectedVideoId, setSelectedVideoId] = useState(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const { channels: chans, isLoadingChannels } = useChannel()
+  const [chanId, setChanId] = useState('')
+  const { page, setPage } = usePaginationParams(1)
+  const { data, isLoading, isError } = useChannelVideos({ channelId: chanId, pageNumber: page, pageSize: 25 })
+  const { deleteVideo, isDeleting } = useDeleteVideo()
+  const [selectedVideoId, setSelectedVideoId] = useState(null)
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
 
   useEffect(() => {
-    setPage(1);
-  }, [chanId, setPage]);
+    setPage(1)
+  }, [chanId, setPage])
 
-  const handleDelete = (videoId) => {
-    setDeleteConfirmId(videoId);
-  };
-
-  const handleConfirmDelete = () => {
-    if (deleteConfirmId) {
-      deleteVideo(deleteConfirmId);
-      setDeleteConfirmId(null);
-    }
-  };
-
-  const handleShow = (videoId) => {
-    setSelectedVideoId(videoId);
-  };
+  const handleConfirmDelete = useCallback(() => {
+    if (!deleteConfirmId) return
+    deleteVideo(deleteConfirmId)
+    setDeleteConfirmId(null)
+  }, [deleteConfirmId, deleteVideo])
 
   return (
     <DashboardLayout>
+      <Seo title="مدیریت ویدیوها | اربعین تی وی" description="مدیریت، مشاهده و حذف ویدیوهای بارگذاری‌شده در پنل ادمین." noIndex />
       <div className="space-y-6">
-        {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">ویدیوهای آپلودشده</h1>
-          <p className="text-sm text-gray-600">مشاهده و مدیریت تمام ویدیوهای آپلود شده</p>
-        </div> */}
-
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <label className="block text-sm font-semibold text-gray-900 mb-2">
-            فیلتر بر اساس کانال
-          </label>
+          <label className="block text-sm font-semibold text-gray-900 mb-2">فیلتر بر اساس کانال</label>
           <select
             value={chanId}
             onChange={(e) => setChanId(e.target.value)}
@@ -57,71 +41,30 @@ function Videos() {
             disabled={isLoadingChannels}
           >
             <option value="">همه ویدیوها</option>
-            {(chans || []).map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
+            {(chans || []).map((channel) => (
+              <option key={channel.id} value={channel.id}>
+                {channel.name}
               </option>
             ))}
           </select>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          {isLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-20 bg-gray-100 rounded-lg animate-pulse" />
-              ))}
-            </div>
-          ) : isError ? (
-            <div className="text-center py-12">
-              <p className="text-red-500 font-medium">خطا در بارگذاری ویدیوها</p>
-              <p className="text-sm text-gray-500 mt-2">لطفاً دوباره تلاش کنید</p>
-            </div>
-          ) : (data?.items || []).length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <Play size={32} className="text-gray-400" />
-              </div>
-              <p className="text-sm text-gray-500">
-                {chanId
-                  ? "ویدیویی در این کانال یافت نشد"
-                  : "هنوز ویدیویی آپلود نشده است"}
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="space-y-3">
-                {(data?.items || []).map((v) => (
-                  <VideoRow
-                    key={v.id}
-                    item={v}
-                    onDelete={handleDelete}
-                    onShow={handleShow}
-                    isDeleting={isDeleting}
-                  />
-                ))}
-              </div>
-
-              {data?.totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
-                  <Pagination
-                    count={data.totalPages}
-                    page={page}
-                    onChange={(_, value) => setPage(value)}
-                    shape="rounded"
-                    color="primary"
-                  />
-                </div>
-              )}
-            </>
-          )}
-        </div>
+        <VideoListSection
+          items={data?.items || []}
+          isLoading={isLoading}
+          isError={isError}
+          emptyText={chanId ? 'ویدیویی در این کانال یافت نشد' : 'هنوز ویدیویی آپلود نشده است'}
+          errorDescription="لطفاً دوباره تلاش کنید"
+          totalPages={data?.totalPages || 0}
+          page={page}
+          onPageChange={setPage}
+          onDelete={setDeleteConfirmId}
+          onShow={setSelectedVideoId}
+          isDeleting={isDeleting}
+        />
       </div>
-      <VideoModal
-        videoId={selectedVideoId}
-        isOpen={!!selectedVideoId}
-        onClose={() => setSelectedVideoId(null)}
-      />
+
+      <VideoModal videoId={selectedVideoId} isOpen={!!selectedVideoId} onClose={() => setSelectedVideoId(null)} />
       <ConfirmModal
         isOpen={!!deleteConfirmId}
         onClose={() => setDeleteConfirmId(null)}
@@ -134,7 +77,7 @@ function Videos() {
         isLoading={isDeleting}
       />
     </DashboardLayout>
-  );
+  )
 }
 
-export default Videos;
+export default Videos
