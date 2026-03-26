@@ -5,7 +5,7 @@ import useLogin from "../hooks/useLogin";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import logo from "../assets/logo/logo-login.png";
-
+import Seo from "../components/Seo";
 
 function Login() {
   const { LogIn, isLoading } = useLogin();
@@ -27,13 +27,14 @@ function Login() {
     try {
       await LogIn({ phone_number: values.phone, password: values.password });
       // onSuccess در useLogin مدیریت می‌شود و redirect انجام می‌شود
-    } catch (err) {
+    } catch {
       setError("ورود ناموفق بود. لطفاً شماره موبایل و رمز عبور را بررسی کنید.");
     }
   };
 
   return (
     <Layout>
+      <Seo title="ورود | اربعین تی وی" description="ورود کاربران به پنل مدیریت ویدیو در اربعین تی وی." noIndex />
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-6 sm:py-12 px-3 sm:px-4 bg-gray-50">
         <div className="max-w-md w-full mx-auto bg-white rounded-2xl border border-gray-200 shadow-lg p-6 sm:p-8 md:p-10">
           <div className="text-center mb-8">

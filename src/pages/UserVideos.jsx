@@ -6,9 +6,6 @@ import cover from '../assets/img/cover.jpg'
 import CoverPicker from '../components/Upload/CoverPicker'
 import VideoDropzone from '../components/VideoDropzone'
 import useChannel from '../hooks/useChannel'
-import useChannelVideos from '../hooks/useChannelVideos'
-import useDeleteVideo from '../hooks/useDeleteVideo'
-import { usePaginationParams } from '../hooks/usePaginationParams'
 import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
 
@@ -21,27 +18,18 @@ function UserVideos() {
 
   const { channels, isLoadingChannels } = useChannel(1, PAGE_SIZE, {}, { enabled: isAdmin })
   const { uploadAsync, isPending } = useVideoUpload()
-  const { deleteVideo, isDeleting } = useDeleteVideo()
-  const { page, setPage } = usePaginationParams(1)
 
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [thumbFile, setThumbFile] = useState(null)
   const [thumbPreview, setThumbPreview] = useState(null)
-  const [thumbDrag, setThumbDrag] = useState(false)
   const [tempPath, setTempPath] = useState(null)
   const [videoFile, setVideoFile] = useState(null)
   const [videoStatus, setVideoStatus] = useState('idle') // idle | success
   const [thumbnails, setThumbnails] = useState([])
-  const [selectedVideoId, setSelectedVideoId] = useState(null)
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   const navigate = useNavigate()
 
 
-  const { data: videos, isLoading: isLoadingVideos, isError } = useChannelVideos({
-    pageNumber: page,
-    pageSize: PAGE_SIZE,
-  })
 
   useEffect(() => {
     if (isAdmin && !isLoadingChannels && !channels?.length) {
@@ -270,15 +258,6 @@ function UserVideos() {
 
   const isFormDisabled = videoStatus !== 'success' // غیرفعال شدن وقتی ویدیو آپلود نشده
 
-  // existing delete confirm
-  const handleConfirmDelete = () => {
-    if (deleteConfirmId) {
-      deleteVideo(deleteConfirmId)
-      setDeleteConfirmId(null)
-    }
-  }
-
-  const videosList = Array.isArray(videos?.items) ? videos.items : []
 
   return (
     <DashboardLayout>
