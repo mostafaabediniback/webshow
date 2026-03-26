@@ -1,21 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useVideoList } from '@/lib/hooks/useVideoList'
 import VideoListSection from './VideoListSection'
-import { useDashboardVideos } from '@/lib/hooks/videoHooks'
 
-export default function VideoListClient({ title, channelId }) {
-  const [page, setPage] = useState(1)
-  const { data, isLoading } = useDashboardVideos(page, channelId)
-
+export default function VideoListClient({ items, title }) {
+  const { items: pageItems, page, setPage, totalPages } = useVideoList(items)
   return (
     <VideoListSection
       title={title}
-      items={data?.items || []}
+      items={pageItems}
       page={page}
-      totalPages={data?.totalPages || 1}
+      totalPages={totalPages}
       onPageChange={setPage}
-      isLoading={isLoading}
     />
   )
 }

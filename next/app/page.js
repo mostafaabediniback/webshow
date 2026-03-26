@@ -1,37 +1,19 @@
-'use client'
+import dynamic from 'next/dynamic'
+import { getVideos } from '@/lib/services/video.service'
 
-import { useMemo, useState } from 'react'
-import { useInfiniteLandingVideos, useLandingChannels } from '@/lib/hooks/videoHooks'
-import CategoryChips from '@/components/video/CategoryChips'
-import VideoGrid from '@/components/video/VideoGrid'
-import VideoSkeleton from '@/components/video/VideoSkeleton'
+const VideoGrid = dynamic(() => import('@/components/video/VideoGrid'))
 
-export default function HomePage() {
-  const [activeChannelId, setActiveChannelId] = useState('')
-  const { data: channelsData, isLoading: channelsLoading } = useLandingChannels()
-  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteLandingVideos(activeChannelId)
+export const metadata = {
+  title: 'خانه',
+  description: 'مشاهده آخرین ویدیوها در اربعین تی وی',
+}
 
-  const channels = channelsData?.items || []
-  const videos = useMemo(() => data?.pages?.flatMap((page) => page.items || []) || [], [data])
-
+export default async function HomePage() {
+  const data = await getVideos()
   return (
-    <section className="container grid">
-      <header className="card">
-        <CategoryChips channels={channels} activeChannelId={activeChannelId} onSelect={setActiveChannelId} />
-      </header>
-
-      {channelsLoading || isLoading ? (
-        <VideoSkeleton count={10} />
-      ) : (
-        <>
-          <VideoGrid items={videos} />
-          {hasNextPage ? (
-            <button className="btn" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
-              {isFetchingNextPage ? 'در حال بارگذاری...' : 'بارگذاری بیشتر'}
-            </button>
-          ) : null}
-        </>
-      )}
+    <section className="container">
+      <header><h1>جدیدترین ویدیوها</h1></header>
+      <VideoGrid items={data.items} />
     </section>
   )
 }

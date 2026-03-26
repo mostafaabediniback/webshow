@@ -1,7 +1,6 @@
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import Providers from '@/components/providers'
 
 export const metadata = {
   metadataBase: new URL('https://example.com'),
@@ -27,11 +26,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fa" dir="rtl">
       <body>
-        <Providers>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </Providers>
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   )

@@ -1,22 +1,19 @@
-'use client'
-
+import { getVideos } from '@/lib/services/video.service'
 import VideoGrid from '@/components/video/VideoGrid'
-import VideoSkeleton from '@/components/video/VideoSkeleton'
-import { useSearchVideos } from '@/lib/hooks/videoHooks'
 
-export default function SearchPage({ params }) {
-  const query = decodeURIComponent(params.q)
-  const { data, isLoading } = useSearchVideos(query)
+export async function generateMetadata({ params }) {
+  return {
+    title: `جستجو: ${params.q}`,
+    description: `نتایج جستجو برای ${params.q}`,
+  }
+}
 
-  const payload = data?.data || data
-  const videos = Array.isArray(payload?.videos)
-    ? payload.videos.flatMap((entry) => (Array.isArray(entry.videos) ? entry.videos : entry))
-    : Array.isArray(payload) ? payload : []
-
+export default async function SearchPage({ params }) {
+  const data = await getVideos({ q: decodeURIComponent(params.q) })
   return (
-    <section className="container grid">
-      <header><h1>نتایج جستجو: {query}</h1></header>
-      {isLoading ? <VideoSkeleton count={8} /> : <VideoGrid items={videos} />}
+    <section className="container">
+      <header><h1>نتایج جستجو: {decodeURIComponent(params.q)}</h1></header>
+      <VideoGrid items={data.items} />
     </section>
   )
 }

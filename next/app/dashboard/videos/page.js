@@ -1,5 +1,7 @@
+import { getVideos } from '@/lib/services/video.service'
 import VideoListClient from '@/components/dashboard/VideoListClient'
 
-export default function DashboardVideosPage() {
-  return <VideoListClient title="مدیریت ویدیوها" />
+export default async function DashboardVideosPage() {
+  const data = await getVideos()
+  return <VideoListClient items={data.items} title="مدیریت ویدیوها" />
 }
