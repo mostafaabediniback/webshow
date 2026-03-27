@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Pagination } from '@mui/material'
 import { Play } from 'iconsax-react'
 import DashboardLayout from '../layouts/DashboardLayout'
@@ -8,6 +8,7 @@ import VideoRow from '../components/VideoRow'
 import VideoModal from '../components/VideoModal'
 import ConfirmModal from '../components/ConfirmModal'
 import { usePaginationParams } from '../hooks/usePaginationParams'
+import EditVideoModal from '../components/EditVideoModal'
 
 const PAGE_SIZE = 25
 
@@ -17,6 +18,7 @@ export default function UploadedVideos() {
 
   const [selectedVideoId, setSelectedVideoId] = useState(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
+  const [editingVideo, setEditingVideo] = useState(null)
 
   const { data: videos, isLoading: isLoadingVideos, isError } = useChannelVideos({
     pageNumber: page,
@@ -58,6 +60,7 @@ export default function UploadedVideos() {
                     item={v}
                     onDelete={(id) => setDeleteConfirmId(id)}
                     onShow={(id) => setSelectedVideoId(id)}
+                    onEdit={setEditingVideo}
                     isDeleting={isDeleting}
                   />
                 ))}
@@ -90,6 +93,12 @@ export default function UploadedVideos() {
         cancelText="انصراف"
         variant="danger"
         isLoading={isDeleting}
+      />
+      <EditVideoModal
+        videoId={editingVideo?.id}
+        initialVideo={editingVideo}
+        isOpen={!!editingVideo}
+        onClose={() => setEditingVideo(null)}
       />
     </DashboardLayout>
   )

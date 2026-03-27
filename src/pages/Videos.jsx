@@ -9,6 +9,7 @@ import VideoRow from "../components/VideoRow";
 import VideoModal from "../components/VideoModal";
 import ConfirmModal from "../components/ConfirmModal";
 import { usePaginationParams } from "../hooks/usePaginationParams";
+import EditVideoModal from "../components/EditVideoModal";
 
 function Videos() {
   const { channels: chans, isLoadingChannels } = useChannel();
@@ -18,6 +19,7 @@ function Videos() {
   const { deleteVideo, isDeleting } = useDeleteVideo();
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [editingVideo, setEditingVideo] = useState(null);
 
   useEffect(() => {
     setPage(1);
@@ -97,6 +99,7 @@ function Videos() {
                     item={v}
                     onDelete={handleDelete}
                     onShow={handleShow}
+                    onEdit={setEditingVideo}
                     isDeleting={isDeleting}
                   />
                 ))}
@@ -132,6 +135,12 @@ function Videos() {
         cancelText="انصراف"
         variant="danger"
         isLoading={isDeleting}
+      />
+      <EditVideoModal
+        videoId={editingVideo?.id}
+        initialVideo={editingVideo}
+        isOpen={!!editingVideo}
+        onClose={() => setEditingVideo(null)}
       />
     </DashboardLayout>
   );
