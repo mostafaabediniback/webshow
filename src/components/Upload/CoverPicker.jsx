@@ -101,10 +101,7 @@ export default function CoverPicker({
           {isFormDisabled ? 'opacity-60 pointer-events-none' : ''}
         </button> */}
         <button onClick={() => setShowFrameModal(true)} className={`flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50 
-  ${isFormDisabled
-            ? 'opacity-60 pointer-events-none'
-            : 'hover:bg-gray-50'
-          }`}>
+`}>
           انتخاب کاور از فریم ویدیو
         </button>
       </div>

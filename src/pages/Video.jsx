@@ -156,7 +156,7 @@ function Video() {
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <Link
-                  to={data?.data?.username ? `/${data.data.username}` : "/"} state={{ channelId: data?.data?.channel_id}}
+                  to={data?.data?.username ? `/${data.data.username}` : "/"} state={{ channelId: data?.data?.channel_id }}
                   className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                 >
                   <img
@@ -205,7 +205,7 @@ function Video() {
               </div>
             </div>
             <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
-              <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 break-all">
+              <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 break-words ">
                 {data.data.description}
               </p>
             </div>

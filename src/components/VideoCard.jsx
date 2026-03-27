@@ -20,7 +20,7 @@ function VideoCard({ video }) {
   return (
     <Link
       to={`/v/${video.id}`}
-      className="group/card block w-full h-fit cursor-pointer touch-manipulation isolate rounded-2xl border border-slate-200/60 bg-gradient-to-br from-white to-slate-50/50 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200/50 transition-all duration-400 overflow-hidden hover:-translate-y-1 hover:scale-[1.02]"
+      className="group/card block w-full h-full cursor-pointer touch-manipulation isolate rounded-2xl border border-slate-200/60 bg-gradient-to-br from-white to-slate-50/50 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200/50 transition-all duration-400 overflow-hidden hover:-translate-y-1 hover:scale-[1.02]"
     >
       {/* Thumbnail */}
       <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
@@ -54,9 +54,10 @@ function VideoCard({ video }) {
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-5">
+      
+      <div className="flex flex-col justify-between  p-4 sm:p-5">
         {/* Title */}
-        <h3 className="text-base sm:text-lg font-bold leading-tight line-clamp-2 text-slate-900 group-hover/card:text-indigo-600 group-hover/card:font-black transition-all duration-300 mb-3 pr-1">
+        <h3 className="text-base flex-1  sm:text-lg font-bold leading-tight line-clamp-2 text-slate-900 group-hover/card:text-indigo-600 group-hover/card:font-black transition-all duration-300 mb-3 pr-1">
           {video.title}
         </h3>
         

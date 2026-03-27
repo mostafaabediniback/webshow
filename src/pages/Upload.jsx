@@ -313,7 +313,7 @@ function Upload() {
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                   placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                  className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                  className="h-48 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
                 />
               </div>
               <div>
@@ -340,7 +340,7 @@ function Upload() {
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
                 <CoverPicker
-                isFormDisabled={isFormDisabled}
+                // isFormDisabled={isFormDisabled}
                   value={thumbFile}
                   onChange={(file) => setThumbFile(file)}
                   onConfirm={(file) => {

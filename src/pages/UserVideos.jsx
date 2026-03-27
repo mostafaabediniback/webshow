@@ -299,7 +299,7 @@ function UserVideos() {
         </div>
 
 
-        <div className='flex gap-6 justify-between'>
+        <div className='flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2'>
 
           <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full `}>
             <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
@@ -321,7 +321,7 @@ function UserVideos() {
                   onChange={(e) => setDesc(e.target.value)}
                   placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
                   // disabled={isFormDisabled}
-                  className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
+                  className="h-64 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
                 />
               </div>
             </div>
@@ -333,7 +333,7 @@ function UserVideos() {
                 <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
                 <div>
                   <CoverPicker
-                    isFormDisabled={isFormDisabled}
+                    // isFormDisabled={isFormDisabled}
                     value={thumbFile}
                     onChange={(file) => setThumbFile(file)}
                     onConfirm={(file) => {
