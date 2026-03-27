@@ -1,9 +1,9 @@
-import { Eye, Play, Trash } from "iconsax-react";
+import { Edit2, Eye, Play, Trash } from "iconsax-react";
 
 /**
  * کامپوننت نمایش یک ردیف ویدیو در لیست - کاملاً ریسپانسیو
  */
-function VideoRow({ item, onDelete, onShow, isDeleting }) {
+function VideoRow({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
   // طبق OpenAPI: {id, channel_name, cover_link, title}
   const coverImage =
     item.cover_link ||
@@ -53,10 +53,21 @@ function VideoRow({ item, onDelete, onShow, isDeleting }) {
 
       {/* دکمه‌های عمل */}
       <div className="flex items-center gap-2 w-full sm:w-auto sm:shrink-0">
+        {onEdit && (
+          <button
+            onClick={() => onEdit(item)}
+            className="flex-1 sm:flex-none h-10 px-3 sm:px-4 rounded-lg border border-blue-200 hover:bg-blue-50 hover:border-blue-500 text-blue-700 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-2 min-h-[40px]"
+            disabled={isDeleting || isEditing}
+          >
+            <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" color="#1D4ED8" />
+            <span className="hidden sm:inline">ویرایش</span>
+          </button>
+        )}
+
         <button
           onClick={() => onShow(item.id)}
           className="flex-1 sm:flex-none h-10 px-3 sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-2 min-h-[40px]"
-          disabled={isDeleting}
+          disabled={isDeleting || isEditing}
         >
           <Play className="w-5 h-5 sm:w-6 sm:h-6" color="black" />
           <span className="hidden sm:inline">نمایش</span>

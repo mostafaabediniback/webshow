@@ -121,6 +121,22 @@ export const deleteVideo = async (id) => {
   return res.data;
 };
 
+export const updateVideo = async (videoId, { title, description, coverFile }) => {
+  const fd = new FormData();
+  fd.append("title", title || "");
+  fd.append("description", description || "");
+
+  if (coverFile) {
+    fd.append("cover", coverFile);
+  }
+
+  const res = await axiosInstanceNew.post(`/video/update-video/${videoId}`, fd, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  return res.data;
+};
+
 export default {
   uploadVideo,
   storeVideo,
@@ -130,6 +146,7 @@ export default {
   // getLanding,
   getSearch,
   deleteVideo,
+  updateVideo,
   getLandingVideos,
   getLandingChannels
 };
