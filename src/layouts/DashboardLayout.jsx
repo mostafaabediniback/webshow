@@ -1,7 +1,9 @@
 import { FolderAdd, Home2, People, Personalcard, VideoAdd, VideoPlay } from 'iconsax-react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
+import { safeSessionStorage } from '../utils/safeStorage'
 
 const ADMIN_NAV = [
   { to: '/dashboard', label: 'داشبورد', icon: Home2 },
@@ -19,7 +21,12 @@ const USER_NAV = [
 
 function DashboardLayout({ children }) {
   const { asPath: pathname } = useRouter()
-  const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
+  const [role, setRole] = useState(null)
+
+  useEffect(() => {
+    setRole(safeSessionStorage.get('role'))
+  }, [])
+
   const navItems = role === 'admin' ? USER_NAV : ADMIN_NAV
 
   return (

@@ -1,5 +1,6 @@
 import { ArrowLeft2, PlayCircle } from "iconsax-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Head from 'next/head'
 import CategoryChips from "../components/CategoryChips";
 import VideoGrid from "../components/VideoGrid";
 import VideoSkeleton from "../components/VideoSkeleton";
@@ -7,17 +8,14 @@ import Layout from "../layouts/Layout";
 import { useLandingChannels } from "../hooks/useLandingChannels";
 import { useInfiniteLandingVideos } from "../hooks/useInfiniteLandingVideos";
 import { useRouter } from "next/router";
+import { getHomeNavigationState } from '../next/navigationState'
 
 const PAGE_SIZE = 25;
 
 function Home() {
   const router = useRouter();
-  const username = Array.isArray(router.query.username)
-    ? router.query.username[0]
-    : router.query.username;
-  console.log(router);
-
   const [activeChannelId, setActiveChannelId] = useState(null);
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
   const loadMoreRef = useRef(null);
 
   const {
@@ -40,8 +38,6 @@ function Home() {
   const videosList = Array.isArray(videosData?.items) ? videosData.items : [];
   // console.log(videosList);
   const activeChannelName = channelsList.find((channel) => channel.id === activeChannelId)?.name;
-  console.log(activeChannelName);
-  console.log(activeChannelId);
 
   const handleChannelSelect = useCallback((id) => {
     setActiveChannelId(id);
@@ -52,8 +48,12 @@ function Home() {
   }, [refetch]);
 
   useEffect(() => {
-    if (router.query?.channelId) {
-      setActiveChannelId(router.query.channelId);
+    const queryChannelId = typeof router.query?.channelId === 'string' ? router.query.channelId : null
+    const transientChannelId = getHomeNavigationState()
+    const nextChannelId = queryChannelId || transientChannelId
+
+    if (nextChannelId) {
+      setActiveChannelId(nextChannelId);
     }
   }, [router.query?.channelId]);
 
@@ -110,6 +110,15 @@ function Home() {
 
   return (
     <Layout>
+      <Head>
+        <title>اربعین تی وی - تلویزیون اینترنتی جبهه مقاومت</title>
+        <meta name="description" content="تماشای ویدیوهای اربعین و جبهه مقاومت در اربعین تی وی" />
+        <meta property="og:title" content="اربعین تی وی" />
+        <meta property="og:description" content="تماشای ویدیوهای اربعین و جبهه مقاومت" />
+        <meta property="og:image" content="/vite.svg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <link rel="canonical" href={`${siteUrl}/`} />
+      </Head>
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-6 sm:py-8">
           <div className="sticky top-[57px] sm:top-[61px] md:top-[73px] z-40 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 py-3 backdrop-blur-md border-b border-slate-200/80 mb-6">

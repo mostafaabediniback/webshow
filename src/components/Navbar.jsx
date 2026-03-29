@@ -10,12 +10,13 @@ import Link from "next/link";
 import logo from "../assets/logo/logo-01-01.png";
 import useLogin from "../hooks/useLogin";
 import SearchInput from "./SearchInput";
+import { safeSessionStorage } from "../utils/safeStorage";
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { LogOut, isLoggingOut } = useLogin();
-  const [isAuthenticated, setIsAuthenticated] = useState(typeof window !== "undefined" ? !!sessionStorage.getItem("token") : false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // بررسی وضعیت لاگین
 
@@ -34,7 +35,7 @@ function Navbar() {
   };
 
   useEffect(() => {
-    setIsAuthenticated(typeof window !== "undefined" ? !!sessionStorage.getItem("token") : false)
+    setIsAuthenticated(!!safeSessionStorage.get("token"))
   }, [])
 
   // Prevent body scroll when sidebar is open

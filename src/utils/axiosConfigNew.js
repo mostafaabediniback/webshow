@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import { safeSessionStorage } from "./safeStorage";
 export const serverUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 const axiosInstanceNew = axios.create({
   baseURL: serverUrl,
@@ -11,7 +12,7 @@ const axiosInstanceNew = axios.create({
 
 axiosInstanceNew.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem("token");
+    const token = safeSessionStorage.get("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -47,7 +48,9 @@ axiosInstanceNew.interceptors.response.use(
       toast.error(String(data.message), { position: "top-right", theme: "colored" });
     }
     if (status === 401 || status === 403) {
-      window.location.href = "/login";
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }

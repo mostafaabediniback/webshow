@@ -11,12 +11,17 @@ import useDeleteVideo from '../hooks/useDeleteVideo'
 import { usePaginationParams } from '../hooks/usePaginationParams'
 import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
+import { safeSessionStorage } from '../utils/safeStorage'
 
 
 const PAGE_SIZE = 25
 
 function UserVideos() {
-  const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
+  const [role, setRole] = useState(null)
+
+  useEffect(() => {
+    setRole(safeSessionStorage.get('role'))
+  }, [])
   const isAdmin = String(role || '').toLowerCase() === 'admin'
 
   const { channels, isLoadingChannels } = useChannel(1, PAGE_SIZE, {}, { enabled: isAdmin })

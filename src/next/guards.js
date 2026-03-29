@@ -1,50 +1,51 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { safeSessionStorage } from '../utils/safeStorage'
 
 export function useRequireAuth() {
   const router = useRouter()
-  const [authorized, setAuthorized] = useState(false)
+  const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? sessionStorage.getItem('token') : null
+    const token = safeSessionStorage.get('token')
     if (!token) {
       router.replace('/login')
       return
     }
-    setAuthorized(true)
+    setAllowed(true)
   }, [router])
 
-  return authorized
+  return allowed
 }
 
 export function useRequireUserRole() {
   const router = useRouter()
-  const [authorized, setAuthorized] = useState(false)
+  const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
-    const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
+    const role = safeSessionStorage.get('role')
     if (role !== 'admin') {
       router.replace('/dashboard')
       return
     }
-    setAuthorized(true)
+    setAllowed(true)
   }, [router])
 
-  return authorized
+  return allowed
 }
 
 export function useRequireAdminRole() {
   const router = useRouter()
-  const [authorized, setAuthorized] = useState(false)
+  const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
-    const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
+    const role = safeSessionStorage.get('role')
     if (role === 'admin') {
       router.replace('/dashboard/user-videos')
       return
     }
-    setAuthorized(true)
+    setAllowed(true)
   }, [router])
 
-  return authorized
+  return allowed
 }

@@ -2,10 +2,16 @@ import DashboardLayout from '../layouts/DashboardLayout'
 import Link from 'next/link'
 import useDashboard from '../hooks/useDashboard'
 import { VideoPlay, FolderAdd, VideoAdd } from 'iconsax-react'
+import { useEffect, useState } from 'react'
+import { safeSessionStorage } from '../utils/safeStorage'
 
 function Dashboard() {
   const { totalChannels, totalVideos, isLoading } = useDashboard()
-  const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
+  const [role, setRole] = useState(null)
+
+  useEffect(() => {
+    setRole(safeSessionStorage.get('role'))
+  }, [])
 
   return (
     <DashboardLayout>

@@ -1,6 +1,7 @@
 import { ArrowLeft2 } from 'iconsax-react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import VideoGrid from '../components/VideoGrid'
 import VideoSkeleton from '../components/VideoSkeleton'
 import useSearch from '../hooks/useSearch'
@@ -9,6 +10,7 @@ import Layout from '../layouts/Layout'
 function Search() {
   const router = useRouter()
   const q = typeof router.query.q === 'string' ? router.query.q : ''
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
   const { data, isLoading, isError } = useSearch(q)
 
   const payload = data?.data
@@ -58,6 +60,15 @@ function Search() {
 
   return (
     <Layout>
+      <Head>
+        <title>{q ? `نتایج جستجو: ${q} | اربعین تی وی` : 'جستجو | اربعین تی وی'}</title>
+        <meta name="description" content={q ? `نتایج جستجو برای ${q} در اربعین تی وی` : 'جستجو در ویدیوهای اربعین تی وی'} />
+        <meta property="og:title" content={q ? `نتایج جستجو: ${q}` : 'جستجو در اربعین تی وی'} />
+        <meta property="og:description" content={q ? `نتایج جستجو برای ${q}` : 'جستجو در ویدیوها'} />
+        <meta property="og:image" content="/vite.svg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <link rel="canonical" href={`${siteUrl}/search/${encodeURIComponent(q || '')}`} />
+      </Head>
       <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-4 sm:py-6">
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <Link
