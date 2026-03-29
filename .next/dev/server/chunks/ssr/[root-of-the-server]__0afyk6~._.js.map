@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 40, "column": 0}, "map": {"version":3,"sources":["file:///G:/webshow/pages/_document.js"],"sourcesContent":["import { Html, Head, Main, NextScript } from 'next/document'\r\n\r\nexport default function Document() {\r\n  return (\r\n    <Html lang=\"fa\" dir=\"rtl\">\r\n      <Head>\r\n        <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />\r\n        <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossOrigin=\"\" />\r\n      </Head>\r\n      <body>\r\n        <Main />\r\n        <NextScript />\r\n      </body>\r\n    </Html>\r\n  )\r\n}\r\n"],"names":["Document","lang","dir","rel","href","crossOrigin"],"mappings":";;;;;AAAA;;;AAEe,SAASA;IACtB,qBACE,qKAAC,gPAAI;QAACC,MAAK;QAAKC,KAAI;;0BAClB,qKAAC,gPAAI;;kCACH,qKAAC;wBAAKC,KAAI;wBAAaC,MAAK;;;;;;kCAC5B,qKAAC;wBAAKD,KAAI;wBAAaC,MAAK;wBAA4BC,aAAY;;;;;;;;;;;;0BAEtE,qKAAC;;kCACC,qKAAC,gPAAI;;;;;kCACL,qKAAC,sPAAU;;;;;;;;;;;;;;;;;AAInB"}}]
+}
