@@ -12,7 +12,7 @@ import { getHomeNavigationState } from '../next/navigationState'
 
 const PAGE_SIZE = 25;
 
-function Home() {
+function Home({ initialChannels, initialVideos }) {
   const router = useRouter();
   const [activeChannelId, setActiveChannelId] = useState(null);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -22,7 +22,7 @@ function Home() {
     data: channelsData,
     isLoading: channelsLoading,
     refetch: channelsRefetch,
-  } = useLandingChannels({ pageSize: 20 });
+  } = useLandingChannels(1, initialChannels);
 
   const {
     data: videosData,
@@ -32,7 +32,7 @@ function Home() {
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useInfiniteLandingVideos(activeChannelId, PAGE_SIZE);
+  } = useInfiniteLandingVideos(activeChannelId, PAGE_SIZE, initialVideos);
 
   const channelsList = Array.isArray(channelsData?.items) ? channelsData.items : [];
   const videosList = Array.isArray(videosData?.items) ? videosData.items : [];
