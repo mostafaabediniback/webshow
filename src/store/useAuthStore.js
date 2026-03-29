@@ -1,13 +1,14 @@
 import { create } from "zustand";
+import { safeSessionStorage } from "../utils/safeStorage";
 
 const useAuthStore = create((set) => ({
-  token: sessionStorage.getItem("token") || null,
+  token: safeSessionStorage.get("token") || null,
   roles: [],
   user: { id: null, firstname: "", lastname: "" ,nationalCode:""},
 
   update: (token, roles, user) => {
     set({ token, roles, user });
-    sessionStorage.setItem("token", token);
+    safeSessionStorage.set("token", token);
   },
   clear: () => {
     set({
@@ -15,7 +16,7 @@ const useAuthStore = create((set) => ({
       roles: [],
       user: { id: null, firstname: "", lastname: "",nationalCode:"" },
     });
-    sessionStorage.removeItem("token");
+    safeSessionStorage.remove("token");
   },
 }));
 

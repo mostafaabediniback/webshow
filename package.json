@@ -2,12 +2,11 @@
   "name": "webshow",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -22,10 +21,10 @@
     "iconsax-react": "^0.0.8",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.6",
     "react-toastify": "^11.0.5",
     "tailwindcss": "^4.1.17",
-    "yup": "^1.7.1"
+    "yup": "^1.7.1",
+    "next": "^16.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

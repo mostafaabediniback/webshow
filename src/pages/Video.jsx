@@ -1,11 +1,14 @@
 import axios from 'axios'
 import { Eye } from 'iconsax-react'
 import { useEffect, useState } from 'react'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import Head from 'next/head'
 import { toast } from 'react-toastify'
 import useChannelVideos from '../hooks/useChannelVideos'
 import { useVideo } from '../hooks/useVideo'
 import Layout from '../layouts/Layout'
+import { setHomeNavigationState } from '../next/navigationState'
 
 const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
   <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -16,7 +19,9 @@ const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
 )
 
 function Video() {
-  const { id } = useParams()
+  const router = useRouter()
+  const id = typeof router.query.id === 'string' ? router.query.id : ''
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
   const { data, isLoading } = useVideo(id)
   const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({ channelId: data?.data?.channel_id, pageNumber: 1, pageSize: 25 })
 
@@ -139,6 +144,15 @@ function Video() {
 
   return (
     <Layout>
+      <Head>
+        <title>{data?.data?.title ? `${data.data.title} | اربعین تی وی` : 'تماشای ویدیو | اربعین تی وی'}</title>
+        <meta name="description" content={data?.data?.description || 'تماشای ویدیو در اربعین تی وی'} />
+        <meta property="og:title" content={data?.data?.title || 'تماشای ویدیو در اربعین تی وی'} />
+        <meta property="og:description" content={data?.data?.description || 'تماشای ویدیو در اربعین تی وی'} />
+        <meta property="og:image" content={data?.data?.thumbnailUrl || data?.data?.cover_link || data?.data?.cover || '/vite.svg'} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <link rel="canonical" href={`${siteUrl}/v/${id || ''}`} />
+      </Head>
       <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-4 sm:py-6">
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
           <div>
@@ -156,7 +170,8 @@ function Video() {
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <Link
-                  to={data?.data?.username ? `/${data.data.username}` : "/"} state={{ channelId: data?.data?.channel_id }}
+                  onClick={() => setHomeNavigationState(data?.data?.channel_id)}
+                  href={{ pathname: data?.data?.username ? `/${data.data.username}` : '/', query: { channelId: data?.data?.channel_id } }}
                   className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                 >
                   <img
@@ -225,7 +240,7 @@ function Video() {
                 ))
               ) : (
                 (relatedVideos?.items || []).filter(v => String(v.id) !== String(id)).slice(0, 10).map((video) => (
-                  <Link to={`/v/${video.id}`} key={video.id} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
+                  <Link href={`/v/${video.id}`} key={video.id} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
                     <div className="w-40 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
                       <img
                         src={video.thumbnailUrl || video.cover_link || video.cover}

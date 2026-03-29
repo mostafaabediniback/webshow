@@ -1,5 +1,5 @@
 import { Eye, PlayCircle } from 'iconsax-react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 function VideoCard({ video }) {
   // console.log(video);
@@ -19,7 +19,7 @@ function VideoCard({ video }) {
 
   return (
     <Link
-      to={`/v/${video.id}`}
+      href={`/v/${video.id}`}
       className="group/card block w-full h-full cursor-pointer touch-manipulation isolate rounded-2xl border border-slate-200/60 bg-gradient-to-br from-white to-slate-50/50 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200/50 transition-all duration-400 overflow-hidden hover:-translate-y-1 hover:scale-[1.02]"
     >
       {/* Thumbnail */}

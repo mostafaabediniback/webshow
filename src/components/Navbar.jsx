@@ -6,16 +6,17 @@ import {
   User
 } from "iconsax-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import logo from "../assets/logo/logo-01-01.png";
 import useLogin from "../hooks/useLogin";
 import SearchInput from "./SearchInput";
+import { safeSessionStorage } from "../utils/safeStorage";
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { LogOut, isLoggingOut } = useLogin();
-  const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("token"));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // بررسی وضعیت لاگین
 
@@ -32,6 +33,10 @@ function Navbar() {
       // خطا در useLogin مدیریت می‌شود
     }
   };
+
+  useEffect(() => {
+    setIsAuthenticated(!!safeSessionStorage.get("token"))
+  }, [])
 
   // Prevent body scroll when sidebar is open
   useEffect(() => {
@@ -58,7 +63,7 @@ function Navbar() {
               <Menu size={20} color="#0f172a" />
             </button>
             <Link
-              to="/"
+              href="/"
               onClick={closeSidebar}
               className="flex items-center gap-2"
             >
@@ -91,7 +96,7 @@ function Navbar() {
               {isAuthenticated ? (
                 <>
                   <Link
-                    to="/dashboard"
+                    href="/dashboard"
                     className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
                   >
                     مدیریت کانال‌ها
@@ -108,7 +113,7 @@ function Navbar() {
                 </>
               ) : (
                 <Link
-                  to="/login"
+                  href="/login"
                   className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
                 >
                   <User size={18} color="#0f172a" />
@@ -159,21 +164,21 @@ function Navbar() {
           <div className="flex-1 overflow-y-auto">
             <nav className="p-4 space-y-2">
               <Link
-                to="/"
+                href="/"
                 onClick={closeSidebar}
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
               >
                 <span>خانه</span>
               </Link>
               {/* <Link
-                to="/"
+                href="/"
                 onClick={closeSidebar}
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
               >
                 <span>ویدیوهای محبوب</span>
               </Link> */}
               {/* <Link
-                to="/"
+                href="/"
                 onClick={closeSidebar}
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
               >
@@ -181,7 +186,7 @@ function Navbar() {
               </Link> */}
               {isAuthenticated && (
                 <Link
-                  to="/dashboard/channels"
+                  href="/dashboard/channels"
                   onClick={closeSidebar}
                   className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
                 >
@@ -230,7 +235,7 @@ function Navbar() {
               </button>
             ) : (
               <Link
-                to="/login"
+                href="/login"
                 onClick={closeSidebar}
                 className="w-full h-12 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
               >

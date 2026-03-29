@@ -1,6 +1,6 @@
 import { CloseCircle, TickCircle } from 'iconsax-react'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import cover from '../assets/img/cover.jpg'
 import CoverPicker from '../components/Upload/CoverPicker'
 import VideoDropzone from "../components/VideoDropzone"
@@ -21,7 +21,7 @@ function Upload() {
   const [videoStatus, setVideoStatus] = useState('idle')
   const [uploadProgress, setUploadProgress] = useState(0)
   const [thumbnails, setThumbnails] = useState([])
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const handleCancelAndRefresh = () => {
     window.location.reload()
@@ -222,7 +222,7 @@ function Upload() {
         },
         {
           onSuccess: () => {
-            navigate('/dashboard/videos')
+            router.push('/dashboard/videos')
             resetForm()
           }
         }

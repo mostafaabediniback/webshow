@@ -1,6 +1,6 @@
 import { CloseCircle, TickCircle } from 'iconsax-react'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import cover from '../assets/img/cover.jpg'
 import CoverPicker from '../components/Upload/CoverPicker'
@@ -11,12 +11,17 @@ import useDeleteVideo from '../hooks/useDeleteVideo'
 import { usePaginationParams } from '../hooks/usePaginationParams'
 import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
+import { safeSessionStorage } from '../utils/safeStorage'
 
 
 const PAGE_SIZE = 25
 
 function UserVideos() {
-  const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
+  const [role, setRole] = useState(null)
+
+  useEffect(() => {
+    setRole(safeSessionStorage.get('role'))
+  }, [])
   const isAdmin = String(role || '').toLowerCase() === 'admin'
 
   const { channels, isLoadingChannels } = useChannel(1, PAGE_SIZE, {}, { enabled: isAdmin })
@@ -35,7 +40,7 @@ function UserVideos() {
   const [thumbnails, setThumbnails] = useState([])
   const [selectedVideoId, setSelectedVideoId] = useState(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
-  const navigate = useNavigate()
+  const router = useRouter()
 
 
   const { data: videos, isLoading: isLoadingVideos, isError } = useChannelVideos({
@@ -252,7 +257,7 @@ function UserVideos() {
         coverFile: thumbFile,
       })
       // وقتی promise کامل شد:
-      navigate('/dashboard/user-videos')
+      router.push('/dashboard/user-videos')
       resetForm()
     } catch {
       // خطاها در هوک مدیریت می‌شوند
