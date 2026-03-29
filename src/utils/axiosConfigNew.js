@@ -1,6 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-export const serverUrl = import.meta.env.VITE_API_BASE_URL;
+export const serverUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 const axiosInstanceNew = axios.create({
   baseURL: serverUrl,
   headers: {

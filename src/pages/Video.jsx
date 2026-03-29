@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { Eye } from 'iconsax-react'
 import { useEffect, useState } from 'react'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import useChannelVideos from '../hooks/useChannelVideos'
 import { useVideo } from '../hooks/useVideo'
@@ -16,7 +17,8 @@ const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
 )
 
 function Video() {
-  const { id } = useParams()
+  const router = useRouter()
+  const id = typeof router.query.id === 'string' ? router.query.id : ''
   const { data, isLoading } = useVideo(id)
   const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({ channelId: data?.data?.channel_id, pageNumber: 1, pageSize: 25 })
 
@@ -156,7 +158,7 @@ function Video() {
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <Link
-                  to={data?.data?.username ? `/${data.data.username}` : "/"} state={{ channelId: data?.data?.channel_id }}
+                  href={{ pathname: data?.data?.username ? `/${data.data.username}` : '/', query: { channelId: data?.data?.channel_id } }}
                   className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                 >
                   <img
@@ -225,7 +227,7 @@ function Video() {
                 ))
               ) : (
                 (relatedVideos?.items || []).filter(v => String(v.id) !== String(id)).slice(0, 10).map((video) => (
-                  <Link to={`/v/${video.id}`} key={video.id} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
+                  <Link href={`/v/${video.id}`} key={video.id} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
                     <div className="w-40 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
                       <img
                         src={video.thumbnailUrl || video.cover_link || video.cover}

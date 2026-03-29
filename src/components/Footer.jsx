@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 function Footer() {
   return (
@@ -43,8 +43,8 @@ function Footer() {
             © {new Date().getFullYear()} اربعین تی وی. تمامی حقوق محفوظ است.
           </p>
           <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm text-gray-600">
-            <Link to="/" className="hover:text-blue-600 transition-colors">حریم خصوصی</Link>
-            <Link to="/" className="hover:text-blue-600 transition-colors">شرایط استفاده</Link>
+            <Link href="/" className="hover:text-blue-600 transition-colors">حریم خصوصی</Link>
+            <Link href="/" className="hover:text-blue-600 transition-colors">شرایط استفاده</Link>
           </div>
         </div>
       </div>

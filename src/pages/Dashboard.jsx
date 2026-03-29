@@ -1,5 +1,5 @@
 import DashboardLayout from '../layouts/DashboardLayout'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import useDashboard from '../hooks/useDashboard'
 import { VideoPlay, FolderAdd, VideoAdd } from 'iconsax-react'
 
@@ -51,7 +51,7 @@ function Dashboard() {
         {role === 'admin' ? (
           <div className="grid grid-cols-1 gap-4">
             <Link
-              to="/dashboard/user-videos"
+              href="/dashboard/user-videos"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-orange-500 hover:bg-orange-50 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
@@ -67,7 +67,7 @@ function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* 1️⃣ کانال‌ها - نارنجی */}
             <Link
-              to="/dashboard/channels"
+              href="/dashboard/channels"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-orange-500 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
@@ -81,7 +81,7 @@ function Dashboard() {
 
             {/* 2️⃣ آپلود - زرد/نارنجی */}
             <Link
-              to="/dashboard/upload"
+              href="/dashboard/upload"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-amber-500 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
@@ -95,7 +95,7 @@ function Dashboard() {
 
             {/* 3️⃣ ویدیوها - طلایی */}
             <Link
-              to="/dashboard/videos"
+              href="/dashboard/videos"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-yellow-500 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
