@@ -19,12 +19,24 @@ globalThis.__BUILD_MANIFEST = {
       "static/chunks/0vvi_next_dist_client_0_edrmt._.js",
       "static/chunks/0vvi_next_dist_014tdsi._.js",
       "static/chunks/0kbc_react-dom_0bul~hs._.js",
-      "static/chunks/070r_tailwindcss_dist_10m8vlu._.js",
       "static/chunks/node_modules__pnpm_09b6jjz._.js",
       "static/chunks/[root-of-the-server]__0uahh7t._.js",
-      "static/chunks/_0i1wr6~._.css",
+      "static/chunks/_0_d4yka._.css",
       "static/chunks/pages__app_07xvfw~._.js",
-      "static/chunks/turbopack-pages__app_105vsej._.js"
+      "static/chunks/turbopack-pages__app_0w_-b9l._.js"
+    ],
+    "/v/[id]": [
+      "static/chunks/[root-of-the-server]__0e_g~88._.js",
+      "static/chunks/0vvi_next_dist_compiled_00cn3ad._.js",
+      "static/chunks/0vvi_next_dist_shared_lib_0syr._p._.js",
+      "static/chunks/0vvi_next_dist_client_12hmldy._.js",
+      "static/chunks/0vvi_next_dist_0n.ddk0._.js",
+      "static/chunks/0vvi_next_06z.5mr._.js",
+      "static/chunks/0kbc_react-dom_0bul~hs._.js",
+      "static/chunks/0kmr_axios_lib_0t3ipxr._.js",
+      "static/chunks/node_modules__pnpm_0064-gc._.js",
+      "static/chunks/pages_v_[id]_07xvfw~.js",
+      "static/chunks/turbopack-pages_v_[id]_08ph3t2.js"
     ]
   },
   "devFiles": [],

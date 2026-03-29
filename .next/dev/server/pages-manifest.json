@@ -1,5 +1,6 @@
 {
   "/[[...username]]": "pages/[[...username]].js",
   "/_app": "pages/_app.js",
-  "/_document": "pages/_document.js"
+  "/_document": "pages/_document.js",
+  "/v/[id]": "pages/v/[id].js"
 }

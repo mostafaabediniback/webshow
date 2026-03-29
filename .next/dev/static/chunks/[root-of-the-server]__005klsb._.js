@@ -2206,7 +2206,7 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-const useLandingChannels = (initialPage = 1)=>{
+const useLandingChannels = (initialPage = 1, initialData = null)=>{
     _s();
     const { page, setPage } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$usePaginationParams$2e$js__$5b$client$5d$__$28$ecmascript$29$__["usePaginationParams"])(initialPage);
     return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f40$tanstack$2b$react$2d$query$40$5$2e$90$2e$10_react$40$19$2e$2$2e$0$2f$node_modules$2f40$tanstack$2f$react$2d$query$2f$build$2f$modern$2f$useQuery$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useQuery"])({
@@ -2221,6 +2221,8 @@ const useLandingChannels = (initialPage = 1)=>{
         }["useLandingChannels.useQuery"],
         keepPreviousData: true,
         staleTime: 5 * 60 * 1000,
+        refetchOnMount: false,
+        initialData,
         select: {
             "useLandingChannels.useQuery": (data)=>({
                     ...data,
@@ -2253,7 +2255,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$services$2f$videoApi$
 var _s = __turbopack_context__.k.signature();
 ;
 ;
-const useInfiniteLandingVideos = (channelId, pageSize = 25)=>{
+const useInfiniteLandingVideos = (channelId, pageSize = 25, initialPageData = null)=>{
     _s();
     return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f40$tanstack$2b$react$2d$query$40$5$2e$90$2e$10_react$40$19$2e$2$2e$0$2f$node_modules$2f40$tanstack$2f$react$2d$query$2f$build$2f$modern$2f$useInfiniteQuery$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useInfiniteQuery"])({
         queryKey: [
@@ -2268,6 +2270,14 @@ const useInfiniteLandingVideos = (channelId, pageSize = 25)=>{
                     pageSize
                 })
         }["useInfiniteLandingVideos.useInfiniteQuery"],
+        initialData: initialPageData ? {
+            pages: [
+                initialPageData
+            ],
+            pageParams: [
+                1
+            ]
+        } : undefined,
         initialPageParam: 1,
         getNextPageParam: {
             "useInfiniteLandingVideos.useInfiniteQuery": (lastPage, allPages)=>{
@@ -2276,6 +2286,8 @@ const useInfiniteLandingVideos = (channelId, pageSize = 25)=>{
             }
         }["useInfiniteLandingVideos.useInfiniteQuery"],
         staleTime: 2 * 60 * 1000,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
         select: {
             "useInfiniteLandingVideos.useInfiniteQuery": (data)=>{
                 const pages = Array.isArray(data?.pages) ? data.pages : [];
@@ -2360,16 +2372,16 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 const PAGE_SIZE = 25;
-function Home() {
+function Home({ initialChannels, initialVideos }) {
     _s();
+    console.log(initialChannels);
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$1_$40$babel$2b$core$40$7$2e$2_002c6875e2cc4925b70c9aa5d4dde4bf$2f$node_modules$2f$next$2f$router$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const [activeChannelId, setActiveChannelId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$index$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const siteUrl = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$1_$40$babel$2b$core$40$7$2e$2_002c6875e2cc4925b70c9aa5d4dde4bf$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
     const loadMoreRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$index$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const { data: channelsData, isLoading: channelsLoading, refetch: channelsRefetch } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useLandingChannels$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useLandingChannels"])({
-        pageSize: 20
-    });
-    const { data: videosData, isLoading: videosLoading, isError: videosError, isFetchingNextPage, hasNextPage, fetchNextPage, refetch } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useInfiniteLandingVideos$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useInfiniteLandingVideos"])(activeChannelId, PAGE_SIZE);
+    const { data: channelsData, isLoading: channelsLoading, refetch: channelsRefetch } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useLandingChannels$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useLandingChannels"])(1, initialChannels);
+    console.log(channelsData);
+    const { data: videosData, isLoading: videosLoading, isError: videosError, isFetchingNextPage, hasNextPage, fetchNextPage, refetch } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useInfiniteLandingVideos$2e$js__$5b$client$5d$__$28$ecmascript$29$__["useInfiniteLandingVideos"])(activeChannelId, PAGE_SIZE, initialVideos);
     const channelsList = Array.isArray(channelsData?.items) ? channelsData.items : [];
     const videosList = Array.isArray(videosData?.items) ? videosData.items : [];
     // console.log(videosList);
@@ -2444,22 +2456,22 @@ function Home() {
                         count: 12
                     }, void 0, false, {
                         fileName: "[project]/src/pages/Home.jsx",
-                        lineNumber: 102,
+                        lineNumber: 104,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/pages/Home.jsx",
-                    lineNumber: 101,
+                    lineNumber: 103,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/pages/Home.jsx",
-                lineNumber: 100,
+                lineNumber: 102,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/pages/Home.jsx",
-            lineNumber: 99,
+            lineNumber: 101,
             columnNumber: 7
         }, this);
     }
@@ -2472,7 +2484,7 @@ function Home() {
                         children: "اربعین تی وی - تلویزیون اینترنتی جبهه مقاومت"
                     }, void 0, false, {
                         fileName: "[project]/src/pages/Home.jsx",
-                        lineNumber: 114,
+                        lineNumber: 116,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
@@ -2480,7 +2492,7 @@ function Home() {
                         content: "تماشای ویدیوهای اربعین و جبهه مقاومت در اربعین تی وی"
                     }, void 0, false, {
                         fileName: "[project]/src/pages/Home.jsx",
-                        lineNumber: 115,
+                        lineNumber: 117,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
@@ -2488,7 +2500,7 @@ function Home() {
                         content: "اربعین تی وی"
                     }, void 0, false, {
                         fileName: "[project]/src/pages/Home.jsx",
-                        lineNumber: 116,
+                        lineNumber: 118,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
@@ -2496,7 +2508,7 @@ function Home() {
                         content: "تماشای ویدیوهای اربعین و جبهه مقاومت"
                     }, void 0, false, {
                         fileName: "[project]/src/pages/Home.jsx",
-                        lineNumber: 117,
+                        lineNumber: 119,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
@@ -2504,7 +2516,7 @@ function Home() {
                         content: "/vite.svg"
                     }, void 0, false, {
                         fileName: "[project]/src/pages/Home.jsx",
-                        lineNumber: 118,
+                        lineNumber: 120,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
@@ -2512,7 +2524,7 @@ function Home() {
                         content: "summary_large_image"
                     }, void 0, false, {
                         fileName: "[project]/src/pages/Home.jsx",
-                        lineNumber: 119,
+                        lineNumber: 121,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
@@ -2520,13 +2532,13 @@ function Home() {
                         href: `${siteUrl}/`
                     }, void 0, false, {
                         fileName: "[project]/src/pages/Home.jsx",
-                        lineNumber: 120,
+                        lineNumber: 122,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/pages/Home.jsx",
-                lineNumber: 113,
+                lineNumber: 115,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2544,12 +2556,12 @@ function Home() {
                                 isRefetch: channelsRefetch
                             }, void 0, false, {
                                 fileName: "[project]/src/pages/Home.jsx",
-                                lineNumber: 125,
+                                lineNumber: 127,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/pages/Home.jsx",
-                            lineNumber: 124,
+                            lineNumber: 126,
                             columnNumber: 11
                         }, this),
                         activeChannelId && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2562,7 +2574,7 @@ function Home() {
                                         className: "text-slate-400"
                                     }, void 0, false, {
                                         fileName: "[project]/src/pages/Home.jsx",
-                                        lineNumber: 137,
+                                        lineNumber: 139,
                                         columnNumber: 17
                                     }, this),
                                     "نمایش ویدیوهای ",
@@ -2571,18 +2583,18 @@ function Home() {
                                         children: activeChannelName || videosData?.pages?.flatMap((page)=>page.items || page.data || [])[0]?.channel_name
                                     }, void 0, false, {
                                         fileName: "[project]/src/pages/Home.jsx",
-                                        lineNumber: 138,
+                                        lineNumber: 140,
                                         columnNumber: 32
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/pages/Home.jsx",
-                                lineNumber: 136,
+                                lineNumber: 138,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/pages/Home.jsx",
-                            lineNumber: 135,
+                            lineNumber: 137,
                             columnNumber: 13
                         }, this),
                         showInitialLoading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2591,12 +2603,12 @@ function Home() {
                                 count: PAGE_SIZE
                             }, void 0, false, {
                                 fileName: "[project]/src/pages/Home.jsx",
-                                lineNumber: 145,
+                                lineNumber: 147,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/pages/Home.jsx",
-                            lineNumber: 144,
+                            lineNumber: 146,
                             columnNumber: 13
                         }, this) : videosError ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "flex flex-col items-center justify-center py-16 px-4 rounded-2xl bg-slate-50 border border-slate-200",
@@ -2608,12 +2620,12 @@ function Home() {
                                         children: "⚠"
                                     }, void 0, false, {
                                         fileName: "[project]/src/pages/Home.jsx",
-                                        lineNumber: 150,
+                                        lineNumber: 152,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/pages/Home.jsx",
-                                    lineNumber: 149,
+                                    lineNumber: 151,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2621,7 +2633,7 @@ function Home() {
                                     children: "خطا در دریافت ویدیوها"
                                 }, void 0, false, {
                                     fileName: "[project]/src/pages/Home.jsx",
-                                    lineNumber: 152,
+                                    lineNumber: 154,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2630,13 +2642,13 @@ function Home() {
                                     children: "تلاش مجدد"
                                 }, void 0, false, {
                                     fileName: "[project]/src/pages/Home.jsx",
-                                    lineNumber: 153,
+                                    lineNumber: 155,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/pages/Home.jsx",
-                            lineNumber: 148,
+                            lineNumber: 150,
                             columnNumber: 13
                         }, this) : videosList.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "flex flex-col items-center justify-center py-20 px-4 rounded-2xl bg-slate-50 border border-slate-200 border-dashed",
@@ -2648,12 +2660,12 @@ function Home() {
                                         color: "#f97316"
                                     }, void 0, false, {
                                         fileName: "[project]/src/pages/Home.jsx",
-                                        lineNumber: 163,
+                                        lineNumber: 165,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/pages/Home.jsx",
-                                    lineNumber: 162,
+                                    lineNumber: 164,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -2661,7 +2673,7 @@ function Home() {
                                     children: activeChannelId ? "ویدیویی یافت نشد" : "شروع کنید!"
                                 }, void 0, false, {
                                     fileName: "[project]/src/pages/Home.jsx",
-                                    lineNumber: 165,
+                                    lineNumber: 167,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2669,13 +2681,13 @@ function Home() {
                                     children: activeChannelId ? "در این کانال فعلاً ویدیویی موجود نیست." : "کانالی انتخاب کنید تا ویدیوهایش را ببینید."
                                 }, void 0, false, {
                                     fileName: "[project]/src/pages/Home.jsx",
-                                    lineNumber: 168,
+                                    lineNumber: 170,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/pages/Home.jsx",
-                            lineNumber: 161,
+                            lineNumber: 163,
                             columnNumber: 13
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                             children: [
@@ -2685,12 +2697,12 @@ function Home() {
                                         items: videosList
                                     }, void 0, false, {
                                         fileName: "[project]/src/pages/Home.jsx",
-                                        lineNumber: 178,
+                                        lineNumber: 180,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/pages/Home.jsx",
-                                    lineNumber: 177,
+                                    lineNumber: 179,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2702,54 +2714,54 @@ function Home() {
                                             count: Math.min(8, PAGE_SIZE)
                                         }, void 0, false, {
                                             fileName: "[project]/src/pages/Home.jsx",
-                                            lineNumber: 184,
+                                            lineNumber: 186,
                                             columnNumber: 21
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/pages/Home.jsx",
-                                        lineNumber: 183,
+                                        lineNumber: 185,
                                         columnNumber: 19
                                     }, this) : hasNextPage ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "text-sm text-slate-500",
                                         children: "برای بارگذاری ویدیوهای بیشتر اسکرول کنید."
                                     }, void 0, false, {
                                         fileName: "[project]/src/pages/Home.jsx",
-                                        lineNumber: 187,
+                                        lineNumber: 189,
                                         columnNumber: 19
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$react$40$19$2e$2$2e$0$2f$node_modules$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "text-sm text-slate-400",
                                         children: "همه ویدیوها نمایش داده شدند."
                                     }, void 0, false, {
                                         fileName: "[project]/src/pages/Home.jsx",
-                                        lineNumber: 189,
+                                        lineNumber: 191,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/pages/Home.jsx",
-                                    lineNumber: 181,
+                                    lineNumber: 183,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/pages/Home.jsx",
-                            lineNumber: 176,
+                            lineNumber: 178,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/pages/Home.jsx",
-                    lineNumber: 123,
+                    lineNumber: 125,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/pages/Home.jsx",
-                lineNumber: 122,
+                lineNumber: 124,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/pages/Home.jsx",
-        lineNumber: 112,
+        lineNumber: 114,
         columnNumber: 5
     }, this);
 }
@@ -2772,11 +2784,14 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "use strict";
 
 __turbopack_context__.s([
+    "__N_SSP",
+    ()=>__N_SSP,
     "default",
     ()=>__TURBOPACK__default__export__
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$pages$2f$Home$2e$jsx__$5b$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/pages/Home.jsx [client] (ecmascript)");
 ;
+var __N_SSP = true;
 const __TURBOPACK__default__export__ = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$pages$2f$Home$2e$jsx__$5b$client$5d$__$28$ecmascript$29$__["default"];
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);

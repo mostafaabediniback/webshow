@@ -1,6 +1,7 @@
 import Home from '../src/pages/Home'
-import { serverAxios } from '../lib/serverAxios'
+import serverAxios from '../lib/serverAxios'
 
+// همون mapper خودت
 const mapPaginatedResponse = (data) => {
   const items =
     Array.isArray(data?.data) ? data.data :
@@ -19,17 +20,24 @@ const mapPaginatedResponse = (data) => {
 export async function getServerSideProps() {
   try {
     const [channelsRes, videosRes] = await Promise.all([
-      serverAxios.get('/api/landing/channels?page=1&per_page=10'),
-      serverAxios.get('/api/landing/videos?page=1&per_page=25'),
+      serverAxios.get('/landing/channels?page=1&per_page=10'),
+      serverAxios.get('/landing/videos?page=1&per_page=25'),
     ])
+
+    const initialChannels = mapPaginatedResponse(channelsRes.data)
+    const initialVideos = mapPaginatedResponse(videosRes.data)
+
+    console.log('SSR OK')
 
     return {
       props: {
-        initialChannels: mapPaginatedResponse(channelsRes?.data),
-        initialVideos: mapPaginatedResponse(videosRes?.data),
+        initialChannels,
+        initialVideos,
       },
     }
   } catch (error) {
+    console.log('SSR Error:', error?.message)
+
     return {
       props: {
         initialChannels: { items: [], totalPages: 1, totalItems: 0 },

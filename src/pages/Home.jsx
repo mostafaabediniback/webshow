@@ -13,6 +13,7 @@ import { getHomeNavigationState } from '../next/navigationState'
 const PAGE_SIZE = 25;
 
 function Home({ initialChannels, initialVideos }) {
+  console.log(initialChannels)
   const router = useRouter();
   const [activeChannelId, setActiveChannelId] = useState(null);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -23,6 +24,7 @@ function Home({ initialChannels, initialVideos }) {
     isLoading: channelsLoading,
     refetch: channelsRefetch,
   } = useLandingChannels(1, initialChannels);
+  console.log(channelsData)
 
   const {
     data: videosData,

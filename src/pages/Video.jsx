@@ -160,7 +160,7 @@ function Video() {
               <video
                 controls
                 className="w-full h-full"
-                poster={data.data.thumbnailUrl || data.data.cover_link || data.data.cover}
+                // poster={data.data.thumbnailUrl || data.data.cover_link || data.data.cover}
                 src={data.data.video_link || data.data.videoUrl}
               />
             </div>
