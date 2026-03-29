@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const useAuthStore = create((set) => ({
-  token: sessionStorage.getItem("token") || null,
+  token: typeof window !== "undefined" ? sessionStorage.getItem("token") || null : null,
   roles: [],
   user: { id: null, firstname: "", lastname: "" ,nationalCode:""},
 

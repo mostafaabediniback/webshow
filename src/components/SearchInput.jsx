@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import { useState, useEffect, useMemo } from 'react'
 import { SearchNormal1, CloseCircle } from 'iconsax-react'
 import { useQuery } from '@tanstack/react-query'
@@ -8,13 +8,13 @@ import defaultCover from '../assets/img/cover.jpg'
 function SearchInput() {
   const [q, setQ] = useState('')
   const [debouncedQ, setDebouncedQ] = useState('')
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
+  const router = useRouter()
+  const pathname = router.asPath
 
   const onSubmit = (e) => {
     e.preventDefault()
     if (!q.trim()) return
-    navigate(`/search/${encodeURIComponent(q.trim())}`)
+    router.push(`/search/${encodeURIComponent(q.trim())}`)
   }
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function SearchInput() {
           onKeyDown={(e) => {
             if (e.key === 'Escape') {
               setQ('')
-              if (pathname.startsWith('/search')) navigate('/')
+              if (pathname.startsWith('/search')) router.push('/')
             }
           }}
           placeholder="جستجو در ویدیوها"
@@ -64,7 +64,7 @@ function SearchInput() {
             type="button"
             onClick={() => {
               setQ('')
-              if (pathname.startsWith('/search')) navigate('/')
+              if (pathname.startsWith('/search')) router.push('/')
             }}
             className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-200 active:bg-gray-300 transition-colors"
             aria-label="حذف جستجو"
@@ -89,7 +89,7 @@ function SearchInput() {
                 <li key={v.id}>
                   <button
                     type="button"
-                    onClick={() => navigate(`/v/${v.id}`)}
+                    onClick={() => router.push(`/v/${v.id}`)}
                     className="w-full text-right px-4 py-3 hover:bg-gray-50 flex items-center gap-3"
                   >
                     <img
@@ -112,7 +112,7 @@ function SearchInput() {
                 <li>
                   <button
                     type="button"
-                    onClick={() => navigate(`/search/${encodeURIComponent(q.trim())}`)}
+                    onClick={() => router.push(`/search/${encodeURIComponent(q.trim())}`)}
                     className="w-full text-right px-4 py-3 bg-gray-50 hover:bg-gray-100 text-sm text-blue-700"
                   >
                     مشاهده همه نتایج

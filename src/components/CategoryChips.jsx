@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/router";
 
 function CategoryChips({ channels, activeChannelId, onSelect }) {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   console.log(onSelect);
   console.log(activeChannelId);
@@ -18,7 +18,7 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
           }`}
       >
         <div 
-        onClick={() => navigate("/")}
+        onClick={() => router.push("/")}
           className={`w-14 h-14 rounded-xl overflow-hidden border-2 shadow-sm flex items-center justify-center transition-all duration-200 ${activeChannelId === null
               ? 'border-indigo-500 bg-indigo-50'
               : 'border-slate-200 bg-slate-100 hover:border-slate-300'
@@ -44,7 +44,7 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
               }`}
           >
             <div
-            onClick={() => navigate("/")}
+            onClick={() => router.push("/")}
               className={`w-14 h-14 rounded-xl overflow-hidden border-2 shadow-sm transition-all duration-200 ${isActive
                   ? 'border-indigo-500 ring-2 ring-indigo-200'
                   : 'border-slate-200 hover:border-slate-300'
@@ -68,4 +68,3 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
 }
 
 export default CategoryChips
-

@@ -1,5 +1,6 @@
 import { FolderAdd, Home2, People, Personalcard, VideoAdd, VideoPlay } from 'iconsax-react'
-import { Link, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import Navbar from '../components/Navbar'
 
 const ADMIN_NAV = [
@@ -17,7 +18,7 @@ const USER_NAV = [
 ]
 
 function DashboardLayout({ children }) {
-  const { pathname } = useLocation()
+  const { asPath: pathname } = useRouter()
   const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
   const navItems = role === 'admin' ? USER_NAV : ADMIN_NAV
 
@@ -37,7 +38,7 @@ function DashboardLayout({ children }) {
                   return (
                     <Link
                       key={item.to}
-                      to={item.to}
+                      href={item.to}
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${active
                           ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md'
                           : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'

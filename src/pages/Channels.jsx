@@ -370,7 +370,7 @@ function Channels() {
                       }}
                       className="h-9 px-3 sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
                     >
-                      <Edit2 size={16} sm:size={20} color="currentColor" />
+                      <Edit2 size={16} color="currentColor" />
                       ویرایش
                     </button>
 
@@ -378,7 +378,7 @@ function Channels() {
                       onClick={() => setDeleteConfirmId(c.id)}
                       className="h-9 px-3 sm:px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
                     >
-                      <Trash size={16} sm:size={20} color="#fff" />
+                      <Trash size={16} color="#fff" />
                       حذف
                     </button>
                   </div>

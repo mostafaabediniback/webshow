@@ -1,12 +1,14 @@
 import DashboardLayout from '../layouts/DashboardLayout'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useParams, Link } from 'react-router-dom'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { getLocalVideos, updateLocalVideo } from '../services/api'
 import { useMemo, useState } from 'react'
 import useChannel from '../hooks/useChannel'
 
 function VideoEdit() {
-  const { id } = useParams()
+  const router = useRouter()
+  const id = typeof router.query.id === 'string' ? router.query.id : ''
   const qc = useQueryClient()
   const { data: localVideos } = useQuery({ queryKey: ['localVideos'], queryFn: getLocalVideos })
   const { channels } = useChannel()
@@ -48,7 +50,7 @@ function VideoEdit() {
       <DashboardLayout>
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <p className="text-sm text-red-600">ویدیو پیدا نشد.</p>
-          <Link to="/dashboard/videos" className="mt-3 inline-block h-9 px-3 rounded-lg border border-gray-300">بازگشت</Link>
+          <Link href="/dashboard/videos" className="mt-3 inline-block h-9 px-3 rounded-lg border border-gray-300">بازگشت</Link>
         </div>
       </DashboardLayout>
     )
@@ -96,7 +98,7 @@ function VideoEdit() {
             </div>
             <div className="flex items-center gap-2">
               <button onClick={()=>mUpdate.mutate()} className="h-10 px-4 rounded-lg bg-blue-600 text-white">ذخیره</button>
-              <Link to="/dashboard/videos" className="h-10 px-4 rounded-lg border border-gray-300">بازگشت</Link>
+              <Link href="/dashboard/videos" className="h-10 px-4 rounded-lg border border-gray-300">بازگشت</Link>
             </div>
           </div>
           <div className="space-y-3"></div>

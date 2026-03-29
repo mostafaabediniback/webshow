@@ -6,17 +6,16 @@ import VideoSkeleton from "../components/VideoSkeleton";
 import Layout from "../layouts/Layout";
 import { useLandingChannels } from "../hooks/useLandingChannels";
 import { useInfiniteLandingVideos } from "../hooks/useInfiniteLandingVideos";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useRouter } from "next/router";
 
 const PAGE_SIZE = 25;
 
 function Home() {
-  const { username } = useParams();
-  // const navigate = useNavigate();
-
-
-  const location = useLocation(); // استفاده از useLocation
-  console.log(location);
+  const router = useRouter();
+  const username = Array.isArray(router.query.username)
+    ? router.query.username[0]
+    : router.query.username;
+  console.log(router);
 
   const [activeChannelId, setActiveChannelId] = useState(null);
   const loadMoreRef = useRef(null);
@@ -53,10 +52,10 @@ function Home() {
   }, [refetch]);
 
   useEffect(() => {
-    if (location.state?.channelId) {
-      setActiveChannelId(location.state.channelId);
+    if (router.query?.channelId) {
+      setActiveChannelId(router.query.channelId);
     }
-  }, [location.state]);
+  }, [router.query?.channelId]);
 
   // useEffect(() => {
   //   if (username && !location.state?.channelId) {
