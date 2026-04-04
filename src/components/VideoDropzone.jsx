@@ -35,6 +35,7 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
       chunking: true,
       forceChunking: true,
       chunkSize: 5 * 1024 * 1024,
+      maxFilesize: 2048, // in MB (2GB)
       retryChunks: true,
       retryChunksLimit: 3,
       maxFiles: 1,

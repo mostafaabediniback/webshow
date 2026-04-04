@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 import useChannelVideos from '../hooks/useChannelVideos'
 import { useVideo } from '../hooks/useVideo'
 import Layout from '../layouts/Layout'
+import { useRef } from 'react'
 
 const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
   <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -22,6 +23,9 @@ function Video() {
 
   const [isDownloading, setIsDownloading] = useState(false)
   const [videoSource, setVideoSource] = useState('')
+
+  const videoRef = useRef(null)
+  const isMobile = window.innerWidth < 768
 
   useEffect(() => {
     const src = data?.data?.video_link || data?.data?.videoUrl || ''
@@ -101,6 +105,23 @@ function Video() {
       setIsDownloading(false)
     }
   }
+  const handlePlay = () => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (isMobile) {
+      if (video.requestFullscreen) {
+        video.requestFullscreen()
+      } else if (video.webkitEnterFullscreen) {
+        video.webkitEnterFullscreen()
+      }
+    }
+  }
+  useEffect(() => {
+    if (!isMobile && videoRef.current) {
+      videoRef.current.play().catch(() => { })
+    }
+  }, [videoSource])
 
   if (isLoading) {
     return (
@@ -144,10 +165,14 @@ function Video() {
           <div>
             <div className="relative aspect-video w-full overflow-hidden rounded-lg sm:rounded-xl bg-black shadow-lg">
               <video
+                ref={videoRef}
                 controls
+                muted
+                playsInline
+                autoPlay={!isMobile}
+                onPlay={handlePlay}
                 className="w-full h-full"
-                poster={data.data.thumbnailUrl || data.data.cover_link || data.data.cover}
-                src={data.data.video_link || data.data.videoUrl}
+                src={videoSource}
               />
             </div>
             <h1 className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-tight px-1">
