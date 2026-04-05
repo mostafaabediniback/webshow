@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { Edit2, FolderAdd, TickCircle, Trash } from "iconsax-react";
+import { Edit2, FolderAdd, TickCircle, Trash, User } from "iconsax-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import ConfirmModal from "../components/ConfirmModal";
@@ -18,6 +18,7 @@ function Channels() {
   } = useChannel();
 
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [editing, setEditing] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
@@ -52,8 +53,10 @@ function Channels() {
           return;
         }
 
-        await updateChannel(editing.id, { name });
-
+        await updateChannel(editing.id, {
+          name,
+          slug: username // ✅ اضافه کن
+        });
         if (imageFile) {
           await changeChannelImage(editing.id, imageFile);
         }
@@ -66,11 +69,17 @@ function Channels() {
           return;
         }
 
-        await createChannel({ name, image: imageFile });
-        toast.success("کانال جدید با موفقیت ایجاد شد");
+        await createChannel({
+          name,
+          slug: username,
+          image: imageFile,
+        });
+
+        // toast.success("کانال جدید با موفقیت ایجاد شد");
       }
 
       setName("");
+      setUsername("");
       setImageFile(null);
     } catch (err) {
       toast.error("خطا در انجام عملیات، دوباره تلاش کنید");
@@ -122,13 +131,6 @@ function Channels() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* header */}
-        {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
-            مدیریت کانال‌ها
-          </h1>
-          <p className="text-sm text-gray-600">ایجاد و مدیریت کانال‌های خود</p>
-        </div> */}
 
         {/* فرم ایجاد / ویرایش */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -143,7 +145,7 @@ function Channels() {
                 className={`rounded-xl border-2 transition-all ${thumbDrag
                   ? "border-blue-500 bg-blue-50"
                   : "border-dashed border-gray-300 hover:border-gray-400"
-                  } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[140px]`}
+                  } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[190px]`}
                 onDragOver={(e) => {
                   e.preventDefault();
                   setThumbDrag(true);
@@ -234,6 +236,27 @@ function Channels() {
                 className="w-full h-11 px-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
 
+              <label className="space-y-2">
+                {/* <span className="text-sm font-semibold text-gray-900">نام کاربری</span> */}
+                <div className="relative">
+                  <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    value={username}
+                    onChange={(e) => {
+                      const value = e.target.value.toLowerCase();
+                      const regex = /^[a-z0-9_]*$/;
+
+                      if (regex.test(value)) {
+                        setUsername(value);
+                      }
+                    }}
+                    className="h-11 w-full rounded-lg border border-gray-300 pr-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="نام کاربری : مثلاً ali_m123"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 m-4">فقط حروف کوچک انگلیسی، اعداد و _ مجاز است.</p>
+              </label>
+
               <div className="flex items-center gap-2">
                 {editing && (
                   <button
@@ -248,10 +271,11 @@ function Channels() {
                   onClick={handleSubmit}
                   disabled={
                     !name.trim() ||
+                    !username.trim() ||
                     (!editing && !imageFile) ||
                     (editing && !imageFile && !editing?.image)
                   }
-                  className="h-11 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white flex items-center gap-2"
+                  className="w-full items-center justify-center h-11 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white flex items-center gap-2"
                 >
                   {editing ? (
                     <>
@@ -326,7 +350,7 @@ function Channels() {
                             : `http://${c.image}`
                         }
                         alt={c.name}
-                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0"
+                        className="w-20 h-20 sm:w-12 sm:h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0"
                       />
                     ) : (
                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-xs font-medium flex-shrink-0">
@@ -338,7 +362,12 @@ function Channels() {
                       <span className="text-sm sm:text-base font-semibold text-gray-900 block line-clamp-1">
                         {c.name}
                       </span>
+
                       <span className="block text-xs text-gray-500 mt-1">
+                        @{c.username}
+                      </span>
+
+                      <span className="block text-xs text-gray-400 mt-1">
                         ایجاد: {new Date(c.created_at).toLocaleDateString("fa-IR")} |
                         ویرایش: {new Date(c.updated_at).toLocaleDateString("fa-IR")}
                       </span>
@@ -366,9 +395,10 @@ function Channels() {
                       onClick={() => {
                         setEditing(c);
                         setName(c.name);
+                        setUsername(c.username || "");
                         setImageFile(null);
                       }}
-                      className="h-9 px-3 sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
+                      className="h-9 px-3 justify-center sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
                     >
                       <Edit2 size={16} sm:size={20} color="currentColor" />
                       ویرایش
@@ -376,7 +406,7 @@ function Channels() {
 
                     <button
                       onClick={() => setDeleteConfirmId(c.id)}
-                      className="h-9 px-3 sm:px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
+                      className="h-9 px-3 justify-center  sm:px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
                     >
                       <Trash size={16} sm:size={20} color="#fff" />
                       حذف

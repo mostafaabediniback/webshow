@@ -92,7 +92,7 @@ function Videos() {
             </div>
           ) : (
             <>
-              <div className="space-y-3">
+              <div className="flex gap-4 flex-wrap space-y-3">
                 {(data?.items || []).map((v) => (
                   <VideoRow
                     key={v.id}

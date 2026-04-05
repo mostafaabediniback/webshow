@@ -10,20 +10,28 @@ export const getChannels = async (pageNumber = 1, pageSize = 25) => {
 export const createChannel = async (payload) => {
   const uidRaw =
     typeof window !== "undefined" ? sessionStorage.getItem("user_id") : null;
+
   const user_id = uidRaw ? Number(uidRaw) : undefined;
+
   const formData = new FormData();
+
   formData.append("name", payload?.name || "");
+  formData.append("slug", payload?.slug || ""); // ✅ مهم
+
   if (typeof user_id !== "undefined") {
     formData.append("user_id", String(user_id));
   }
+
   if (payload?.image) {
     formData.append("image", payload.image);
   }
+
   const res = await axiosInstanceNew.post("/channel/create", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
+
   return res.data;
 };
 

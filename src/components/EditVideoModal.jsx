@@ -10,6 +10,7 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
   const [coverFile, setCoverFile] = useState(null);
   const [coverPreview, setCoverPreview] = useState("");
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [publicShow, setPublicShow] = useState(true);
 
   const { updateVideoAsync, isUpdating } = useUpdateVideo();
 
@@ -30,6 +31,11 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
     setDescription(initialVideo?.description || "");
     setCoverFile(null);
     setCoverPreview(initialCover);
+    setPublicShow(
+      typeof initialVideo?.public_show !== "undefined"
+        ? Boolean(initialVideo.public_show)
+        : true
+    );
 
     const fetchDetail = async () => {
       try {
@@ -41,11 +47,16 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
         setDescription(detail?.description || initialVideo?.description || "");
         setCoverPreview(
           detail?.cover_link ||
-            detail?.cover_url ||
-            detail?.cover ||
-            detail?.thumbnailUrl ||
-            initialCover ||
-            ""
+          detail?.cover_url ||
+          detail?.cover ||
+          detail?.thumbnailUrl ||
+          initialCover ||
+          ""
+        );
+        setPublicShow(
+          typeof detail?.public_show !== "undefined"
+            ? Boolean(detail.public_show)
+            : true
         );
       } catch (error) {
         console.error(error);
@@ -76,12 +87,13 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
     }
 
     try {
-      await updateVideoAsync({
-        videoId,
-        title: title.trim(),
-        description: description || "",
-        coverFile,
-      });
+await updateVideoAsync({
+  videoId,
+  title: title.trim(),
+  description: description || "",
+  coverFile,
+  public_show: publicShow ? 1 : 0, // ✅ مهم
+});
       onClose();
     } catch {
       // errors handled in hook
@@ -152,6 +164,22 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
               disabled={isUpdating}
             />
           </div>
+          <div className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3">
+  <div>
+    <p className="text-sm font-semibold text-gray-900">نمایش عمومی</p>
+    <p className="text-xs text-gray-500">
+      در صورت غیرفعال بودن، ویدیو خصوصی خواهد بود
+    </p>
+  </div>
+
+  <input
+    type="checkbox"
+    checked={publicShow}
+    onChange={(e) => setPublicShow(e.target.checked)}
+    disabled={isUpdating}
+    className="w-5 h-5 accent-blue-600 cursor-pointer"
+  />
+</div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-2">

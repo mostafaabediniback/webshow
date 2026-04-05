@@ -71,7 +71,7 @@ function Dashboard() {
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-orange-500 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-12 h-12 rounded-lg bg-orange-100 group-hover:bg-orange-500 flex items-center justify-center mb-3 transition-colors">
+                <div className="w-12 h-12 rounded-lg bg-orange-100  flex items-center justify-center mb-3 transition-colors">
                   <FolderAdd size={24} color="#F97316" className="group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">مدیریت کانال‌ها</h3>
@@ -85,7 +85,7 @@ function Dashboard() {
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-amber-500 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-12 h-12 rounded-lg bg-amber-100 group-hover:bg-amber-500 flex items-center justify-center mb-3 transition-colors">
+                <div className="w-12 h-12 rounded-lg bg-amber-100  flex items-center justify-center mb-3 transition-colors">
                   <VideoAdd size={24} color="#D97706" className="group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">آپلود ویدیو</h3>
@@ -99,7 +99,7 @@ function Dashboard() {
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-yellow-500 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-12 h-12 rounded-lg bg-yellow-100 group-hover:bg-yellow-500 flex items-center justify-center mb-3 transition-colors">
+                <div className="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center mb-3 transition-colors">
                   <VideoPlay size={24} color="#EAB308" className="group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">ویدیوهای آپلودشده</h3>

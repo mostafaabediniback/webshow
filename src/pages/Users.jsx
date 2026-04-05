@@ -12,14 +12,14 @@ const INITIAL_FORM = {
   phone_number: '',
   password: '',
   channel_id: '',
-  username: ''
+  // username: ''
 }
 
 const INITIAL_EDIT_FORM = {
   user_id: '',
   name: '',
   phone_number: '',
-  username: '',
+  // username: '',
 }
 
 const INITIAL_PASSWORD_FORM = {
@@ -73,7 +73,9 @@ function Users() {
   })
 
   const isValidCreate = useMemo(() => {
-    return form.channel_id && form.phone_number && form.password && form.name && form.username;
+    return form.channel_id && form.phone_number && form.password && form.name
+    //  && form.username
+     ;
   }, [form]);
 
 
@@ -88,7 +90,7 @@ function Users() {
       phone_number: form.phone_number,
       password: form.password,
       name: form.name,
-      username: form.username
+      // username: form.username
 
 
     })
@@ -115,7 +117,7 @@ function Users() {
       user_id: userId,
       name: user?.name || '',
       phone_number: user?.phone_number || '',
-      username: user?.username || '',
+      // username: user?.username || '',
     })
     setIsEditModalOpen(true)
   }
@@ -130,7 +132,9 @@ function Users() {
   }
 
   const handleUpdateUser = async () => {
-    if (!editForm.user_id || !editForm.name || !editForm.phone_number || !editForm.username) {
+    if (!editForm.user_id || !editForm.name || !editForm.phone_number 
+      // || !editForm.username
+    ) {
       toast.error('لطفاً همه فیلدهای ویرایش کاربر را کامل کنید')
       return
     }
@@ -139,7 +143,7 @@ function Users() {
       user_id: Number(editForm.user_id),
       name: editForm.name,
       phone_number: editForm.phone_number,
-      username: editForm.username,
+      // username: editForm.username,
     })
   }
 
@@ -198,7 +202,7 @@ function Users() {
               </div>
             </label>
 
-            <label className="space-y-2">
+            {/* <label className="space-y-2">
               <span className="text-sm font-semibold text-gray-900">نام کاربری</span>
               <div className="relative">
                 <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -217,7 +221,7 @@ function Users() {
                 />
               </div>
               <p className="text-xs text-gray-500">فقط حروف کوچک انگلیسی، اعداد و _ مجاز است.</p>
-            </label>
+            </label> */}
 
 
 
@@ -306,7 +310,7 @@ function Users() {
                 <tr className="text-right text-gray-500 border-b border-gray-100">
                   <th className="pb-3 font-semibold">نام</th>
                   <th className="pb-3 font-semibold">شماره موبایل</th>
-                  <th className="pb-3 font-semibold">نام کاربری</th>
+                  {/* <th className="pb-3 font-semibold">نام کاربری</th> */}
                   <th className="pb-3 font-semibold">شناسه کانال</th>
                   <th className="pb-3 font-semibold">عملیات</th>
                 </tr>
@@ -321,7 +325,7 @@ function Users() {
                     <tr key={user.id || index} className="border-b border-gray-100 last:border-b-0">
                       <td className="py-4 font-medium text-gray-900">{user.name || '-'}</td>
                       <td className="py-4 text-gray-700" >{user.phone_number || '-'}</td>
-                      <td className="py-4 text-gray-700" >{user.username || '-'}</td>
+                      {/* <td className="py-4 text-gray-700" >{user.username || '-'}</td> */}
                       <td className="py-4 text-gray-700">{user.channel?.name || '-'}</td>
                       <td className="py-4">
                         <div className="flex items-center gap-2">
@@ -398,7 +402,7 @@ function Users() {
               dir="ltr"
             />
           </label>
-          <label className="space-y-2 md:col-span-2">
+          {/* <label className="space-y-2 md:col-span-2">
             <span className="text-sm font-semibold text-gray-900">نام کاربری</span>
             <input
               value={editForm.username}
@@ -413,7 +417,7 @@ function Users() {
               placeholder="username"
               dir="ltr"
             />
-          </label>
+          </label> */}
         </div>
       </Modal>
 

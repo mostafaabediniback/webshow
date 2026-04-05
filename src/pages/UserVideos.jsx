@@ -116,6 +116,11 @@ function UserVideos() {
       setVideoStatus('success')
     }
   }
+  const handleVideoSelected = (file) => {
+    setVideoFile(file || null)
+    setTempPath(null)
+    setVideoStatus('uploading')
+  }
 
   // تولید thumbnails (همان منطق Upload)
   useEffect(() => {
@@ -285,7 +290,12 @@ function UserVideos() {
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div>
+            {/* <VideoDropzone
+              onUploaded={handleVideoUploaded}
+              onProgress={() => { }}
+            /> */}
             <VideoDropzone
+              onFileSelected={handleVideoSelected}
               onUploaded={handleVideoUploaded}
               onProgress={() => { }}
             />
@@ -333,7 +343,6 @@ function UserVideos() {
                 <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
                 <div>
                   <CoverPicker
-                    // isFormDisabled={isFormDisabled}
                     value={thumbFile}
                     onChange={(file) => setThumbFile(file)}
                     onConfirm={(file) => {

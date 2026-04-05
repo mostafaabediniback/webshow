@@ -7,6 +7,8 @@ export default function FramePickerModal({
   videoFile,
   onSelect,
 }) {
+  console.log('videoFile:', videoFile)
+console.log('isFile:', videoFile instanceof File)
   const videoRef = useRef(null);
   const [videoSrc, setVideoSrc] = useState(null);
   const [duration, setDuration] = useState(0);
@@ -122,23 +124,25 @@ export default function FramePickerModal({
             ✕
           </button>
         </div>
-        
+
         {/* تغییرات: overflow-y-auto به اینجا منتقل شد تا محتوا اسکرول شود و هدر ثابت بماند */}
         <div className="px-4 sm:px-6 pb-6 space-y-5 overflow-y-auto">
           {/* 🎬 VIDEO */}
           <div className="bg-[#24364A] rounded-xl overflow-hidden relative shrink-0">
-            <video
+            {/* <video
               ref={videoRef}
               src={videoSrc}
+              video
               onLoadedMetadata={handleLoadedMetadata}
               onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
               className="w-full h-[220px] sm:h-[300px] object-contain"
               muted
               playsInline
               crossOrigin="anonymous"
-            />
+
+            /> */}
             {/* controls */}
-            <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2 sm:gap-3">
+            {/* <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2 sm:gap-3">
               <button
                 onClick={togglePlay}
                 className="bg-white px-3 py-2 rounded-full text-sm"
@@ -158,9 +162,21 @@ export default function FramePickerModal({
               <span className="text-white text-[10px] sm:text-xs">
                 {Math.floor(currentTime)} / {Math.floor(duration)}
               </span>
+            </div> */}
+            <div className="bg-[#24364A] rounded-xl overflow-hidden relative shrink-0">
+              <video
+                ref={videoRef}
+                src={videoSrc}
+                controls
+                onLoadedMetadata={handleLoadedMetadata}
+                onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
+                className="w-full h-[220px] sm:h-[300px] object-contain"
+                playsInline
+                crossOrigin="anonymous"
+              />
             </div>
           </div>
-          
+
           <div className="flex flex-col gap-4">
             <p className="text-sm text-gray-600">
               برای انتخاب تصویر شاخص می توانیدحین پخش ویدیو ،تصویر دلخواه خود را برش بزنید.
@@ -182,7 +198,7 @@ export default function FramePickerModal({
               </button>
             </div>
           </div>
-          
+
           {/* ✨ فریم‌های پیشنهادی */}
           <div>
             {suggested.length > 0 && (
