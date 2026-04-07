@@ -52,17 +52,53 @@ export const deleteChannel = async (id) => {
 };
 
 export const getChannelById = async (id) => {
-  const res = await axiosInstanceNew.get(`/channel/show/${id}`);
+  const url = id
+    ? `/channel/show/${id}`
+    : `/channel/show`;
+
+  const res = await axiosInstanceNew.get(url);
   return res.data;
 };
 
 export const changeChannelImage = async (id, imageFile) => {
   const formData = new FormData();
   formData.append("image", imageFile);
-  const res = await axiosInstanceNew.post(`/channel/change-image/${id}`, formData, {
+
+  const url = id
+    ? `/channel/change-image/${id}`
+    : `/channel/change-image`;
+
+  const res = await axiosInstanceNew.post(url, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return res.data;
+};
+
+export const changeProfileChannelImage = async (id, imageFile) => {
+  const formData = new FormData();
+  formData.append("image", imageFile);
+
+  const url = id
+    ? `/channel/change-background/${id}`
+    : `/channel/change-background`;
+
+  const res = await axiosInstanceNew.post(url, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
   return res.data;
+};
+
+export const updateChannelInfo = async (channelId, payload) => {
+    const url = channelId
+        ? `/channel/update-info/${channelId}`
+        : `/channel/update-info`;
+
+    const res = await axiosInstanceNew.put(url, payload);
+
+    return res.data;
 };

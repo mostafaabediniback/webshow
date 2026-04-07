@@ -10,7 +10,8 @@ const useChannelVideos = ({ channelId, pageNumber = 1, pageSize = 25 } = {}) => 
       }
       return getVideosByChannel(channelId, pageNumber, pageSize)
     },
-    enabled: true,
+    // enabled: true,
+    enabled: false,
   })
 }
 

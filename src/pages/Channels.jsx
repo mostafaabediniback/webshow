@@ -6,6 +6,7 @@ import ConfirmModal from "../components/ConfirmModal";
 import useChannel from "../hooks/useChannel";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { getSearch } from "../services/videoApi";
+import { useEffect } from "react";
 
 function Channels() {
   const {
@@ -15,6 +16,7 @@ function Channels() {
     deleteChannel,
     isLoadingChannels,
     changeChannelImage,
+    refetchChannels
   } = useChannel();
 
   const [name, setName] = useState("");
@@ -74,6 +76,7 @@ function Channels() {
           slug: username,
           image: imageFile,
         });
+    refetchChannels()
 
         // toast.success("کانال جدید با موفقیت ایجاد شد");
       }
@@ -97,6 +100,8 @@ function Channels() {
       await deleteChannel(deleteConfirmId);
       toast.success("کانال با موفقیت حذف شد");
       setDeleteConfirmId(null);
+          refetchChannels()
+
     } catch {
       toast.error("حذف کانال موفقیت‌آمیز نبود");
     }
@@ -127,6 +132,11 @@ function Channels() {
       toast.error("آپلود تصویر انجام نشد");
     }
   };
+
+  useEffect(() => {
+    refetchChannels()
+  }, [])
+
 
   return (
     <DashboardLayout>

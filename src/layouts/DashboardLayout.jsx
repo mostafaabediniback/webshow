@@ -1,6 +1,7 @@
 import { FolderAdd, Home2, People, Personalcard, VideoAdd, VideoPlay } from 'iconsax-react'
 import { Link, useLocation } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import { Setting2 } from 'iconsax-react'
 
 const ADMIN_NAV = [
   { to: '/dashboard', label: 'داشبورد', icon: Home2 },
@@ -14,6 +15,8 @@ const ADMIN_NAV = [
 const USER_NAV = [
   { to: '/dashboard/user-upload', label: 'بارگذاری ویدیو', icon: VideoAdd },
   { to: '/dashboard/user-videos', label: 'ویدیوهای من', icon: Personalcard },
+    { to: '/dashboard/settings', label: 'تنظیمات', icon: Setting2 },
+
 ]
 
 function DashboardLayout({ children }) {

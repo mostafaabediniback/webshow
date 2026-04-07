@@ -9,7 +9,7 @@ import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
 
 function Upload() {
-  const { channels: chans, isLoadingChannels } = useChannel()
+  const { channels: chans, isLoadingChannels, refetchChannels } = useChannel()
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [videoFile, setVideoFile] = useState(null)
@@ -102,6 +102,9 @@ function Upload() {
 
     setUploadProgress(100)
   }
+  useEffect(() => {
+    refetchChannels()
+  }, [])
 
   useEffect(() => {
     let canceled = false
@@ -340,7 +343,7 @@ function Upload() {
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
                 <CoverPicker
-                // isFormDisabled={isFormDisabled}
+                  // isFormDisabled={isFormDisabled}
                   value={thumbFile}
                   onChange={(file) => setThumbFile(file)}
                   onConfirm={(file) => {

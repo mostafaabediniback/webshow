@@ -15,7 +15,7 @@ function Videos() {
   const { channels: chans, isLoadingChannels } = useChannel();
   const [chanId, setChanId] = useState("");
   const { page, setPage } = usePaginationParams(1);
-  const { data, isLoading, isError } = useChannelVideos({ channelId: chanId, pageNumber: page, pageSize: 25 });
+  const { data, isLoading, isError, refetch } = useChannelVideos({ channelId: chanId, pageNumber: page, pageSize: 25 });
   const { deleteVideo, isDeleting } = useDeleteVideo();
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
@@ -25,6 +25,10 @@ function Videos() {
     setPage(1);
   }, [chanId, setPage]);
 
+  useEffect(() => {
+    refetch();
+  }, []);
+
   const handleDelete = (videoId) => {
     setDeleteConfirmId(videoId);
   };
@@ -33,6 +37,8 @@ function Videos() {
     if (deleteConfirmId) {
       deleteVideo(deleteConfirmId);
       setDeleteConfirmId(null);
+          refetch();
+
     }
   };
 
@@ -82,7 +88,7 @@ function Videos() {
           ) : (data?.items || []).length === 0 ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <Play size={32} className="text-gray-400" />
+                <Play size={32} color="#F97316" className="text-gray-400" />
               </div>
               <p className="text-sm text-gray-500">
                 {chanId

@@ -29,6 +29,7 @@ import Search from './pages/Search'
 import Users from './pages/Users'
 import UserVideos from './pages/UserVideos'
 import UploadedVideos from './pages/UploadedVideos'
+import SettingsPage from './pages/SettingsPage'
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
       <Route path="/dashboard/users" element={<RequireAuth><RequireAdminRole><Users /></RequireAdminRole></RequireAuth>} />
       <Route path="/dashboard/user-upload" element={<RequireAuth><RequireUserRole><UserVideos /></RequireUserRole></RequireAuth>} />
       <Route path="/dashboard/user-videos" element={<RequireAuth><RequireUserRole><UploadedVideos /></RequireUserRole></RequireAuth>} />
+      <Route path="//dashboard/settings" element={<RequireAuth><RequireUserRole><SettingsPage /></RequireUserRole></RequireAuth>} />
     </Routes>
   )
 }

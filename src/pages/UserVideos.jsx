@@ -43,11 +43,11 @@ function UserVideos() {
     pageSize: PAGE_SIZE,
   })
 
-  useEffect(() => {
-    if (isAdmin && !isLoadingChannels && !channels?.length) {
-      toast.warning('برای آپلود ویدیو باید ابتدا کانال برای شما تعریف شود')
-    }
-  }, [isAdmin, isLoadingChannels, channels])
+  // useEffect(() => {
+  //   if (isAdmin && !isLoadingChannels && !channels?.length) {
+  //     toast.warning('برای آپلود ویدیو باید ابتدا کانال برای شما تعریف شود')
+  //   }
+  // }, [isAdmin, isLoadingChannels, channels])
 
   // helper: capture frame from URL
   const captureFrameFromUrl = (videoUrl, timeInSeconds = 0) => {

@@ -5,6 +5,8 @@ import {
   updateChannel,
   deleteChannel,
   changeChannelImage,
+  changeProfileChannelImage,
+  updateChannelInfo,
 } from "../services/channelApi";
 import { QueryKeys } from "../enums";
 import { toast } from "react-toastify";
@@ -21,7 +23,8 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
   } = useQuery({
     queryKey: [QueryKeys.channel, pageNumber, pageSize, filters],
     queryFn: () => getChannels(pageNumber, pageSize, filters),
-    enabled: options.enabled ?? true,
+    // enabled: options.enabled ?? true,
+    enabled: false,
   });
 
   // [02] - Create channel
@@ -57,6 +60,48 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
     mutationFn: ({ id, file }) => changeChannelImage(id, file),
     onSuccess: () => {
       queryClient.invalidateQueries([QueryKeys.channel]);
+      toast.success("تصویر کاور با موفقیت تغییر کرد");
+
+    },
+    onError: (error) => {
+      toast.error(
+        error?.response?.data?.message ||
+        "خطا در تغییر تصویر کاور"
+      );
+    },
+
+  });
+
+  // [06] - Change profile channel image
+  const changeProfileChannelImageMutation = useMutation({
+    mutationFn: ({ id, file }) => changeProfileChannelImage(id, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries([QueryKeys.channel]);
+      toast.success("تصویر پروفایل با موفقیت تغییر کرد");
+    },
+
+    onError: (error) => {
+      toast.error(
+        error?.response?.data?.message ||
+        "خطا در تغییر تصویر پروفایل"
+      );
+    },
+  });
+
+  const updateChannelInfoMutation = useMutation({
+    mutationFn: ({ id, payload }) =>
+      updateChannelInfo(id, payload),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries([QueryKeys.channel]);
+      toast.success("اطلاعات شبکه‌های اجتماعی با موفقیت ذخیره شد");
+    },
+
+    onError: (error) => {
+      toast.error(
+        error?.response?.data?.message ||
+        "خطا در ذخیره اطلاعات کانال"
+      );
     },
   });
 
@@ -69,8 +114,19 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
     updateChannel: (id, payload) =>
       updateChannelMutation.mutate({ id, payload }),
     deleteChannel: deleteChannelMutation.mutate,
-    changeChannelImage: (id, file) =>
+    changeChannelImage: (file, id = null) =>
       changeChannelImageMutation.mutate({ id, file }),
+
+    changeProfileChannelImage: (file, id = null) =>
+      changeProfileChannelImageMutation.mutate({ id, file }),
+
+    isChangingChannelImage: changeChannelImageMutation.isPending,
+    isChangingProfileImage: changeProfileChannelImageMutation.isPending,
+
+    updateChannelInfo: (payload, id = null) =>
+      updateChannelInfoMutation.mutate({ id, payload }),
+
+    isUpdatingChannelInfo: updateChannelInfoMutation.isPending,
   };
 }
 
