@@ -94,11 +94,10 @@ export const changeProfileChannelImage = async (id, imageFile) => {
 };
 
 export const updateChannelInfo = async (channelId, payload) => {
-    const url = channelId
-        ? `/channel/update-info/${channelId}`
-        : `/channel/update-info`;
+  const url = channelId
+    ? `/channel/update-info/${channelId}`
+    : `/channel/update-info`;
 
-    const res = await axiosInstanceNew.put(url, payload);
-
-    return res.data;
+  const res = await axiosInstanceNew.put(url, payload);
+  return res.data;
 };

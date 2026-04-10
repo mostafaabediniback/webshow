@@ -58,51 +58,19 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
   // [05] - Change channel image
   const changeChannelImageMutation = useMutation({
     mutationFn: ({ id, file }) => changeChannelImage(id, file),
-    onSuccess: () => {
-      queryClient.invalidateQueries([QueryKeys.channel]);
-      toast.success("تصویر کاور با موفقیت تغییر کرد");
-
-    },
-    onError: (error) => {
-      toast.error(
-        error?.response?.data?.message ||
-        "خطا در تغییر تصویر کاور"
-      );
-    },
-
   });
+
+
 
   // [06] - Change profile channel image
   const changeProfileChannelImageMutation = useMutation({
     mutationFn: ({ id, file }) => changeProfileChannelImage(id, file),
-    onSuccess: () => {
-      queryClient.invalidateQueries([QueryKeys.channel]);
-      toast.success("تصویر پروفایل با موفقیت تغییر کرد");
-    },
-
-    onError: (error) => {
-      toast.error(
-        error?.response?.data?.message ||
-        "خطا در تغییر تصویر پروفایل"
-      );
-    },
   });
 
+  // [07] - Update channel info (🔥 اصلاح‌شده)
   const updateChannelInfoMutation = useMutation({
     mutationFn: ({ id, payload }) =>
       updateChannelInfo(id, payload),
-
-    onSuccess: () => {
-      queryClient.invalidateQueries([QueryKeys.channel]);
-      toast.success("اطلاعات شبکه‌های اجتماعی با موفقیت ذخیره شد");
-    },
-
-    onError: (error) => {
-      toast.error(
-        error?.response?.data?.message ||
-        "خطا در ذخیره اطلاعات کانال"
-      );
-    },
   });
 
   return {
@@ -114,17 +82,29 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
     updateChannel: (id, payload) =>
       updateChannelMutation.mutate({ id, payload }),
     deleteChannel: deleteChannelMutation.mutate,
-    changeChannelImage: (file, id = null) =>
-      changeChannelImageMutation.mutate({ id, file }),
+    changeChannelImage: (file, id, options = {}) =>
+      changeChannelImageMutation.mutate(
+        { id, file },
+        options
+      ),
 
-    changeProfileChannelImage: (file, id = null) =>
-      changeProfileChannelImageMutation.mutate({ id, file }),
+    changeProfileChannelImage: (file, id, options = {}) =>
+      changeProfileChannelImageMutation.mutate(
+        { id, file },
+        options
+      ),
 
     isChangingChannelImage: changeChannelImageMutation.isPending,
     isChangingProfileImage: changeProfileChannelImageMutation.isPending,
 
-    updateChannelInfo: (payload, id = null) =>
-      updateChannelInfoMutation.mutate({ id, payload }),
+    updateChannelInfo: ({ id, ...payload }, options = {}) =>
+      updateChannelInfoMutation.mutate(
+        {
+          id: id || null,
+          payload,
+        },
+        options
+      ),
 
     isUpdatingChannelInfo: updateChannelInfoMutation.isPending,
   };

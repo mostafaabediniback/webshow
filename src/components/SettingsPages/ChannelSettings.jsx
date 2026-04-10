@@ -1,8 +1,11 @@
 import { useState } from "react";
 import useChannel from "../../hooks/useChannel";
 import { toast } from "react-toastify";
+import useChannelDetail from "../../hooks/useChannelDetail";
+import { useEffect } from "react";
 
 function ImageUploader({ label, imageFile, setImageFile }) {
+
     const [drag, setDrag] = useState(false);
 
     return (
@@ -10,11 +13,10 @@ function ImageUploader({ label, imageFile, setImageFile }) {
             <p className="text-sm font-semibold text-gray-800">{label}</p>
 
             <div
-                className={`rounded-xl border-2 transition-all ${
-                    drag
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-dashed border-gray-300 hover:border-gray-400"
-                } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[190px]`}
+                className={`rounded-xl border-2 transition-all ${drag
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-dashed border-gray-300 hover:border-gray-400"
+                    } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[190px]`}
                 onDragOver={(e) => {
                     e.preventDefault();
                     setDrag(true);
@@ -81,6 +83,7 @@ function ImageUploader({ label, imageFile, setImageFile }) {
 function ChannelSettings({ channelId }) {
     const [channelImage, setChannelImage] = useState(null);
     const [profileImage, setProfileImage] = useState(null);
+    const { data, refetch } = useChannelDetail();
 
     const {
         changeChannelImage,
@@ -89,89 +92,205 @@ function ChannelSettings({ channelId }) {
         isChangingProfileImage,
     } = useChannel();
 
+
+    useEffect(() => {
+        refetch()
+    }, [])
+
     const isLoading =
         isChangingChannelImage || isChangingProfileImage;
 
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         try {
             // کاور
             if (channelImage) {
-                await changeChannelImage(channelImage, channelId);
-                setChannelImage(null);
-                // toast.success("تصویر کاور با موفقیت تغییر کرد");
+                changeChannelImage(
+                    channelImage,
+                    channelId,
+                    {
+                        onSuccess: () => {
+                            setChannelImage(null);
+                            toast.success("تصویر کاور با موفقیت تغییر کرد");
+                            refetch()
+                        },
+                        onError: (error) => {
+                            toast.error(
+                                error?.response?.data?.message ||
+                                "خطا در تغییر تصویر کاور"
+                            );
+                        },
+                    }
+                );
             }
 
             // پروفایل
             if (profileImage) {
-                await changeProfileChannelImage(profileImage, channelId);
-                setProfileImage(null);
-                // toast.success("تصویر پروفایل با موفقیت تغییر کرد");
+                changeProfileChannelImage(
+                    profileImage,
+                    channelId,
+                    {
+                        onSuccess: () => {
+                            setProfileImage(null);
+                            toast.success("تصویر پروفایل با موفقیت تغییر کرد");
+                            refetch()
+                        },
+                        onError: (error) => {
+                            toast.error(
+                                error?.response?.data?.message ||
+                                "خطا در تغییر تصویر پروفایل"
+                            );
+                        },
+                    }
+                );
             }
         } catch (error) {
             toast.error(
                 error?.response?.data?.message ||
-                    "خطا در ذخیره تصاویر"
+                "خطا در تغییر تصویر"
             );
         }
     };
 
     return (
-        <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-8">
 
-                {/* کاور کانال */}
-                <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4">
-                    <ImageUploader
-                        label="تصویر کاور کانال"
-                        imageFile={channelImage}
-                        setImageFile={setChannelImage}
-                    />
+            {/* ================= COVER ================= */}
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-5">
 
-                    <div className="text-xs text-gray-600 space-y-1 leading-5">
-                        <p>• حداکثر حجم فایل: <span className="font-medium">۴ مگابایت</span></p>
-                        <p>
-                            • نسبت تصویر پیشنهادی: <span className="font-medium">۹:۱</span>
-                        </p>
-                        <p className="text-gray-500">
-                            (مثال: 1800×200 ، 1600×177 ، 2200×245 پیکسل)
-                        </p>
-                    </div>
+                <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-gray-700">
+                        تصویر کاور کانال
+                    </h2>
                 </div>
 
-                {/* پروفایل */}
-                <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4">
-                    <ImageUploader
-                        label="تصویر پروفایل"
-                        imageFile={profileImage}
-                        setImageFile={setProfileImage}
-                    />
+                <div >
 
-                    <div className="text-xs text-gray-600 space-y-1 leading-5">
-                        <p>• حداکثر حجم فایل: <span className="font-medium">۴ مگابایت</span></p>
-                        <p>
-                            • نسبت تصویر: <span className="font-medium">۱:۱ (مربع)</span>
-                        </p>
-                        <p className="text-gray-500">
-                            حداقل ابعاد: 300×300 پیکسل
-                        </p>
+                    <div className="flex flex-col gap-4" >
+                        {/* Upload */}
+                        <div className="flex flex-col gap-4">
+                            <ImageUploader
+                                label="آپلود تصویر کاور"
+                                imageFile={channelImage}
+                                setImageFile={setChannelImage}
+                            />
+                            <div className="text-xs text-gray-600 space-y-1 leading-5">
+                                <p>• حداکثر حجم فایل: <span className="font-medium">۴ مگابایت</span></p>
+                                <p>
+                                    • نسبت تصویر پیشنهادی: <span className="font-medium">۹:۱</span>
+                                </p>
+                                <p className="text-gray-500">
+                                    (مثال: 1800×200 ، 1600×177 ، 2200×245 پیکسل)
+                                </p>
+                            </div>
+                        </div>
+                        <div className="pt-4 border-t space-y-3"></div>
+
+
+                        {/* Preview */}
+                        <div>
+                            <div className="text-xs text-gray-500 mb-2 flex justify-between">
+                                <span>تصویر فعلی</span>
+
+                            </div>
+
+                            {data?.data?.image ? (
+                                <div className="relative overflow-hidden rounded-xl border bg-gray-50 group">
+                                    <img
+                                        src={data.data.image}
+                                        className="w-full h-96  transition duration-300 group-hover:scale-[1.03]"
+                                    />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition" />
+                                </div>
+                            ) : (
+                                <div className="w-full h-44 rounded-xl border border-dashed flex items-center justify-center text-xs text-gray-400 bg-gray-50">
+                                    بدون تصویر
+                                </div>
+                            )}
+                        </div>
                     </div>
+
                 </div>
             </div>
 
-            {/* دکمه */}
-            <button
-                onClick={handleSubmit}
-                disabled={isLoading}
-                className={`px-5 py-2.5 rounded-lg text-sm font-medium text-white transition
-                    ${
-                        isLoading
+
+            {/* ================= PROFILE ================= */}
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-5">
+
+                <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-gray-700">
+                        تصویر پروفایل کانال
+                    </h2>
+
+
+                </div>
+
+                <div >
+
+                    <div className=" flex flex-col gap-4 ">
+                        {/* Upload */}
+                        <div className="flex flex-col gap-4">
+                            <ImageUploader
+                                label="آپلود تصویر پروفایل"
+                                imageFile={profileImage}
+                                setImageFile={setProfileImage}
+                            />
+                            <div className="text-xs text-gray-600 space-y-1 leading-5">
+                                <p>• حداکثر حجم فایل: <span className="font-medium">۴ مگابایت</span></p>
+                                <p>
+                                    • نسبت تصویر: <span className="font-medium">۱:۱ (مربع)</span>
+                                </p>
+                                <p className="text-gray-500">
+                                    حداقل ابعاد: 300×300 پیکسل
+                                </p>
+                            </div>
+                        </div>
+                        <div className="pt-4 border-t space-y-3"></div>
+
+                        {/* Preview */}
+                        <div>
+                            <div className="text-xs text-gray-500 mb-2 flex justify-between">
+                                <span>تصویر فعلی</span>
+                            </div>
+
+                            {data?.data?.background_image ? (
+                                <div className="flex justify-center">
+                                    <div className="relative w-32 h-32 rounded-full overflow-hidden border bg-gray-50 group">
+                                        <img
+                                            src={data.data.background_image}
+                                            className="w-full h-full object-cover transition duration-300 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition" />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="w-32 h-32 mx-auto rounded-full border border-dashed flex items-center justify-center text-xs text-gray-400 bg-gray-50">
+                                    بدون تصویر
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            {/* ================= BUTTON ================= */}
+            <div className="flex justify-end">
+                <button
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                    className={`
+        w-full sm:w-auto px-6 py-3 rounded-xl text-sm font-medium text-white transition
+        ${isLoading
                             ? "bg-orange-300 cursor-not-allowed"
                             : "bg-orange-500 hover:bg-orange-600"
-                    }
-                `}
-            >
-                {isLoading ? "در حال ذخیره..." : "ذخیره تغییرات"}
-            </button>
+                        }
+      `}
+                >
+                    {isLoading ? "در حال ذخیره..." : "ذخیره تغییرات"}
+                </button>
+            </div>
+
         </div>
     );
 }

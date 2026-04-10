@@ -1,10 +1,23 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+// hooks
+import useMyProfile from '../../hooks/userProfile/useMyProfile'
+import useUpdateMyProfile from '../../hooks/userProfile/useUpdateMyProfile'
+import useUpdateMyPassword from '../../hooks/userProfile/useUpdateMyPassword'
+
+
 
 function ProfileSettings() {
+  // 📌 گرفتن اطلاعات پروفایل
+  const { profile, isLoadingProfile } = useMyProfile()
+
+  // 📌 mutation ها
+  const { updateMyProfile, isUpdatingMyProfile } = useUpdateMyProfile()
+  const { updateMyPassword, isUpdatingMyPassword } = useUpdateMyPassword()
+
   const [form, setForm] = useState({
     name: '',
-    phone_number: '09120000000', // از بک میاد و غیرقابل تغییره
+    phone_number: '',
   })
 
   const [passwordForm, setPasswordForm] = useState({
@@ -12,8 +25,15 @@ function ProfileSettings() {
     new_password: '',
   })
 
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false)
-  const [isLoadingPassword, setIsLoadingPassword] = useState(false)
+  // 📌 مقداردهی اولیه از بک
+  useEffect(() => {
+    if (profile) {
+      setForm({
+        name: profile.name || '',
+        phone_number: profile.phone_number || '',
+      })
+    }
+  }, [profile])
 
   const handleChangeProfile = (key, value) => {
     setForm((prev) => ({
@@ -29,7 +49,7 @@ function ProfileSettings() {
     }))
   }
 
-  // ذخیره اطلاعات پروفایل
+  // ✅ ذخیره اطلاعات پروفایل
   const handleSaveProfile = async () => {
     if (!form.name) {
       toast.error('نام الزامی است')
@@ -37,21 +57,15 @@ function ProfileSettings() {
     }
 
     try {
-      setIsLoadingProfile(true)
-
-      // await updateProfile({
-      //   name: form.name,
-      // })
-
-      toast.success('اطلاعات با موفقیت ذخیره شد')
+      await updateMyProfile({
+        name: form.name,
+      })
     } catch (e) {
       toast.error('خطا در ذخیره اطلاعات')
-    } finally {
-      setIsLoadingProfile(false)
     }
   }
 
-  // تغییر رمز عبور
+  // ✅ تغییر رمز عبور
   const handleChangePasswordSubmit = async () => {
     if (!passwordForm.current_password || !passwordForm.new_password) {
       toast.error('هر دو فیلد رمز الزامی هستند')
@@ -59,14 +73,10 @@ function ProfileSettings() {
     }
 
     try {
-      setIsLoadingPassword(true)
-
-      // await changePassword({
-      //   current_password: passwordForm.current_password,
-      //   new_password: passwordForm.new_password,
-      // })
-
-      toast.success('رمز عبور با موفقیت تغییر کرد')
+      await updateMyPassword({
+        old_password: passwordForm.current_password,
+        new_password: passwordForm.new_password,
+      })
 
       setPasswordForm({
         current_password: '',
@@ -74,14 +84,11 @@ function ProfileSettings() {
       })
     } catch (e) {
       toast.error('خطا در تغییر رمز')
-    } finally {
-      setIsLoadingPassword(false)
     }
   }
 
   return (
     <div className="space-y-6">
-
       {/* بخش اطلاعات پروفایل */}
       <div className="space-y-4 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
         <h2 className="text-lg font-semibold">تنظیمات پروفایل</h2>
@@ -95,7 +102,7 @@ function ProfileSettings() {
           className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
         />
 
-        {/* شماره تماس (فقط خواندنی) */}
+        {/* شماره تماس */}
         <input
           type="text"
           value={form.phone_number}
@@ -105,10 +112,10 @@ function ProfileSettings() {
 
         <button
           onClick={handleSaveProfile}
-          disabled={isLoadingProfile}
+          disabled={isUpdatingMyProfile}
           className="bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white px-4 py-2 rounded-lg"
         >
-          {isLoadingProfile ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+          {isUpdatingMyProfile ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
         </button>
       </div>
 
@@ -123,7 +130,7 @@ function ProfileSettings() {
           onChange={(e) =>
             handleChangePassword('current_password', e.target.value)
           }
-          className="w-full  rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
         />
 
         <input
@@ -138,10 +145,10 @@ function ProfileSettings() {
 
         <button
           onClick={handleChangePasswordSubmit}
-          disabled={isLoadingPassword}
+          disabled={isUpdatingMyPassword}
           className="bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg"
         >
-          {isLoadingPassword ? 'در حال تغییر...' : 'تغییر رمز عبور'}
+          {isUpdatingMyPassword ? 'در حال تغییر...' : 'تغییر رمز عبور'}
         </button>
       </div>
     </div>

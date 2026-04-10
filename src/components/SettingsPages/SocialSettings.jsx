@@ -7,6 +7,7 @@ import {
 } from "react-icons/fa";
 import useChannelDetail from "../../hooks/useChannelDetail";
 import useChannel from "../../hooks/useChannel";
+import { toast } from "react-toastify";
 
 const SOCIAL_CONFIG = [
   { name: "telegram", label: "Telegram", icon: FaTelegram },
@@ -17,9 +18,9 @@ const SOCIAL_CONFIG = [
   { name: "aparat", label: "Aparat", icon: FaGlobe },
 ];
 
-function SocialSettings({ channelId }) {
+function SocialSettings() {
   const { updateChannelInfo, isUpdatingChannelInfo } = useChannel();
-  const { data, refetch } = useChannelDetail(channelId);
+  const { data, refetch } = useChannelDetail();
   useEffect(() => {
     refetch()
   }, [])
@@ -41,12 +42,37 @@ function SocialSettings({ channelId }) {
     }));
   };
 
-  const handleSubmit = () => {
-    updateChannelInfo(channelId, {
-      description: data?.data?.description || "",
-      socials,
-    });
-  };
+  // const handleSubmit = () => {
+  //   updateChannelInfo(channelId, {
+  //     description: data?.data?.description || "",
+  //     socials,
+  //   });
+  // }; 
+const handleSubmit = () => {
+  try {
+    updateChannelInfo(
+      {
+        description: data?.data?.description || "",
+        socials,
+      },
+      {
+        onSuccess: () => {
+          toast.success("اطلاعات شبکه‌های اجتماعی با موفقیت ذخیره شد");
+          refetch();
+        },
+        onError: (error) => {
+          toast.error(
+            error?.response?.data?.message ||
+              "خطا در ذخیره اطلاعات کانال"
+          );
+        },
+      }
+    );
+  } catch (error) {
+    // فقط خطاهای sync رو می‌گیره (معمولاً اتفاق نمیفته)
+    toast.error("خطای غیرمنتظره رخ داد");
+  }
+};
 
   return (
     <div className="space-y-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
@@ -97,34 +123,51 @@ function SocialSettings({ channelId }) {
       </button>
 
       {/* PREVIEW */}
-      <div className="pt-4 border-t space-y-2">
-        <h3 className="text-sm font-semibold text-gray-600">
-          پیش‌نمایش اطلاعات
-        </h3>
+<div className="pt-4 border-t space-y-3">
+  <h3 className="text-sm font-semibold text-gray-600">
+    پیش‌نمایش اطلاعات
+  </h3>
 
-        {data?.data?.socials ? (
-          <div className="text-sm text-gray-700 space-y-1">
-            {Object.entries(data.data.socials).map(
-              ([key, value]) => (
-                <div key={key}>
-                  <span className="font-medium">{key}: </span>
-                  <a
-                    href={value}
-                    target="_blank"
-                    className="text-blue-500 underline"
-                  >
-                    {value}
-                  </a>
-                </div>
-              )
-            )}
+  {data?.data?.socials &&
+  Object.values(data.data.socials).some(Boolean) ? (
+    <div className="grid sm:grid-cols-2 gap-3">
+      {SOCIAL_CONFIG.map((item) => {
+        const value = data.data.socials?.[item.name];
+        if (!value) return null;
+
+        const Icon = item.icon;
+
+        return (
+          <div
+            key={item.name}
+            className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50 hover:bg-gray-100 transition"
+          >
+            <Icon className="text-gray-500 text-lg" />
+
+            <div className="flex flex-col overflow-hidden">
+              <span className="text-xs text-gray-500">
+                {item.label}
+              </span>
+
+              <a
+                href={value}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-blue-600 hover:underline truncate"
+              >
+                {value}
+              </a>
+            </div>
           </div>
-        ) : (
-          <p className="text-sm text-gray-400">
-            اطلاعاتی وجود ندارد
-          </p>
-        )}
-      </div>
+        );
+      })}
+    </div>
+  ) : (
+    <div className="text-sm text-gray-400 bg-gray-50 border rounded-lg p-4 text-center">
+      هنوز شبکه اجتماعی ثبت نشده
+    </div>
+  )}
+</div>
     </div>
   );
 }

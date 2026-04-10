@@ -90,7 +90,7 @@ export default function UploadedVideos() {
             </div>
           ) : (
             <>
-              <div className="space-y-3">
+              <div className="space-y-3 flex flex-wrap gap-4">
                 {videosList.map((v) => (
                   <VideoRow
                     key={v.id}
