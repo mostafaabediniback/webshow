@@ -1,12 +1,11 @@
 import axios from 'axios'
 import { Eye } from 'iconsax-react'
-import { useEffect, useState } from 'react'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import useChannelVideos from '../hooks/useChannelVideos'
 import { useVideo } from '../hooks/useVideo'
 import Layout from '../layouts/Layout'
-import { useRef } from 'react'
 import { readAuthSession } from '../utils/auth'
 
 const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
@@ -24,6 +23,7 @@ function Video() {
 
   const [isDownloading, setIsDownloading] = useState(false)
   const [videoSource, setVideoSource] = useState('')
+  const [started, setStarted] = useState(false)
 
   const videoRef = useRef(null)
   const isMobile = window.innerWidth < 768
@@ -118,11 +118,24 @@ function Video() {
       }
     }
   }
+  // useEffect(() => {
+  //   if (!isMobile && videoRef.current) {
+  //     videoRef.current.play().catch(() => { })
+  //   }
+  // }, [videoSource])
   useEffect(() => {
-    if (!isMobile && videoRef.current) {
-      videoRef.current.play().catch(() => { })
+    if (!videoSource || !videoRef.current) return
+
+    if (!isMobile) {
+      const playPromise = videoRef.current.play()
+
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // autoplay blocked → ignore
+        })
+      }
     }
-  }, [videoSource])
+  }, [videoSource, isMobile])
 
   if (isLoading) {
     return (
@@ -168,12 +181,21 @@ function Video() {
               <video
                 ref={videoRef}
                 controls
-                muted
                 playsInline
-                autoPlay={!isMobile}
-                onPlay={handlePlay}
-                className="w-full h-full"
+                autoPlay
+                preload="auto"
                 src={videoSource}
+                className="w-full h-full"
+                onCanPlay={() => {
+                  const v = videoRef.current
+                  if (!v) return
+
+                  const playPromise = v.play()
+                  if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                    })
+                  }
+                }}
               />
             </div>
             <h1 className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-tight px-1">
