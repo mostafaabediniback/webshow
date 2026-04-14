@@ -199,29 +199,29 @@ function Video() {
               />
             </div>
             <h1 className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-tight px-1">
-              {data.data.title}
+              {data?.data?.title}
             </h1>
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <Link
-                  to={data?.data?.username ? `/${data.data.username}` : "/"} state={{ channelId: data?.data?.channel_id }}
+                  to={data?.data?.username ? `/${data?.data?.username}` : "/"} state={{ channelId: data?.data?.channel_id }}
                   className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                 >
                   <img
-                    src={data.data.channel_image}
-                    alt={data.data.channelName || data.data.channel_name}
+                    src={data?.data?.channel_image}
+                    alt={data?.data?.channelName || data?.data?.channel_name}
                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 ring-2 ring-gray-200 flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{data.data.channel_name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{(data.data.view_count || 0).toLocaleString('fa-IR')} بازدید</p>
+                    <p className="text-sm font-semibold text-gray-900 truncate">{data?.data?.channel_name}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{(data?.data?.view_count || 0).toLocaleString('fa-IR')} بازدید</p>
                   </div>
                 </Link>
               </div>
               <div className="flex items-center gap-2 flex-wrap text-gray-600">
                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
                   <Eye size={16} color="#4a5565" />
-                  {(data.data.view_count || 0).toLocaleString('fa-IR')}
+                  {(data?.data?.view_count || 0).toLocaleString('fa-IR')}
                 </span>
                 {/* <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
                   <Like1 size={16} color="#4a5565" />
@@ -254,7 +254,7 @@ function Video() {
             </div>
             <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
               <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 break-words ">
-                {data.data.description}
+                {data?.data?.description}
               </p>
             </div>
           </div>
