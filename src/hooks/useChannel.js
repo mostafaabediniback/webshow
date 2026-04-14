@@ -1,20 +1,19 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'react-toastify'
+import { QueryKeys } from '../enums'
 import {
-  getChannels,
-  createChannel,
-  updateChannel,
-  deleteChannel,
   changeChannelImage,
   changeProfileChannelImage,
+  createChannel,
+  deleteChannel,
+  getChannels,
+  updateChannel,
   updateChannelInfo,
-} from "../services/channelApi";
-import { QueryKeys } from "../enums";
-import { toast } from "react-toastify";
+} from '../services/channelApi'
 
 function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
-  // [01] - Get channels list
   const {
     data: channels,
     isLoading: isLoadingChannels,
@@ -23,91 +22,70 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
   } = useQuery({
     queryKey: [QueryKeys.channel, pageNumber, pageSize, filters],
     queryFn: () => getChannels(pageNumber, pageSize, filters),
-    // enabled: options.enabled ?? true,
-    enabled: false,
-  });
+    enabled: options.enabled ?? true,
+  })
 
-  // [02] - Create channel
+  const invalidateChannelQueries = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.channel] }),
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.channelDetail] }),
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.dashboard] }),
+    ])
+  }
+
   const createChannelMutation = useMutation({
     mutationFn: createChannel,
-    onSuccess: () => {
-      queryClient.invalidateQueries([QueryKeys.channel]);
-      toast.success("کانال با موفقیت ثبت شد", {
-        position: "top-right",
-        theme: "colored",
-      });
+    onSuccess: async () => {
+      await invalidateChannelQueries()
+      toast.success('کانال با موفقیت ثبت شد', {
+        position: 'top-right',
+        theme: 'colored',
+      })
     },
-  });
+  })
 
-  // [03] - Update channel
   const updateChannelMutation = useMutation({
     mutationFn: ({ id, payload }) => updateChannel(id, payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries([QueryKeys.channel]);
-    },
-  });
+    onSuccess: invalidateChannelQueries,
+  })
 
-  // [04] - Delete channel
   const deleteChannelMutation = useMutation({
     mutationFn: deleteChannel,
-    onSuccess: () => {
-      queryClient.invalidateQueries([QueryKeys.channel]);
-    },
-  });
+    onSuccess: invalidateChannelQueries,
+  })
 
-  // [05] - Change channel image
   const changeChannelImageMutation = useMutation({
     mutationFn: ({ id, file }) => changeChannelImage(id, file),
-  });
+    onSuccess: invalidateChannelQueries,
+  })
 
-
-
-  // [06] - Change profile channel image
   const changeProfileChannelImageMutation = useMutation({
     mutationFn: ({ id, file }) => changeProfileChannelImage(id, file),
-  });
+    onSuccess: invalidateChannelQueries,
+  })
 
-  // [07] - Update channel info (🔥 اصلاح‌شده)
   const updateChannelInfoMutation = useMutation({
-    mutationFn: ({ id, payload }) =>
-      updateChannelInfo(id, payload),
-  });
+    mutationFn: ({ id, payload }) => updateChannelInfo(id, payload),
+    onSuccess: invalidateChannelQueries,
+  })
 
   return {
     channels,
     isLoadingChannels,
     isErrorChannels,
     refetchChannels,
-    createChannel: createChannelMutation.mutate,
-    updateChannel: (id, payload) =>
-      updateChannelMutation.mutate({ id, payload }),
-    deleteChannel: deleteChannelMutation.mutate,
-    changeChannelImage: (file, id, options = {}) =>
-      changeChannelImageMutation.mutate(
-        { id, file },
-        options
-      ),
-
-    changeProfileChannelImage: (file, id, options = {}) =>
-      changeProfileChannelImageMutation.mutate(
-        { id, file },
-        options
-      ),
-
+    createChannel: (payload, mutationOptions = {}) => createChannelMutation.mutateAsync(payload, mutationOptions),
+    updateChannel: (id, payload, mutationOptions = {}) => updateChannelMutation.mutateAsync({ id, payload }, mutationOptions),
+    deleteChannel: (id, mutationOptions = {}) => deleteChannelMutation.mutateAsync(id, mutationOptions),
+    changeChannelImage: (file, id, mutationOptions = {}) => changeChannelImageMutation.mutateAsync({ id, file }, mutationOptions),
+    changeProfileChannelImage: (file, id, mutationOptions = {}) => changeProfileChannelImageMutation.mutateAsync({ id, file }, mutationOptions),
     isChangingChannelImage: changeChannelImageMutation.isPending,
     isChangingProfileImage: changeProfileChannelImageMutation.isPending,
-
-    updateChannelInfo: ({ id, ...payload }, options = {}) =>
-      updateChannelInfoMutation.mutate(
-        {
-          id: id || null,
-          payload,
-        },
-        options
-      ),
-
+    updateChannelInfo: ({ id = null, ...payload }, mutationOptions = {}) => (
+      updateChannelInfoMutation.mutateAsync({ id, payload }, mutationOptions)
+    ),
     isUpdatingChannelInfo: updateChannelInfoMutation.isPending,
-  };
+  }
 }
 
-export default useChannel;
+export default useChannel

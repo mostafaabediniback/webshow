@@ -9,7 +9,7 @@ import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
 
 function Upload() {
-  const { channels: chans, isLoadingChannels, refetchChannels } = useChannel()
+  const { channels: chans, isLoadingChannels } = useChannel()
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [videoFile, setVideoFile] = useState(null)
@@ -102,10 +102,6 @@ function Upload() {
 
     setUploadProgress(100)
   }
-  useEffect(() => {
-    refetchChannels()
-  }, [])
-
   useEffect(() => {
     let canceled = false
     const createdUrls = []

@@ -6,8 +6,8 @@ function useUpdateVideo() {
   const queryClient = useQueryClient();
 
   const updateVideoMutation = useMutation({
-    mutationFn: ({ videoId, title, description, coverFile }) =>
-      updateVideo(videoId, { title, description, coverFile }),
+    mutationFn: ({ videoId, title, description, coverFile, public_show }) =>
+      updateVideo(videoId, { title, description, coverFile, public_show }),
     onSuccess: () => {
       toast.success("ویدیو با موفقیت بروزرسانی شد");
       queryClient.invalidateQueries({ queryKey: ["channelVideos"] });

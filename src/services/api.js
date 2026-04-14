@@ -1,5 +1,6 @@
 import axios from 'axios'
 import axiosInstanceNew from '../utils/axiosConfigNew'
+import { readAuthSession } from '../utils/auth'
 
 const api = axios.create({
   baseURL: '/',
@@ -102,8 +103,8 @@ export const getChannels = async () => {
 }
 
 export const createChannel = async (payload) => {
-  const uidRaw = typeof window !== 'undefined' ? sessionStorage.getItem('user_id') : null
-  const user_id = uidRaw ? Number(uidRaw) : undefined
+  const { userId } = readAuthSession()
+  const user_id = userId ? Number(userId) : undefined
   const res = await axiosInstanceNew.post('/channel/create', { ...payload, user_id }, {
     headers: {
       Accept: 'application/json',

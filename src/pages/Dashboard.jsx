@@ -1,18 +1,18 @@
-import DashboardLayout from '../layouts/DashboardLayout'
+import { FolderAdd, VideoAdd, VideoPlay } from 'iconsax-react'
 import { Link } from 'react-router-dom'
 import useDashboard from '../hooks/useDashboard'
-import { VideoPlay, FolderAdd, VideoAdd } from 'iconsax-react'
+import DashboardLayout from '../layouts/DashboardLayout'
+import useAuthStore from '../store/useAuthStore'
 
 function Dashboard() {
   const { totalChannels, totalVideos, isLoading } = useDashboard()
-  const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
+  const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* آمار کلی */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {role != 'admin' ? (
+          {!isChannelAdmin ? (
             <div className="p-6 rounded-xl border border-gray-200 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 hover:shadow-lg transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
@@ -28,7 +28,7 @@ function Dashboard() {
                 </div>
               </div>
             </div>
-          ) : (<></>)}
+          ) : null}
 
           <div className="p-6 rounded-xl border border-gray-200 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
@@ -47,8 +47,7 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* لینک‌های سریع */}
-        {role === 'admin' ? (
+        {isChannelAdmin ? (
           <div className="grid grid-cols-1 gap-4">
             <Link
               to="/dashboard/user-videos"
@@ -65,7 +64,6 @@ function Dashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* 1️⃣ کانال‌ها - نارنجی */}
             <Link
               to="/dashboard/channels"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-orange-500 transition-all duration-200 hover:shadow-lg"
@@ -79,7 +77,6 @@ function Dashboard() {
               </div>
             </Link>
 
-            {/* 2️⃣ آپلود - زرد/نارنجی */}
             <Link
               to="/dashboard/upload"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-amber-500 transition-all duration-200 hover:shadow-lg"
@@ -93,7 +90,6 @@ function Dashboard() {
               </div>
             </Link>
 
-            {/* 3️⃣ ویدیوها - طلایی */}
             <Link
               to="/dashboard/videos"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-yellow-500 transition-all duration-200 hover:shadow-lg"

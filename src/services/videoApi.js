@@ -121,11 +121,11 @@ export const deleteVideo = async (id) => {
   return res.data;
 };
 
-export const updateVideo = async (videoId, { title, description, coverFile }) => {
+export const updateVideo = async (videoId, { title, description, coverFile, public_show }) => {
   const fd = new FormData();
   fd.append("title", title || "");
   fd.append("description", description || "");
-  fd.append("public_show", payload.public_show);
+  fd.append("public_show", public_show ?? 1);
 
 
   if (coverFile) {

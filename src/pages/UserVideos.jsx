@@ -5,25 +5,15 @@ import { toast } from 'react-toastify'
 import cover from '../assets/img/cover.jpg'
 import CoverPicker from '../components/Upload/CoverPicker'
 import VideoDropzone from '../components/VideoDropzone'
-import useChannel from '../hooks/useChannel'
-import useChannelVideos from '../hooks/useChannelVideos'
-import useDeleteVideo from '../hooks/useDeleteVideo'
-import { usePaginationParams } from '../hooks/usePaginationParams'
 import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
+import useAuthStore from '../store/useAuthStore'
 
-
-const PAGE_SIZE = 25
 
 function UserVideos() {
-  const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
-  const isAdmin = String(role || '').toLowerCase() === 'admin'
+  const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
 
-  const { channels, isLoadingChannels } = useChannel(1, PAGE_SIZE, {}, { enabled: isAdmin })
   const { uploadAsync, isPending } = useVideoUpload()
-  const { deleteVideo, isDeleting } = useDeleteVideo()
-  const { page, setPage } = usePaginationParams(1)
-
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [thumbFile, setThumbFile] = useState(null)
@@ -31,23 +21,11 @@ function UserVideos() {
   const [thumbDrag, setThumbDrag] = useState(false)
   const [tempPath, setTempPath] = useState(null)
   const [videoFile, setVideoFile] = useState(null)
-  const [videoStatus, setVideoStatus] = useState('idle') // idle | success
+  const [videoStatus, setVideoStatus] = useState('idle')
   const [thumbnails, setThumbnails] = useState([])
-  const [selectedVideoId, setSelectedVideoId] = useState(null)
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   const navigate = useNavigate()
 
 
-  const { data: videos, isLoading: isLoadingVideos, isError } = useChannelVideos({
-    pageNumber: page,
-    pageSize: PAGE_SIZE,
-  })
-
-  // useEffect(() => {
-  //   if (isAdmin && !isLoadingChannels && !channels?.length) {
-  //     toast.warning('برای آپلود ویدیو باید ابتدا کانال برای شما تعریف شود')
-  //   }
-  // }, [isAdmin, isLoadingChannels, channels])
 
   // helper: capture frame from URL
   const captureFrameFromUrl = (videoUrl, timeInSeconds = 0) => {
@@ -275,16 +253,6 @@ function UserVideos() {
 
   const isFormDisabled = videoStatus !== 'success' // غیرفعال شدن وقتی ویدیو آپلود نشده
 
-  // existing delete confirm
-  const handleConfirmDelete = () => {
-    if (deleteConfirmId) {
-      deleteVideo(deleteConfirmId)
-      setDeleteConfirmId(null)
-    }
-  }
-
-  const videosList = Array.isArray(videos?.items) ? videos.items : []
-
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -320,7 +288,6 @@ function UserVideos() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="عنوان ویدیو را وارد کنید"
-                  // disabled={isFormDisabled}
                   className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
                 />
               </div>
@@ -330,7 +297,6 @@ function UserVideos() {
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                   placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                  // disabled={isFormDisabled}
                   className="h-64 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
                 />
               </div>

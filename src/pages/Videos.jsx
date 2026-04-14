@@ -15,8 +15,8 @@ function Videos() {
   const { channels: chans, isLoadingChannels } = useChannel();
   const [chanId, setChanId] = useState("");
   const { page, setPage } = usePaginationParams(1);
-  const { data, isLoading, isError, refetch } = useChannelVideos({ channelId: chanId, pageNumber: page, pageSize: 25 });
-  const { deleteVideo, isDeleting } = useDeleteVideo();
+  const { data, isLoading, isError } = useChannelVideos({ channelId: chanId, pageNumber: page, pageSize: 25 });
+  const { deleteVideoAsync, isDeleting } = useDeleteVideo();
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
@@ -25,21 +25,15 @@ function Videos() {
     setPage(1);
   }, [chanId, setPage]);
 
-  useEffect(() => {
-    refetch();
-  }, []);
-
   const handleDelete = (videoId) => {
     setDeleteConfirmId(videoId);
   };
 
-  const handleConfirmDelete = () => {
-    if (deleteConfirmId) {
-      deleteVideo(deleteConfirmId);
-      setDeleteConfirmId(null);
-          refetch();
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirmId) return;
 
-    }
+    await deleteVideoAsync(deleteConfirmId);
+    setDeleteConfirmId(null);
   };
 
   const handleShow = (videoId) => {

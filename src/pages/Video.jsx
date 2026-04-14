@@ -7,6 +7,7 @@ import useChannelVideos from '../hooks/useChannelVideos'
 import { useVideo } from '../hooks/useVideo'
 import Layout from '../layouts/Layout'
 import { useRef } from 'react'
+import { readAuthSession } from '../utils/auth'
 
 const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
   <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,7 +62,7 @@ function Video() {
 
     try {
       // فقط از axios استفاده می‌کنیم (آدرس کامل است)
-      const token = sessionStorage.getItem('token')
+      const { token } = readAuthSession()
       const res = await axios.get(videoSource, {
         responseType: 'blob',
         headers: {

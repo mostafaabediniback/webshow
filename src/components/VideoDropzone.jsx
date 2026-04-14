@@ -2,6 +2,7 @@ import Dropzone from "dropzone"
 import { CloseCircle, DocumentUpload, TickCircle } from "iconsax-react"
 import { useEffect, useRef, useState } from "react"
 import axiosInstanceNew from "../utils/axiosConfigNew"
+import { readAuthSession } from "../utils/auth"
 
 Dropzone.autoDiscover = false
 
@@ -80,7 +81,7 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
           formData.append("extension", extension)
           formData.append("mimeType", file.type)
 
-          const token = sessionStorage.getItem("token")
+          const { token } = readAuthSession()
           if (token) {
             xhr.setRequestHeader("Authorization", `Bearer ${token}`)
           }

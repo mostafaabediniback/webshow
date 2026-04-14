@@ -3,82 +3,9 @@ import useChannel from "../../hooks/useChannel";
 import { toast } from "react-toastify";
 import useChannelDetail from "../../hooks/useChannelDetail";
 import { useEffect } from "react";
+import ImageUploader from "../ImageUploader";
 
-function ImageUploader({ label, imageFile, setImageFile }) {
 
-    const [drag, setDrag] = useState(false);
-
-    return (
-        <div className="space-y-3">
-            <p className="text-sm font-semibold text-gray-800">{label}</p>
-
-            <div
-                className={`rounded-xl border-2 transition-all ${drag
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-dashed border-gray-300 hover:border-gray-400"
-                    } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[190px]`}
-                onDragOver={(e) => {
-                    e.preventDefault();
-                    setDrag(true);
-                }}
-                onDragLeave={() => setDrag(false)}
-                onDrop={(e) => {
-                    e.preventDefault();
-                    setDrag(false);
-                    const f = e.dataTransfer.files?.[0];
-                    if (f && f.type.startsWith("image/")) setImageFile(f);
-                }}
-            >
-                <input
-                    type="file"
-                    accept="image/*"
-                    className="sr-only"
-                    id={label}
-                    onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                />
-
-                {imageFile ? (
-                    <div className="w-full space-y-2">
-                        <img
-                            className="w-full h-32 rounded-lg object-cover border border-gray-200"
-                            src={URL.createObjectURL(imageFile)}
-                            alt="preview"
-                        />
-                        <div className="flex items-center justify-between">
-                            <p className="text-xs text-gray-600 truncate">
-                                {imageFile.name}
-                            </p>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setImageFile(null);
-                                }}
-                                className="text-red-500 hover:text-red-700 text-xs"
-                            >
-                                حذف تصویر
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <label
-                        htmlFor={label}
-                        className="flex flex-col items-center gap-2 cursor-pointer"
-                    >
-                        <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                            📷
-                        </div>
-                        <p className="text-sm font-medium text-gray-900">
-                            انتخاب تصویر
-                        </p>
-                        <p className="text-xs text-gray-500">
-                            کلیک کنید یا تصویر را بکشید و اینجا رها کنید
-                        </p>
-                    </label>
-                )}
-            </div>
-        </div>
-    );
-}
 
 function ChannelSettings({ channelId }) {
     const [channelImage, setChannelImage] = useState(null);
@@ -90,12 +17,12 @@ function ChannelSettings({ channelId }) {
         changeProfileChannelImage,
         isChangingChannelImage,
         isChangingProfileImage,
-    } = useChannel();
+    } = useChannel(1, 10, {}, { enabled: false });
 
 
-    useEffect(() => {
-        refetch()
-    }, [])
+    // useEffect(() => {
+    //     refetch()
+    // }, [])
 
     const isLoading =
         isChangingChannelImage || isChangingProfileImage;
@@ -104,14 +31,13 @@ function ChannelSettings({ channelId }) {
         try {
             // کاور
             if (channelImage) {
-                changeChannelImage(
+                changeProfileChannelImage(
                     channelImage,
                     channelId,
                     {
                         onSuccess: () => {
                             setChannelImage(null);
                             toast.success("تصویر کاور با موفقیت تغییر کرد");
-                            refetch()
                         },
                         onError: (error) => {
                             toast.error(
@@ -125,7 +51,7 @@ function ChannelSettings({ channelId }) {
 
             // پروفایل
             if (profileImage) {
-                changeProfileChannelImage(
+                changeChannelImage(
                     profileImage,
                     channelId,
                     {
@@ -143,6 +69,8 @@ function ChannelSettings({ channelId }) {
                     }
                 );
             }
+            refetch()
+
         } catch (error) {
             toast.error(
                 error?.response?.data?.message ||
@@ -193,10 +121,10 @@ function ChannelSettings({ channelId }) {
 
                             </div>
 
-                            {data?.data?.image ? (
+                            {data?.data?.background_image ? (
                                 <div className="relative overflow-hidden rounded-xl border bg-gray-50 group">
                                     <img
-                                        src={data.data.image}
+                                        src={data.data.background_image}
                                         className="w-full h-96  transition duration-300 group-hover:scale-[1.03]"
                                     />
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition" />
@@ -252,11 +180,11 @@ function ChannelSettings({ channelId }) {
                                 <span>تصویر فعلی</span>
                             </div>
 
-                            {data?.data?.background_image ? (
+                            {data?.data?.image ? (
                                 <div className="flex justify-center">
                                     <div className="relative w-32 h-32 rounded-full overflow-hidden border bg-gray-50 group">
                                         <img
-                                            src={data.data.background_image}
+                                            src={data.data.image}
                                             className="w-full h-full object-cover transition duration-300 group-hover:scale-110"
                                         />
                                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition" />
@@ -275,7 +203,7 @@ function ChannelSettings({ channelId }) {
 
 
             {/* ================= BUTTON ================= */}
-            <div className="flex justify-end">
+            <div className="flex justify-start">
                 <button
                     onClick={handleSubmit}
                     disabled={isLoading}

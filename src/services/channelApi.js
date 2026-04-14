@@ -1,4 +1,5 @@
 import axiosInstanceNew from "../utils/axiosConfigNew";
+import { readAuthSession } from "../utils/auth";
 
 export const getChannels = async (pageNumber = 1, pageSize = 25) => {
   const res = await axiosInstanceNew.get("/channel", {
@@ -8,10 +9,8 @@ export const getChannels = async (pageNumber = 1, pageSize = 25) => {
 };
 
 export const createChannel = async (payload) => {
-  const uidRaw =
-    typeof window !== "undefined" ? sessionStorage.getItem("user_id") : null;
-
-  const user_id = uidRaw ? Number(uidRaw) : undefined;
+  const { userId } = readAuthSession();
+  const user_id = userId ? Number(userId) : undefined;
 
   const formData = new FormData();
 
@@ -36,9 +35,8 @@ export const createChannel = async (payload) => {
 };
 
 export const updateChannel = async (id, payload) => {
-  const uidRaw =
-    typeof window !== "undefined" ? sessionStorage.getItem("user_id") : null;
-  const user_id = uidRaw ? Number(uidRaw) : undefined;
+  const { userId } = readAuthSession();
+  const user_id = userId ? Number(userId) : undefined;
   const res = await axiosInstanceNew.put(`/channel/update/${id}`, {
     ...payload,
     user_id,

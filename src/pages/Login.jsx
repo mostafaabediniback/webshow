@@ -27,8 +27,13 @@ function Login() {
     try {
       await LogIn({ phone_number: values.phone, password: values.password });
       // onSuccess در useLogin مدیریت می‌شود و redirect انجام می‌شود
-    } catch (err) {
-      setError("ورود ناموفق بود. لطفاً شماره موبایل و رمز عبور را بررسی کنید.");
+    } catch (error) {
+      const errorMessages = error?.response?.data?.errors;
+
+      const formattedErrors = Array.isArray(errorMessages)
+        ? errorMessages
+        : [errorMessages || 'ورود ناموفق بود. لطفاً دوباره تلاش کنید.'];
+      setError(formattedErrors || "ورود ناموفق بود. لطفاً شماره موبایل و رمز عبور را بررسی کنید.");
     }
   };
 

@@ -304,57 +304,109 @@ function Users() {
             <p className="mt-3 text-sm text-gray-500">در حال دریافت لیست کاربران...</p>
           )}
 
-          <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[640px] text-sm">
-              <thead>
-                <tr className="text-right text-gray-500 border-b border-gray-100">
-                  <th className="pb-3 font-semibold">نام</th>
-                  <th className="pb-3 font-semibold">شماره موبایل</th>
-                  {/* <th className="pb-3 font-semibold">نام کاربری</th> */}
-                  <th className="pb-3 font-semibold">شناسه کانال</th>
-                  <th className="pb-3 font-semibold">عملیات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="py-8 text-center text-gray-500">نتیجه‌ای برای نمایش وجود ندارد.</td>
-                  </tr>
-                ) : (
-                  users.map((user, index) => (
-                    <tr key={user.id || index} className="border-b border-gray-100 last:border-b-0">
-                      <td className="py-4 font-medium text-gray-900">{user.name || '-'}</td>
-                      <td className="py-4 text-gray-700" >{user.phone_number || '-'}</td>
-                      {/* <td className="py-4 text-gray-700" >{user.username || '-'}</td> */}
-                      <td className="py-4 text-gray-700">{user.channel?.name || '-'}</td>
-                      <td className="py-4">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => openEditModal(user)}
-                            className="h-9 px-3 rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 text-xs font-semibold"
-                          >
-                            ویرایش
-                          </button>
-                          <button
-                            onClick={() => openPasswordModal(user)}
-                            className="h-9 px-3 rounded-lg border border-yellow-200 text-yellow-700 hover:bg-yellow-50 text-xs font-semibold"
-                          >
-                            تغییر رمز
-                          </button>
-                          <button
-                            onClick={() => setDeleteUserId(getUserId(user))}
-                            className="h-9 px-3 rounded-lg border border-red-200 text-red-700 hover:bg-red-50 text-xs font-semibold"
-                          >
-                            حذف
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+{/* DESKTOP TABLE */}
+<div className="hidden md:block mt-5 overflow-x-auto">
+  <table className="w-full text-sm">
+    <thead>
+      <tr className="text-right text-gray-500 border-b border-gray-100">
+        <th className="pb-3 font-semibold">نام</th>
+        <th className="pb-3 font-semibold">شماره موبایل</th>
+        <th className="pb-3 font-semibold">شناسه کانال</th>
+        <th className="pb-3 font-semibold">عملیات</th>
+      </tr>
+    </thead>
+    <tbody>
+      {users.length === 0 ? (
+        <tr>
+          <td colSpan={4} className="py-8 text-center text-gray-500">
+            نتیجه‌ای برای نمایش وجود ندارد.
+          </td>
+        </tr>
+      ) : (
+        users.map((user, index) => (
+          <tr key={user.id || index} className="border-b border-gray-100">
+            <td className="py-4 font-medium">{user.name || '-'}</td>
+            <td className="py-4">{user.phone_number || '-'}</td>
+            <td className="py-4">{user.channel?.name || '-'}</td>
+            <td className="py-4">
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={() => openEditModal(user)}
+                  className="h-9 px-3 rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 text-xs font-semibold"
+                >
+                  ویرایش
+                </button>
+                <button
+                  onClick={() => openPasswordModal(user)}
+                  className="h-9 px-3 rounded-lg border border-yellow-200 text-yellow-700 hover:bg-yellow-50 text-xs font-semibold"
+                >
+                  تغییر رمز
+                </button>
+                <button
+                  onClick={() => setDeleteUserId(getUserId(user))}
+                  className="h-9 px-3 rounded-lg border border-red-200 text-red-700 hover:bg-red-50 text-xs font-semibold"
+                >
+                  حذف
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))
+      )}
+    </tbody>
+  </table>
+</div>
+
+{/* MOBILE CARD */}
+<div className="md:hidden mt-5 space-y-4">
+  {users.length === 0 ? (
+    <div className="text-center text-gray-500 py-8">
+      نتیجه‌ای برای نمایش وجود ندارد.
+    </div>
+  ) : (
+    users.map((user, index) => (
+      <div key={user.id || index} className="p-4 rounded-xl border border-gray-100 shadow-sm">
+        
+        <div className="mb-2">
+          <p className="text-xs text-gray-400">نام</p>
+          <p className="font-medium">{user.name || '-'}</p>
+        </div>
+
+        <div className="mb-2">
+          <p className="text-xs text-gray-400">شماره موبایل</p>
+          <p dir="ltr">{user.phone_number || '-'}</p>
+        </div>
+
+        <div className="mb-3">
+          <p className="text-xs text-gray-400">کانال</p>
+          <p>{user.channel?.name || '-'}</p>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => openEditModal(user)}
+            className="h-9 w-full rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 text-xs font-semibold"
+          >
+            ویرایش
+          </button>
+          <button
+            onClick={() => openPasswordModal(user)}
+            className="h-9 w-full rounded-lg border border-yellow-200 text-yellow-700 hover:bg-yellow-50 text-xs font-semibold"
+          >
+            تغییر رمز
+          </button>
+          <button
+            onClick={() => setDeleteUserId(getUserId(user))}
+            className="h-9 w-full rounded-lg border border-red-200 text-red-700 hover:bg-red-50 text-xs font-semibold"
+          >
+            حذف
+          </button>
+        </div>
+
+      </div>
+    ))
+  )}
+</div>
         </div>
       </div>
 
