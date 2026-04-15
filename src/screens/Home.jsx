@@ -1,3 +1,5 @@
+'use client'
+
 import { ArrowLeft2, PlayCircle } from "iconsax-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import CategoryChips from "../components/CategoryChips";

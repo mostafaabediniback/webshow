@@ -1,3 +1,5 @@
+'use client'
+
 import { ArrowLeft2 } from 'iconsax-react'
 import { Link, useParams } from 'react-router-dom'
 import VideoGrid from '../components/VideoGrid'
