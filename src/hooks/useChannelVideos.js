@@ -1,18 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
-import { getVideosByChannel, getAllVideos } from '../services/videoApi'
+import { getAllVideos, getVideosByChannel } from '../services/videoApi'
 
-const useChannelVideos = (channelId) => {
+const useChannelVideos = ({ channelId, pageNumber = 1, pageSize = 25, enabled = true } = {}) => {
   return useQuery({
-    queryKey: ['channelVideos', channelId || 'all'],
+    queryKey: ['channelVideos', channelId || 'all', pageNumber, pageSize],
     queryFn: () => {
-      // اگر channelId خالی است، همه ویدیوها را بگیر
       if (!channelId || channelId === '') {
-        return getAllVideos(1, 25);
+        return getAllVideos(pageNumber, pageSize)
       }
-      // در غیر این صورت ویدیوهای کانال خاص را بگیر
-      return getVideosByChannel(channelId);
+
+      return getVideosByChannel(channelId, pageNumber, pageSize)
     },
-    enabled: true, // همیشه فعال است
+    enabled,
   })
 }
 

@@ -25,7 +25,7 @@ function useDashboard() {
     queryFn: () => getAllVideos(1, 25),
     enabled: true,
   });
-
+  
   const channels = channelsData || [];
   const videos = videosData || [];
 
@@ -33,7 +33,7 @@ function useDashboard() {
     channels,
     videos,
     totalChannels: channels.length,
-    totalVideos: videos.length,
+    totalVideos: videos.totalItems ,
     isLoading: isLoadingChannels || isLoadingVideos,
     isError: isErrorChannels || isErrorVideos,
   };

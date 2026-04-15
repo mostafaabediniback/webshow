@@ -14,8 +14,8 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <GlobalLoading />
         <App />
+        <GlobalLoading />
         <ToastContainer position="top-right" theme="colored" rtl />
       </BrowserRouter>
     </QueryClientProvider>

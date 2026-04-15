@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { getChannelById } from '../services/channelApi'
 import { QueryKeys } from '../enums'
+import { getChannelById } from '../services/channelApi'
 
-const useChannelDetail = (id) => {
+const useChannelDetail = (id, options = {}) => {
   return useQuery({
-    queryKey: [QueryKeys.channelDetail, id],
+    queryKey: id
+      ? [QueryKeys.channelDetail, id]
+      : [QueryKeys.channelDetail, 'default'],
     queryFn: () => getChannelById(id),
-    enabled: !!id,
+    enabled: options.enabled ?? true,
   })
 }
 

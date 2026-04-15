@@ -1,70 +1,53 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'react-toastify'
-import { uploadVideo, storeVideo } from '../services/videoApi'
-import defaultCover from '../assets/img/cover.jpg'
+// src/hooks/useVideoUpload.js
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import defaultCover from "../assets/img/cover.jpg";
+import { storeVideo } from "../services/videoApi";
+
+const fileFromUrl = async (url) => {
+  const res = await fetch(url);
+  const blob = await res.blob();
+  return new File([blob], "cover.jpg", { type: blob.type || "image/jpeg" });
+};
 
 const useVideoUpload = () => {
-  const qc = useQueryClient()
-  const m = useMutation({
-    mutationFn: async (vars) => {
-      const { channelId, title, description, videoFile, coverFile } = vars
-      
-      // مرحله 1: آپلود ویدیو
-      const uploaded = await uploadVideo(videoFile)
-      
-      // بررسی response: {status: "completed", temp_path: "temp/693d1046f421f.avi"}
-      if (uploaded?.status !== 'completed') {
-        throw new Error('آپلود ویدیو ناموفق بود')
-      }
-      
-      const tempPath = uploaded?.temp_path || uploaded?.path || ''
-      if (!tempPath) {
-        throw new Error('مسیر فایل آپلود شده یافت نشد')
-      }
-      
-      // مرحله 2: آماده‌سازی تصویر بندانگشتی
-      let coverToSend = coverFile
-      if (!coverToSend) {
-        coverToSend = defaultCover
-      }
-      // اگر cover یک آدرس است، آن را به Blob تبدیل کنیم
-      if (typeof coverToSend === 'string') {
-        try {
-          const res = await fetch(coverToSend)
-          const blob = await res.blob()
-          coverToSend = new File([blob], 'cover.jpg', { type: blob.type || 'image/jpeg' })
-        } catch {
-          coverToSend = undefined
-        }
-      }
-      
-      // مرحله 3: ذخیره ویدیو در کانال
-      return storeVideo(channelId, { 
-        path: tempPath, 
-        title, 
-        description: description || '', 
-        cover: coverToSend 
-      })
-    },
-    onSuccess: (_, vars) => {
-      toast.success('ویدیو با موفقیت آپلود شد', { position: 'top-right', theme: 'colored' })
-      // invalidate queries برای refresh لیست ویدیوها
-      qc.invalidateQueries({ queryKey: ['channelVideos', vars.channelId] })
-      qc.invalidateQueries({ queryKey: ['channelVideos', 'all'] })
-    },
-    onError: (error) => {
-      const errorMessage = error?.response?.data?.message || error?.message || 'خطا در آپلود ویدیو'
-      toast.error(errorMessage, { position: 'top-right', theme: 'colored' })
-    }
-  })
-  return { 
-    upload: m.mutate, 
-    uploadAsync: m.mutateAsync,
-    status: m.status, 
-    data: m.data, 
-    error: m.error,
-    isPending: m.isPending
-  }
-}
+  const qc = useQueryClient();
 
-export default useVideoUpload
+  const mutation = useMutation({
+    mutationFn: async ({ channelId, title, description, temp_path, coverFile }) => {
+      if (!temp_path) throw new Error("ویدیو آپلود نشده است");
+
+      let finalCover = coverFile;
+      if (!finalCover) finalCover = defaultCover;
+      if (typeof finalCover === "string") {
+        finalCover = await fileFromUrl(finalCover);
+      }
+
+      return storeVideo(channelId, {
+        path: temp_path,
+        title,
+        description,
+        cover: finalCover,
+      });
+    },
+
+    onSuccess: (_, vars) => {
+      toast.success("ویدیو با موفقیت آپلود شد", { theme: "colored" });
+
+      qc.invalidateQueries({ queryKey: ["channelVideos", vars?.channelId || "all"] });
+      qc.invalidateQueries({ queryKey: ["channelVideos", "all"] });
+    },
+
+    onError: (e) => {
+      const msg = e?.response?.data?.message || e?.message || "خطا در آپلود ویدیو";
+      toast.error(msg, { theme: "colored" });
+    }
+  });
+
+  return {
+    uploadAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+  };
+};
+
+export default useVideoUpload;

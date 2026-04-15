@@ -1,9 +1,11 @@
-import DashboardLayout from "../layouts/DashboardLayout";
+import { useMutation } from "@tanstack/react-query";
+import { Edit2, FolderAdd, TickCircle, Trash, User } from "iconsax-react";
 import { useState } from "react";
-import useChannel from "../hooks/useChannel";
-import { Trash, FolderAdd, TickCircle, Edit2 } from "iconsax-react";
-import ConfirmModal from "../components/ConfirmModal";
 import { toast } from "react-toastify";
+import ConfirmModal from "../components/ConfirmModal";
+import useChannel from "../hooks/useChannel";
+import DashboardLayout from "../layouts/DashboardLayout";
+import { getSearch } from "../services/videoApi";
 
 function Channels() {
   const {
@@ -16,10 +18,30 @@ function Channels() {
   } = useChannel();
 
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [editing, setEditing] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [thumbDrag, setThumbDrag] = useState(false);
+
+  const [searchInput, setSearchInput] = useState("");
+  const [searchChannels, setSearchChannels] = useState(null);
+
+  const searchMutation = useMutation({
+    mutationFn: getSearch,
+    onSuccess: (res) => {
+      const payload = res?.data;
+      let foundChannels = [];
+
+      if (Array.isArray(payload?.channels)) {
+        foundChannels = payload.channels;
+      } else if (Array.isArray(payload)) {
+        foundChannels = payload;
+      }
+
+      setSearchChannels(foundChannels);
+    },
+  });
 
   const handleSubmit = async () => {
     if (!name.trim()) return;
@@ -31,10 +53,12 @@ function Channels() {
           return;
         }
 
-        await updateChannel(editing.id, { name });
-
+        await updateChannel(editing.id, {
+          name,
+          slug: username // ✅ اضافه کن
+        });
         if (imageFile) {
-          await changeChannelImage(editing.id, imageFile);
+          await changeChannelImage(imageFile, editing.id);
         }
 
         toast.success("تغییرات کانال با موفقیت ذخیره شد");
@@ -45,11 +69,18 @@ function Channels() {
           return;
         }
 
-        await createChannel({ name, image: imageFile });
-        toast.success("کانال جدید با موفقیت ایجاد شد");
+        await createChannel({
+          name,
+          slug: username,
+          image: imageFile,
+        });
+
+
+        // toast.success("کانال جدید با موفقیت ایجاد شد");
       }
 
       setName("");
+      setUsername("");
       setImageFile(null);
     } catch (err) {
       toast.error("خطا در انجام عملیات، دوباره تلاش کنید");
@@ -67,30 +98,42 @@ function Channels() {
       await deleteChannel(deleteConfirmId);
       toast.success("کانال با موفقیت حذف شد");
       setDeleteConfirmId(null);
+
     } catch {
       toast.error("حذف کانال موفقیت‌آمیز نبود");
     }
   };
 
+
+
+  const handleSearch = async () => {
+    if (!searchInput.trim()) {
+      setSearchChannels(null);
+      return;
+    }
+
+    try {
+      await searchMutation.mutateAsync(searchInput.trim());
+    } catch {
+      setSearchChannels([]);
+    }
+  };
+
+  const channelsToRender = searchChannels === null ? channels : searchChannels;
+
   const handleChangeImage = async (id, file) => {
     try {
-      await changeChannelImage(id, file);
+      await changeChannelImage(file, id);
       toast.success("تصویر کانال با موفقیت بروزرسانی شد");
     } catch {
       toast.error("آپلود تصویر انجام نشد");
     }
   };
 
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* header */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
-            مدیریت کانال‌ها
-          </h1>
-          <p className="text-sm text-gray-600">ایجاد و مدیریت کانال‌های خود</p>
-        </div>
 
         {/* فرم ایجاد / ویرایش */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -102,11 +145,10 @@ function Channels() {
             {/* آپلود تصویر */}
             <div>
               <div
-                className={`rounded-xl border-2 transition-all ${
-                  thumbDrag
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-dashed border-gray-300 hover:border-gray-400"
-                } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[140px]`}
+                className={`rounded-xl border-2 transition-all ${thumbDrag
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-dashed border-gray-300 hover:border-gray-400"
+                  } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[190px]`}
                 onDragOver={(e) => {
                   e.preventDefault();
                   setThumbDrag(true);
@@ -197,6 +239,27 @@ function Channels() {
                 className="w-full h-11 px-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
 
+              <label className="space-y-2">
+                {/* <span className="text-sm font-semibold text-gray-900">نام کاربری</span> */}
+                <div className="relative">
+                  <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    value={username}
+                    onChange={(e) => {
+                      const value = e.target.value.toLowerCase();
+                      const regex = /^[a-z0-9_]*$/;
+
+                      if (regex.test(value)) {
+                        setUsername(value);
+                      }
+                    }}
+                    className="h-11 w-full rounded-lg border border-gray-300 pr-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="نام کاربری : مثلاً ali_m123"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 m-4">فقط حروف کوچک انگلیسی، اعداد و _ مجاز است.</p>
+              </label>
+
               <div className="flex items-center gap-2">
                 {editing && (
                   <button
@@ -211,10 +274,11 @@ function Channels() {
                   onClick={handleSubmit}
                   disabled={
                     !name.trim() ||
+                    !username.trim() ||
                     (!editing && !imageFile) ||
                     (editing && !imageFile && !editing?.image)
                   }
-                  className="h-11 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white flex items-center gap-2"
+                  className="w-full items-center justify-center h-11 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white flex items-center gap-2"
                 >
                   {editing ? (
                     <>
@@ -233,6 +297,26 @@ function Channels() {
           </div>
         </div>
 
+        {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">جستجوی کانال‌ها</h2>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
+            <input
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="نام کانال را وارد کنید"
+              className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={handleSearch}
+              disabled={searchMutation.isPending}
+              className="h-11 px-5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm font-semibold inline-flex items-center justify-center gap-2"
+            >
+              <SearchNormal1 size={18} />
+              {searchMutation.isPending ? 'در حال جستجو...' : 'جستجو'}
+            </button>
+          </div>
+        </div> */}
+
         {/* لیست کانال‌ها */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-4">
@@ -245,7 +329,7 @@ function Channels() {
                 <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
               ))}
             </div>
-          ) : !channels?.length ? (
+          ) : !channelsToRender?.length ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
                 <FolderAdd size={32} className="text-gray-400" />
@@ -254,12 +338,13 @@ function Channels() {
             </div>
           ) : (
             <div className="space-y-3">
-              {channels.map((c) => (
+              {(channelsToRender || []).map((c) => (
                 <div
                   key={c.id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <div className="flex items-center gap-3">
+                  {/* محتوای چپ (تصویر + اطلاعات) */}
+                  <div className="flex items-center gap-3 w-full sm:w-auto mb-3 sm:mb-0">
                     {c.image ? (
                       <img
                         src={
@@ -268,25 +353,31 @@ function Channels() {
                             : `http://${c.image}`
                         }
                         alt={c.name}
-                        className="w-12 h-12 rounded-lg object-cover border border-gray-200"
+                        className="w-20 h-20 sm:w-12 sm:h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-xs font-medium">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-xs font-medium flex-shrink-0">
                         بدون تصویر
                       </div>
                     )}
 
-                    <div>
-                      <span className="text-base font-semibold text-gray-900 block">
+                    <div className="min-w-0 flex-1">
+                      <span className="text-sm sm:text-base font-semibold text-gray-900 block line-clamp-1">
                         {c.name}
                       </span>
-                      <span className="block text-xs text-gray-500">
-                        ایجاد: {new Date(c.created_at).toLocaleDateString("fa-IR")} | ویرایش:{" "}
-                        {new Date(c.updated_at).toLocaleDateString("fa-IR")}
+
+                      <span className="block text-xs text-gray-500 mt-1">
+                        @{c.username}
+                      </span>
+
+                      <span className="block text-xs text-gray-400 mt-1">
+                        ایجاد: {new Date(c.created_at).toLocaleDateString("fa-IR")} |
+                        ویرایش: {new Date(c.updated_at).toLocaleDateString("fa-IR")}
                       </span>
                     </div>
                   </div>
 
+                  {/* input مخفی برای آپلود تصویر - روی دکمه قرار می‌گیرد */}
                   <input
                     id={`chan-img-${c.id}`}
                     type="file"
@@ -301,24 +392,26 @@ function Channels() {
                     }}
                   />
 
-                  <div className="flex items-center gap-2">
+                  {/* دکمه‌های اکشن */}
+                  <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-end">
                     <button
                       onClick={() => {
                         setEditing(c);
                         setName(c.name);
+                        setUsername(c.username || "");
                         setImageFile(null);
                       }}
-                      className="h-9 px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-sm font-medium flex items-center gap-2"
+                      className="h-9 px-3 justify-center sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
                     >
-                      <Edit2 size={20} color="currentColor" />
+                      <Edit2 size={16} sm:size={20} color="currentColor" />
                       ویرایش
                     </button>
 
                     <button
                       onClick={() => setDeleteConfirmId(c.id)}
-                      className="h-9 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium flex items-center gap-2"
+                      className="h-9 px-3 justify-center  sm:px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
                     >
-                      <Trash size={20} color="#fff" />
+                      <Trash size={16} sm:size={20} color="#fff" />
                       حذف
                     </button>
                   </div>
@@ -334,9 +427,8 @@ function Channels() {
         onClose={() => setDeleteConfirmId(null)}
         onConfirm={handleDelete}
         title="حذف کانال"
-        message={`آیا از حذف کانال "${
-          channels?.find((c) => c.id === deleteConfirmId)?.name || ""
-        }" مطمئن هستید؟ این عمل قابل بازگشت نیست.`}
+        message={`آیا از حذف کانال "${channels?.find((c) => c.id === deleteConfirmId)?.name || ""
+          }" مطمئن هستید؟ این عمل قابل بازگشت نیست.`}
         confirmText="حذف"
         cancelText="انصراف"
         variant="danger"

@@ -3,7 +3,7 @@ import { Danger, Warning2 } from 'iconsax-react'
 
 /**
  * کامپوننت Modal تایید برای عملیات‌های حساس مثل حذف
- * 
+ *
  * @param {boolean} isOpen - وضعیت باز/بسته بودن modal
  * @param {function} onClose - تابع بستن modal
  * @param {function} onConfirm - تابع تایید
@@ -31,6 +31,10 @@ function ConfirmModal({
 
   const isDanger = variant === 'danger'
 
+  // رنگ‌های پیش‌فرض (می‌تونید اینها رو عوض کنید)
+  const dangerColor = '#DC2626' // red-600
+  const warningColor = '#D97706' // yellow-600
+
   return (
     <Modal
       isOpen={isOpen}
@@ -52,9 +56,7 @@ function ConfirmModal({
             onClick={handleConfirm}
             disabled={isLoading}
             className={`h-10 px-4 rounded-lg text-white text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-              isDanger
-                ? 'bg-red-600 hover:bg-red-700'
-                : 'bg-yellow-600 hover:bg-yellow-700'
+              isDanger ? 'bg-red-600 hover:bg-red-700' : 'bg-yellow-600 hover:bg-yellow-700'
             }`}
           >
             {isLoading ? (
@@ -64,7 +66,11 @@ function ConfirmModal({
               </>
             ) : (
               <>
-                {isDanger ? <Danger size={18} /> : <Warning2 size={18} />}
+                {/* {isDanger ? (
+                  <Danger size={18} color={dangerColor} />
+                ) : (
+                  <Warning2 size={18} color={warningColor} />
+                )} */}
                 {confirmText}
               </>
             )}
@@ -79,9 +85,9 @@ function ConfirmModal({
           }`}
         >
           {isDanger ? (
-            <Danger size={24} className="text-red-600" />
+            <Danger size={24} color={dangerColor} />
           ) : (
-            <Warning2 size={24} className="text-yellow-600" />
+            <Warning2 size={24} color={warningColor} />
           )}
         </div>
         <div className="flex-1">
@@ -93,4 +99,3 @@ function ConfirmModal({
 }
 
 export default ConfirmModal
-

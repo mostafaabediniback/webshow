@@ -4,6 +4,8 @@ import { useState } from "react";
 import useLogin from "../hooks/useLogin";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import logo from "../assets/logo/logo-login.png";
+
 
 function Login() {
   const { LogIn, isLoading } = useLogin();
@@ -25,8 +27,13 @@ function Login() {
     try {
       await LogIn({ phone_number: values.phone, password: values.password });
       // onSuccess در useLogin مدیریت می‌شود و redirect انجام می‌شود
-    } catch (err) {
-      setError("ورود ناموفق بود. لطفاً شماره موبایل و رمز عبور را بررسی کنید.");
+    } catch (error) {
+      const errorMessages = error?.response?.data?.errors;
+
+      const formattedErrors = Array.isArray(errorMessages)
+        ? errorMessages
+        : [errorMessages || 'ورود ناموفق بود. لطفاً دوباره تلاش کنید.'];
+      setError(formattedErrors || "ورود ناموفق بود. لطفاً شماره موبایل و رمز عبور را بررسی کنید.");
     }
   };
 
@@ -35,12 +42,16 @@ function Login() {
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-6 sm:py-12 px-3 sm:px-4 bg-gray-50">
         <div className="max-w-md w-full mx-auto bg-white rounded-2xl border border-gray-200 shadow-lg p-6 sm:p-8 md:p-10">
           <div className="text-center mb-8">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="flex justify-center items-center">
+
+              <img src={logo} alt="اربعین تی وی" className="h-32 sm:h-38       md:h-40 w-auto" />
+            </div>
+            {/* <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               ورود به اربعین تی وی
             </h1>
             <p className="mt-2 text-sm sm:text-base text-gray-600">
               با حساب خود وارد شوید تا ویدیوها و لیست‌هایتان را مدیریت کنید
-            </p>
+            </p> */}
           </div>
 
           <Formik
@@ -89,9 +100,9 @@ function Login() {
                       onClick={() => setShowPassword((prev) => !prev)}
                     >
                       {showPassword ? (
-                        <Eye size={20} color="#64748b" />
+                        <Eye size={20} color="#4a5565" />
                       ) : (
-                        <EyeSlash size={20} color="#64748b" />
+                        <EyeSlash size={20} color="#4a5565" />
                       )}
                     </div>
                   </div>
@@ -106,8 +117,7 @@ function Login() {
 
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:scale-95 text-white font-medium text-sm shadow-md transition-all"
-                  disabled={isSubmitting || isLoading}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 active:scale-95 text-white font-medium text-sm shadow-md transition-all" disabled={isSubmitting || isLoading}
                 >
                   {isLoading ? "در حال ورود..." : "ورود"}
                 </button>

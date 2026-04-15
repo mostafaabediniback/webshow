@@ -1,55 +1,114 @@
 import axiosInstanceNew from "../utils/axiosConfigNew";
+// کمک برای صفحه‌بندی
+const mapPaginatedResponse = (data) => {
+  const items =
+    Array.isArray(data?.data) ? data.data :
+      Array.isArray(data?.data?.data) ? data.data.data :
+        [];
+
+  const totalPages =
+    Number(data?.last_page ||
+      data?.meta?.last_page ||
+      data?.pagination?.last_page ||
+      1) || 1;
+
+  const totalItems =
+    Number(data?.total ||
+      data?.meta?.total ||
+      items.length) || items.length;
+
+  return { items, totalPages, totalItems };
+};
+
 
 export const uploadVideo = async (file) => {
-  const formData = new FormData();
-  formData.append("file", file);
-  const res = await axiosInstanceNew.post("/video/upload", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+  const fd = new FormData();
+  fd.append("file", file);
+
+  const res = await axiosInstanceNew.post("/video/upload", fd, {
+    headers: { "Content-Type": "multipart/form-data" }
   });
-  // response: {status: "completed", temp_path: "temp/693d1046f421f.avi"}
+
   return res.data;
 };
 
+// ذخیره ویدیو
 export const storeVideo = async (channelId, { path, title, description, cover }) => {
-  const formData = new FormData();
-  formData.append("path", path);
-  formData.append("title", title);
-  // description required است طبق OpenAPI
-  formData.append("description", description || "");
-  if (cover) {
-    formData.append("cover", cover);
-  }
-  const res = await axiosInstanceNew.post(`/video/${channelId}/store-video`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+  const fd = new FormData();
+  fd.append("path", path);
+  fd.append("title", title);
+  fd.append("description", description || "");
+
+  if (cover) fd.append("cover", cover);
+
+  const url = channelId
+    ? `/video/store-video/${channelId}`
+    : "/video/store-video";
+
+  const res = await axiosInstanceNew.post(url, fd, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
+
   return res.data;
 };
 
-export const getVideosByChannel = async (channelId) => {
-  const res = await axiosInstanceNew.get(`/video/${channelId}`);
-  return res.data?.data || [];
+export const getVideosByChannel = async (channelId, page = 1, per_page = 25) => {
+  const res = await axiosInstanceNew.get(`/video/${channelId}`, {
+    params: { page, per_page }
+  });
+  return mapPaginatedResponse(res.data);
 };
 
-export const getVideoDetail = async (videoId) => {
-  const res = await axiosInstanceNew.get(`/video/show/${videoId}`);
+export const getVideoDetail = async (id) => {
+  const res = await axiosInstanceNew.get(`/video/show/${id}`);
   return res.data;
 };
 
-export const getAllVideos = async (pageNumber = 1, pageSize = 25) => {
+export const getAllVideos = async (page = 1, per_page = 25) => {
   const res = await axiosInstanceNew.get("/video", {
-    params: { page: pageNumber, per_page: pageSize },
+    params: { page, per_page }
   });
-  return res.data?.data || [];
+  return mapPaginatedResponse(res.data);
 };
 
-export const getLanding = async (channelId) => {
-  const url = channelId ? `/landing/${channelId}` : "/landing";
+export const getLandingChannels = async ({
+  pageNumber = 1,
+  pageSize = 10
+} = {}) => {
+  const page = Number(pageNumber) || 1;
+  const perPage = Number(pageSize) || 10;
+
+
+  const params = new URLSearchParams({
+    page: page.toString(),
+    per_page: perPage.toString(),
+  });
+
+  const queryString = params.toString();
+
+  const res = await axiosInstanceNew.get(`/landing/channels?${queryString}`);
+  return mapPaginatedResponse(res.data);
+};
+
+export const getLandingVideos = async ({
+  channelId,
+  pageNumber = 1,
+  pageSize = 25
+} = {}) => {
+  const params = new URLSearchParams({
+    page: pageNumber,
+    per_page: pageSize,
+  });
+
+  if (channelId) {
+    params.append('channel_id', channelId);
+  }
+
+  const url = `/landing/videos?${params}`;
   const res = await axiosInstanceNew.get(url);
-  return res.data?.data || {};
+
+  // استفاده از mapPaginatedResponse موجود
+  return mapPaginatedResponse(res.data);
 };
 
 export const getSearch = async (q) => {
@@ -57,8 +116,26 @@ export const getSearch = async (q) => {
   return res.data;
 };
 
-export const deleteVideo = async (videoId) => {
-  const res = await axiosInstanceNew.delete(`/video/delete/${videoId}`);
+export const deleteVideo = async (id) => {
+  const res = await axiosInstanceNew.delete(`/video/delete/${id}`);
+  return res.data;
+};
+
+export const updateVideo = async (videoId, { title, description, coverFile, public_show }) => {
+  const fd = new FormData();
+  fd.append("title", title || "");
+  fd.append("description", description || "");
+  fd.append("public_show", public_show ?? 1);
+
+
+  if (coverFile) {
+    fd.append("cover", coverFile);
+  }
+
+  const res = await axiosInstanceNew.post(`/video/update-video/${videoId}`, fd, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
   return res.data;
 };
 
@@ -68,7 +145,10 @@ export default {
   getVideosByChannel,
   getVideoDetail,
   getAllVideos,
-  getLanding,
+  // getLanding,
   getSearch,
   deleteVideo,
+  updateVideo,
+  getLandingVideos,
+  getLandingChannels
 };
