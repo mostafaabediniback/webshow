@@ -1,0 +1,141 @@
+'use client'
+
+import axios from 'axios'
+import { Eye } from 'iconsax-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import Layout from '../../layouts/Layout'
+import { readAuthSession } from '../../utils/auth'
+
+const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
+  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 3v12" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8 11l4 4 4-4" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M21 21H3" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+export default function VideoPageClient({ id, data, relatedVideos }) {
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [videoSource, setVideoSource] = useState('')
+  const [isMobile, setIsMobile] = useState(false)
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768)
+  }, [])
+
+  useEffect(() => {
+    const src = data?.data?.video_link || data?.data?.videoUrl || ''
+    setVideoSource(src)
+  }, [data])
+
+  useEffect(() => {
+    if (!videoSource || !videoRef.current || isMobile) return
+    const playPromise = videoRef.current.play()
+    playPromise?.catch(() => {})
+  }, [videoSource, isMobile])
+
+  const items = useMemo(
+    () => (relatedVideos?.items || []).filter((v) => String(v.id) !== String(id)).slice(0, 10),
+    [relatedVideos, id],
+  )
+
+  const handleDownload = async () => {
+    if (!videoSource || isDownloading) return
+    setIsDownloading(true)
+    const safeName = (data?.data?.title || 'video').replace(/[\/\\?%*:|"<>]/g, '-').slice(0, 120)
+
+    try {
+      const { token } = readAuthSession()
+      const res = await axios.get(videoSource, {
+        responseType: 'blob',
+        headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      })
+
+      const blob = res.data
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${safeName}.mp4`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+      toast.success('دانلود شروع شد')
+    } catch {
+      toast.error('دانلود مستقیم ممکن نیست. لطفاً بعداً تلاش کنید.')
+    } finally {
+      setIsDownloading(false)
+    }
+  }
+
+  if (!data?.data) {
+    return (
+      <Layout>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 py-6">
+          <div className="text-center py-12">
+            <p className="text-red-600 text-lg font-medium">ویدیو یافت نشد</p>
+            <p className="text-gray-500 mt-2">لطفاً آدرس را بررسی کنید</p>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
+  return (
+    <Layout>
+      <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-4 sm:py-6">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
+          <div>
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg sm:rounded-xl bg-black shadow-lg">
+              <video ref={videoRef} controls playsInline autoPlay preload="auto" src={videoSource} className="w-full h-full" />
+            </div>
+            <h1 className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-tight px-1">{data?.data?.title}</h1>
+            <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <Link to={data?.data?.username ? `/${data?.data?.username}` : '/'} className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity">
+                  <img src={data?.data?.channel_image} alt={data?.data?.channelName || data?.data?.channel_name} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 ring-2 ring-gray-200 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{data?.data?.channel_name}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{(data?.data?.view_count || 0).toLocaleString('fa-IR')} بازدید</p>
+                  </div>
+                </Link>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap text-gray-600">
+                <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
+                  <Eye size={16} color="#4a5565" />
+                  {(data?.data?.view_count || 0).toLocaleString('fa-IR')}
+                </span>
+                <button type="button" onClick={handleDownload} disabled={isDownloading || !videoSource} className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5 hover:bg-gray-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                  <DownloadIcon size={16} color="#4a5565" />
+                  {isDownloading ? 'در حال دانلود...' : 'دانلود'}
+                </button>
+              </div>
+            </div>
+            <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
+              <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 break-words ">{data?.data?.description}</p>
+            </div>
+          </div>
+          <aside className="hidden lg:block">
+            <div className="sticky top-24 space-y-3">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">ویدیوهای مرتبط</h3>
+              {items.map((video) => (
+                <Link to={`/v/${video.id}`} key={video.id} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
+                  <div className="w-40 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
+                    <img src={video.thumbnailUrl || video.cover_link || video.cover} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors">{video.title}</h4>
+                    <p className="text-xs text-gray-500 mt-1">{video.channelName || video.channel_name}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </aside>
+        </div>
+      </div>
+    </Layout>
+  )
+}
