@@ -21,10 +21,14 @@ const useLogin = () => {
     mutationFn: signOut,
     onSuccess: (res) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
       clearAuthStore()
       const message = res?.message || 'با موفقیت از حساب کاربری خارج شدید'
       toast.success(message, { position: 'top-right', theme: 'colored' })
       navigate('/login', { replace: true })
+<<<<<<< HEAD
     },
     onError: () => {
       clearAuthStore()
@@ -52,6 +56,16 @@ const useLogin = () => {
       toast.error("خطا در خروج از حساب کاربری", { position: "top-right", theme: "colored" });
       window.location.href = "/login";
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+    },
+    onError: () => {
+      clearAuthStore()
+      toast.error('حساب کاربری شما خارج شد، اما هنگام ثبت خروج در سرور خطایی رخ داد.', {
+        position: 'top-right',
+        theme: 'colored',
+      })
+      navigate('/login', { replace: true })
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
     },
   })
 
@@ -59,10 +73,14 @@ const useLogin = () => {
     mutationFn: signIn,
     onSuccess: (res) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
       const token = res?.data?.token || null
       const user = res?.data?.user || null
       const roleName = normalizeRole(user?.role)
       const channelId = user?.channel_id || user?.channel?.id || null
+<<<<<<< HEAD
 
       if (!token) {
         resetLocalState()
@@ -97,6 +115,13 @@ const useLogin = () => {
         setcodeOtp(false);
         toast.error("خطا در دریافت اطلاعات کاربر", { position: "top-right", theme: "colored" });
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+
+      if (!token) {
+        resetLocalState()
+        toast.error('خطا در دریافت اطلاعات کاربر', { position: 'top-right', theme: 'colored' })
+        return
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
       }
 
       setAuthSession({

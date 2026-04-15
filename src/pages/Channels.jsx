@@ -1,9 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Edit2, FolderAdd, TickCircle, Trash, User } from "iconsax-react";
 =======
 import { Edit2, FolderAdd, TickCircle, Trash } from "iconsax-react";
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+import { Edit2, FolderAdd, TickCircle, Trash, User } from "iconsax-react";
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 import { useState } from "react";
 import { toast } from "react-toastify";
 import ConfirmModal from "../components/ConfirmModal";
@@ -139,6 +143,7 @@ function Channels() {
     <DashboardLayout>
       <div className="space-y-6">
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         {/* header */}
         {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -148,6 +153,8 @@ function Channels() {
           <p className="text-sm text-gray-600">ایجاد و مدیریت کانال‌های خود</p>
         </div> */}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
         {/* فرم ایجاد / ویرایش */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -163,10 +170,14 @@ function Channels() {
                   ? "border-blue-500 bg-blue-50"
                   : "border-dashed border-gray-300 hover:border-gray-400"
 <<<<<<< HEAD
+<<<<<<< HEAD
                   } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[190px]`}
 =======
                   } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[140px]`}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                  } p-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[190px]`}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                 onDragOver={(e) => {
                   e.preventDefault();
                   setThumbDrag(true);
@@ -372,10 +383,14 @@ function Channels() {
                         }
                         alt={c.name}
 <<<<<<< HEAD
+<<<<<<< HEAD
                         className="w-20 h-20 sm:w-12 sm:h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0"
 =======
                         className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0"
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                        className="w-20 h-20 sm:w-12 sm:h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0"
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                       />
                     ) : (
                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-xs font-medium flex-shrink-0">
@@ -388,15 +403,21 @@ function Channels() {
                         {c.name}
                       </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
                       <span className="block text-xs text-gray-500 mt-1">
                         @{c.username}
                       </span>
 
                       <span className="block text-xs text-gray-400 mt-1">
+<<<<<<< HEAD
 =======
                       <span className="block text-xs text-gray-500 mt-1">
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                         ایجاد: {new Date(c.created_at).toLocaleDateString("fa-IR")} |
                         ویرایش: {new Date(c.updated_at).toLocaleDateString("fa-IR")}
                       </span>
@@ -428,10 +449,14 @@ function Channels() {
                         setImageFile(null);
                       }}
 <<<<<<< HEAD
+<<<<<<< HEAD
                       className="h-9 px-3 justify-center sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
 =======
                       className="h-9 px-3 sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                      className="h-9 px-3 justify-center sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                     >
                       <Edit2 size={16} sm:size={20} color="currentColor" />
                       ویرایش
@@ -440,10 +465,14 @@ function Channels() {
                     <button
                       onClick={() => setDeleteConfirmId(c.id)}
 <<<<<<< HEAD
+<<<<<<< HEAD
                       className="h-9 px-3 justify-center  sm:px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
 =======
                       className="h-9 px-3 sm:px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                      className="h-9 px-3 justify-center  sm:px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                     >
                       <Trash size={16} sm:size={20} color="#fff" />
                       حذف

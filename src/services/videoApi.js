@@ -4,6 +4,7 @@ const mapPaginatedResponse = (data) => {
   const items =
     Array.isArray(data?.data) ? data.data :
 <<<<<<< HEAD
+<<<<<<< HEAD
       Array.isArray(data?.data?.data) ? data.data.data :
         [];
 
@@ -20,18 +21,27 @@ const mapPaginatedResponse = (data) => {
 =======
     Array.isArray(data?.data?.data) ? data.data.data :
     [];
+=======
+      Array.isArray(data?.data?.data) ? data.data.data :
+        [];
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   const totalPages =
     Number(data?.last_page ||
-           data?.meta?.last_page ||
-           data?.pagination?.last_page ||
-           1) || 1;
+      data?.meta?.last_page ||
+      data?.pagination?.last_page ||
+      1) || 1;
 
   const totalItems =
     Number(data?.total ||
+<<<<<<< HEAD
            data?.meta?.total ||
            items.length) || items.length;
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+      data?.meta?.total ||
+      items.length) || items.length;
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   return { items, totalPages, totalItems };
 };
@@ -88,6 +98,7 @@ export const getAllVideos = async (page = 1, per_page = 25) => {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export const getLandingChannels = async ({
   pageNumber = 1,
   pageSize = 10
@@ -106,10 +117,21 @@ export const getLandingChannels = async ({
   
   
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+export const getLandingChannels = async ({
+  pageNumber = 1,
+  pageSize = 10
+} = {}) => {
+  const page = Number(pageNumber) || 1;
+  const perPage = Number(pageSize) || 10;
+
+
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const params = new URLSearchParams({
     page: page.toString(),
     per_page: perPage.toString(),
   });
+<<<<<<< HEAD
 <<<<<<< HEAD
 
   const queryString = params.toString();
@@ -119,31 +141,46 @@ export const getLandingChannels = async ({
   const queryString = params.toString();
   
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+
+  const queryString = params.toString();
+
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const res = await axiosInstanceNew.get(`/landing/channels?${queryString}`);
   return mapPaginatedResponse(res.data);
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 export const getLandingVideos = async ({
   channelId,
   pageNumber = 1,
   pageSize = 25
+<<<<<<< HEAD
 =======
 export const getLandingVideos = async ({ 
   channelId, 
   pageNumber = 1, 
   pageSize = 25 
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 } = {}) => {
   const params = new URLSearchParams({
     page: pageNumber,
     per_page: pageSize,
   });
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
   
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   if (channelId) {
     params.append('channel_id', channelId);
   }
@@ -151,10 +188,14 @@ export const getLandingVideos = async ({
   const url = `/landing/videos?${params}`;
   const res = await axiosInstanceNew.get(url);
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
   
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   // استفاده از mapPaginatedResponse موجود
   return mapPaginatedResponse(res.data);
 };
@@ -190,6 +231,24 @@ export const updateVideo = async (videoId, { title, description, coverFile, publ
   return res.data;
 };
 
+export const updateVideo = async (videoId, { title, description, coverFile, public_show }) => {
+  const fd = new FormData();
+  fd.append("title", title || "");
+  fd.append("description", description || "");
+  fd.append("public_show", public_show ?? 1);
+
+
+  if (coverFile) {
+    fd.append("cover", coverFile);
+  }
+
+  const res = await axiosInstanceNew.post(`/video/update-video/${videoId}`, fd, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  return res.data;
+};
+
 export default {
   uploadVideo,
   storeVideo,
@@ -200,9 +259,13 @@ export default {
   getSearch,
   deleteVideo,
 <<<<<<< HEAD
+<<<<<<< HEAD
   updateVideo,
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+  updateVideo,
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   getLandingVideos,
   getLandingChannels
 };

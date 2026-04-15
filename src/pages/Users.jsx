@@ -4,12 +4,18 @@ import useChannel from '../hooks/useChannel'
 import { Add, SearchNormal1, User, Call, Lock, Eye, EyeSlash } from 'iconsax-react'
 import { toast } from 'react-toastify'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import ConfirmModal from '../components/ConfirmModal'
 import Modal from '../components/Modal'
 import { useCreateUser, useDeleteUser, useUpdateUser, useUpdateUserPassword, useUsersList } from '../hooks/users'
 =======
 import { useCreateUser, useUsersList } from '../hooks/users'
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+import ConfirmModal from '../components/ConfirmModal'
+import Modal from '../components/Modal'
+import { useCreateUser, useDeleteUser, useUpdateUser, useUpdateUserPassword, useUsersList } from '../hooks/users'
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
 const INITIAL_FORM = {
   name: '',
@@ -17,6 +23,9 @@ const INITIAL_FORM = {
   password: '',
   channel_id: '',
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   // username: ''
 }
 
@@ -30,9 +39,12 @@ const INITIAL_EDIT_FORM = {
 const INITIAL_PASSWORD_FORM = {
   user_id: '',
   password: '',
+<<<<<<< HEAD
 =======
   username: ''
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 }
 
 
@@ -43,13 +55,19 @@ function Users() {
   const [searchPhoneNumber, setSearchPhoneNumber] = useState('')
   const [showPassword, setShowPassword] = useState(false)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const [editForm, setEditForm] = useState(INITIAL_EDIT_FORM)
   const [passwordForm, setPasswordForm] = useState(INITIAL_PASSWORD_FORM)
   const [deleteUserId, setDeleteUserId] = useState(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+<<<<<<< HEAD
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   const {
     users,
@@ -66,6 +84,9 @@ function Users() {
     }
   })
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const { updateUser, isUpdatingUser } = useUpdateUser({
     onSuccess: () => {
       setEditForm(INITIAL_EDIT_FORM)
@@ -83,6 +104,7 @@ function Users() {
       setIsPasswordModalOpen(false)
     },
   })
+<<<<<<< HEAD
 
   const isValidCreate = useMemo(() => {
     return form.channel_id && form.phone_number && form.password && form.name
@@ -93,6 +115,13 @@ function Users() {
   const isValidCreate = useMemo(() => {
     return form.channel_id && form.phone_number && form.password && form.name && form.username;
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+
+  const isValidCreate = useMemo(() => {
+    return form.channel_id && form.phone_number && form.password && form.name
+    //  && form.username
+     ;
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   }, [form]);
 
 
@@ -108,10 +137,14 @@ function Users() {
       password: form.password,
       name: form.name,
 <<<<<<< HEAD
+<<<<<<< HEAD
       // username: form.username
 =======
       username: form.username
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+      // username: form.username
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
 
     })
@@ -130,6 +163,9 @@ function Users() {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   const getUserId = (user) => Number(user?.id ?? user?.user_id ?? 0)
 
@@ -186,8 +222,11 @@ function Users() {
     })
   }
 
+<<<<<<< HEAD
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword)
   }
@@ -227,10 +266,14 @@ function Users() {
             </label>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             {/* <label className="space-y-2">
 =======
             <label className="space-y-2">
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+            {/* <label className="space-y-2">
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
               <span className="text-sm font-semibold text-gray-900">نام کاربری</span>
               <div className="relative">
                 <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -250,10 +293,14 @@ function Users() {
               </div>
               <p className="text-xs text-gray-500">فقط حروف کوچک انگلیسی، اعداد و _ مجاز است.</p>
 <<<<<<< HEAD
+<<<<<<< HEAD
             </label> */}
 =======
             </label>
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+            </label> */}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
 
 
@@ -337,6 +384,9 @@ function Users() {
           )}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 {/* DESKTOP TABLE */}
 <div className="hidden md:block mt-5 overflow-x-auto">
   <table className="w-full text-sm">
@@ -440,6 +490,7 @@ function Users() {
     ))
   )}
 </div>
+<<<<<<< HEAD
         </div>
       </div>
 
@@ -587,6 +638,125 @@ function Users() {
         </div>
       </div>
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+        </div>
+      </div>
+
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="ویرایش کاربر"
+        size="md"
+        footer={(
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={() => setIsEditModalOpen(false)}
+              disabled={isUpdatingUser}
+              className="h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-60"
+            >
+              انصراف
+            </button>
+            <button
+              onClick={handleUpdateUser}
+              disabled={isUpdatingUser}
+              className="h-10 px-4 rounded-lg bg-black text-white hover:bg-gray-800 disabled:bg-gray-400"
+            >
+              {isUpdatingUser ? 'در حال بروزرسانی...' : 'ذخیره تغییرات'}
+            </button>
+          </div>
+        )}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label className="space-y-2">
+            <span className="text-sm font-semibold text-gray-900">نام</span>
+            <input
+              value={editForm.name}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
+              className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="نام کاربر"
+            />
+          </label>
+          <label className="space-y-2">
+            <span className="text-sm font-semibold text-gray-900">شماره موبایل</span>
+            <input
+              value={editForm.phone_number}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, phone_number: e.target.value }))}
+              className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="0912xxxxxxx"
+              dir="ltr"
+            />
+          </label>
+          {/* <label className="space-y-2 md:col-span-2">
+            <span className="text-sm font-semibold text-gray-900">نام کاربری</span>
+            <input
+              value={editForm.username}
+              onChange={(e) => {
+                const value = e.target.value.toLowerCase()
+                const regex = /^[a-z0-9_]*$/
+                if (regex.test(value)) {
+                  setEditForm((prev) => ({ ...prev, username: value }))
+                }
+              }}
+              className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="username"
+              dir="ltr"
+            />
+          </label> */}
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        title="تغییر رمز عبور کاربر"
+        size="sm"
+        footer={(
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={() => setIsPasswordModalOpen(false)}
+              disabled={isUpdatingUserPassword}
+              className="h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-60"
+            >
+              انصراف
+            </button>
+            <button
+              onClick={handleUpdatePassword}
+              disabled={isUpdatingUserPassword}
+              className="h-10 px-4 rounded-lg bg-black text-white hover:bg-gray-800 disabled:bg-gray-400"
+            >
+              {isUpdatingUserPassword ? 'در حال تغییر...' : 'ثبت رمز جدید'}
+            </button>
+          </div>
+        )}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">شناسه کاربر: {passwordForm.user_id || '-'}</p>
+          <label className="space-y-2 block">
+            <span className="text-sm font-semibold text-gray-900">رمز عبور جدید</span>
+            <input
+              type="password"
+              value={passwordForm.password}
+              onChange={(e) => setPasswordForm((prev) => ({ ...prev, password: e.target.value }))}
+              className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="رمز عبور جدید را وارد کنید"
+              dir="ltr"
+            />
+          </label>
+        </div>
+      </Modal>
+
+      <ConfirmModal
+        isOpen={!!deleteUserId}
+        onClose={() => setDeleteUserId(null)}
+        onConfirm={handleDeleteUser}
+        title="حذف کاربر"
+        message="آیا از حذف این کاربر مطمئن هستید؟"
+        confirmText="حذف کاربر"
+        cancelText="انصراف"
+        variant="danger"
+        isLoading={isDeletingUser}
+      />
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
     </DashboardLayout>
   )
 }

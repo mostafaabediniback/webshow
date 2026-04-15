@@ -1,14 +1,19 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { CloseCircle, TickCircle } from 'iconsax-react'
 =======
 import { TickCircle } from 'iconsax-react'
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+import { CloseCircle, TickCircle } from 'iconsax-react'
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import cover from '../assets/img/cover.jpg'
 import CoverPicker from '../components/Upload/CoverPicker'
 import VideoDropzone from '../components/VideoDropzone'
+<<<<<<< HEAD
 <<<<<<< HEAD
 import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
@@ -24,22 +29,24 @@ import useChannel from '../hooks/useChannel'
 import useChannelVideos from '../hooks/useChannelVideos'
 import useDeleteVideo from '../hooks/useDeleteVideo'
 import { usePaginationParams } from '../hooks/usePaginationParams'
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
+import useAuthStore from '../store/useAuthStore'
 
-
-const PAGE_SIZE = 25
 
 function UserVideos() {
-  const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
-  const isAdmin = String(role || '').toLowerCase() === 'admin'
+  const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
 
-  const { channels, isLoadingChannels } = useChannel(1, PAGE_SIZE, {}, { enabled: isAdmin })
   const { uploadAsync, isPending } = useVideoUpload()
+<<<<<<< HEAD
   const { deleteVideo, isDeleting } = useDeleteVideo()
   const { page, setPage } = usePaginationParams(1)
 
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [thumbFile, setThumbFile] = useState(null)
@@ -48,6 +55,7 @@ function UserVideos() {
   const [tempPath, setTempPath] = useState(null)
   const [videoFile, setVideoFile] = useState(null)
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [videoStatus, setVideoStatus] = useState('idle')
   const [thumbnails, setThumbnails] = useState([])
   const navigate = useNavigate()
@@ -55,12 +63,14 @@ function UserVideos() {
 
 =======
   const [videoStatus, setVideoStatus] = useState('idle') // idle | success
+=======
+  const [videoStatus, setVideoStatus] = useState('idle')
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const [thumbnails, setThumbnails] = useState([])
-  const [selectedVideoId, setSelectedVideoId] = useState(null)
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   const navigate = useNavigate()
 
 
+<<<<<<< HEAD
   const { data: videos, isLoading: isLoadingVideos, isError } = useChannelVideos({
     pageNumber: page,
     pageSize: PAGE_SIZE,
@@ -72,6 +82,8 @@ function UserVideos() {
     }
   }, [isAdmin, isLoadingChannels, channels])
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   // helper: capture frame from URL
   const captureFrameFromUrl = (videoUrl, timeInSeconds = 0) => {
@@ -141,13 +153,19 @@ function UserVideos() {
     }
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const handleVideoSelected = (file) => {
     setVideoFile(file || null)
     setTempPath(null)
     setVideoStatus('uploading')
   }
+<<<<<<< HEAD
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   // تولید thumbnails (همان منطق Upload)
   useEffect(() => {
@@ -256,10 +274,14 @@ function UserVideos() {
     setThumbnails([])
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
   const handleCancelAndRefresh = () => {
 =======
     const handleCancelAndRefresh = () => {
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+  const handleCancelAndRefresh = () => {
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
     window.location.reload()
   }
 
@@ -307,6 +329,7 @@ function UserVideos() {
   const isFormDisabled = videoStatus !== 'success' // غیرفعال شدن وقتی ویدیو آپلود نشده
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   // existing delete confirm
   const handleConfirmDelete = () => {
@@ -319,21 +342,29 @@ function UserVideos() {
   const videosList = Array.isArray(videos?.items) ? videos.items : []
 
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
             {/* <VideoDropzone
               onUploaded={handleVideoUploaded}
               onProgress={() => { }}
             /> */}
             <VideoDropzone
               onFileSelected={handleVideoSelected}
+<<<<<<< HEAD
 =======
             <VideoDropzone
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
               onUploaded={handleVideoUploaded}
               onProgress={() => { }}
             />
@@ -346,6 +377,7 @@ function UserVideos() {
           )}
         </div>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 
         <div className='flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2'>
@@ -396,11 +428,41 @@ function UserVideos() {
 =======
         {!isFormDisabled && (
           <div className='flex gap-6 justify-between'>
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
-            <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${isFormDisabled ? 'opacity-60 pointer-events-none ' : 'w-full'}`}>
-              <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
-              <div className="space-y-4">
+        <div className='flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2'>
+
+          <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full `}>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">عنوان ویدیو <span className="text-red-500">*</span></label>
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="عنوان ویدیو را وارد کنید"
+                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">توضیحات</label>
+                <textarea
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                  placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+                  className="h-64 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
                 <div>
+<<<<<<< HEAD
                   <label className="block text-sm font-semibold text-gray-900 mb-2">عنوان ویدیو <span className="text-red-500">*</span></label>
                   <input
                     value={title}
@@ -419,10 +481,27 @@ function UserVideos() {
                     disabled={isFormDisabled}
                     className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                  <CoverPicker
+                    value={thumbFile}
+                    onChange={(file) => setThumbFile(file)}
+                    onConfirm={(file) => {
+                      setThumbFile(file)
+                    }}
+                    defaultCovers={[
+                      cover,
+                      '/covers/default2.jpg',
+                      '/covers/default3.jpg',
+                    ]}
+                    videoFile={videoFile}
+                    videoUrl={tempPath}
+                    videoThumbnails={thumbnails}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                   />
                 </div>
               </div>
             </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
           </div>
         </div>
@@ -473,9 +552,12 @@ function UserVideos() {
                 </div>
               </div>
             </div>
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
           </div>
-        )}
+        </div>
 
+<<<<<<< HEAD
         {!isFormDisabled && (
           <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             <button
@@ -498,6 +580,28 @@ function UserVideos() {
           </div>
         )}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+
+        <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <button
+            onClick={handleUpload}
+            disabled={!title || !tempPath || videoStatus !== 'success' || isPending || !thumbFile}
+            className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"            >
+            {isPending ? (
+              <>در حال آپلود...</>
+            ) : (
+              <><TickCircle size={20} color="#ffffff" />انتشار ویدیو</>
+            )}
+          </button>
+          <button
+            onClick={handleCancelAndRefresh}
+            className={`px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50 `}
+          >
+            <CloseCircle size={16} color="#fb2c36" />
+            انصراف
+          </button>
+        </div>
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
       </div>
 
 

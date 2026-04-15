@@ -104,7 +104,6 @@ function Upload() {
 
     setUploadProgress(100)
   }
-
   useEffect(() => {
     let canceled = false
     const createdUrls = []
@@ -263,6 +262,7 @@ function Upload() {
     if (videoStatus === 'uploading') return 'آپلود ویدیو در حال انجام است. می‌توانید اطلاعات ویدیو را هم‌زمان تکمیل کنید.'
     return 'ابتدا فایل ویدیو را انتخاب کنید. پس از انتخاب فایل، می‌توانید بلافاصله اطلاعات ویدیو را وارد کنید.'
   }, [videoStatus])
+<<<<<<< HEAD
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
   const handleCancelAndRefresh = () => {
@@ -502,6 +502,8 @@ function Upload() {
     if (videoStatus === 'uploading') return 'آپلود ویدیو در حال انجام است. می‌توانید اطلاعات ویدیو را هم‌زمان تکمیل کنید.'
     return 'ابتدا فایل ویدیو را انتخاب کنید. پس از انتخاب فایل، می‌توانید بلافاصله اطلاعات ویدیو را وارد کنید.'
   }, [videoStatus])
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const isFormDisabled = videoStatus !== 'success'
   return (
     <DashboardLayout>
@@ -555,10 +557,14 @@ function Upload() {
                   onChange={(e) => setDesc(e.target.value)}
                   placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
 <<<<<<< HEAD
+<<<<<<< HEAD
                   className="h-48 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
 =======
                   className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                  className="h-48 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                 />
               </div>
               <div>
@@ -586,9 +592,13 @@ function Upload() {
                 <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
                 <CoverPicker
 <<<<<<< HEAD
+<<<<<<< HEAD
                   // isFormDisabled={isFormDisabled}
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                  // isFormDisabled={isFormDisabled}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                   value={thumbFile}
                   onChange={(file) => setThumbFile(file)}
                   onConfirm={(file) => {

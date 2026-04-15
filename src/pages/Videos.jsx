@@ -10,15 +10,20 @@ import VideoModal from "../components/VideoModal";
 import ConfirmModal from "../components/ConfirmModal";
 import { usePaginationParams } from "../hooks/usePaginationParams";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import EditVideoModal from "../components/EditVideoModal";
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+import EditVideoModal from "../components/EditVideoModal";
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
 function Videos() {
   const { channels: chans, isLoadingChannels } = useChannel();
   const [chanId, setChanId] = useState("");
   const { page, setPage } = usePaginationParams(1);
   const { data, isLoading, isError } = useChannelVideos({ channelId: chanId, pageNumber: page, pageSize: 25 });
+<<<<<<< HEAD
 <<<<<<< HEAD
   const { deleteVideoAsync, isDeleting } = useDeleteVideo();
 =======
@@ -31,6 +36,12 @@ function Videos() {
   useEffect(() => {
     setPage(1);
   }, [chanId, setPage]);
+=======
+  const { deleteVideoAsync, isDeleting } = useDeleteVideo();
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [editingVideo, setEditingVideo] = useState(null);
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   useEffect(() => {
     setPage(1);
@@ -104,10 +115,14 @@ function Videos() {
           ) : (
             <>
 <<<<<<< HEAD
+<<<<<<< HEAD
               <div className="flex gap-4 flex-wrap space-y-3">
 =======
               <div className="space-y-3">
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+              <div className="flex gap-4 flex-wrap space-y-3">
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                 {(data?.items || []).map((v) => (
                   <VideoRow
                     key={v.id}
@@ -115,9 +130,13 @@ function Videos() {
                     onDelete={handleDelete}
                     onShow={handleShow}
 <<<<<<< HEAD
+<<<<<<< HEAD
                     onEdit={setEditingVideo}
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                    onEdit={setEditingVideo}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                     isDeleting={isDeleting}
                   />
                 ))}

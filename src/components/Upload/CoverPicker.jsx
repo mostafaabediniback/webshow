@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Image } from 'iconsax-react'
 import { useEffect, useRef, useState } from 'react'
 import FramePickerModal from './FramePickerModal'
@@ -8,6 +9,11 @@ import DefaultCoversModal from './DefaultCoversModal'
 import FramePickerModal from './FramePickerModal'
 import { Image } from 'iconsax-react'
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+import { Image } from 'iconsax-react'
+import { useEffect, useRef, useState } from 'react'
+import FramePickerModal from './FramePickerModal'
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
 export default function CoverPicker({
   value, // current cover File or null
@@ -15,10 +21,14 @@ export default function CoverPicker({
   defaultCovers = [], // array of URLs (e.g., ['/covers/d1.png', ...])
   videoFile = null,
 <<<<<<< HEAD
+<<<<<<< HEAD
   videoUrl = null,
 =======
   videoUrl = null
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+  videoUrl = null,
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 }) {
   const [thumbDrag, setThumbDrag] = useState(false)
   const [showDefaultModal, setShowDefaultModal] = useState(false)
@@ -31,10 +41,14 @@ export default function CoverPicker({
     if (!value) {
       if (prevUrlRef.current) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
 =======
         try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
         prevUrlRef.current = null
       }
       setPreviewUrl(null)
@@ -51,10 +65,14 @@ export default function CoverPicker({
     const u = URL.createObjectURL(value)
     if (prevUrlRef.current) {
 <<<<<<< HEAD
+<<<<<<< HEAD
       try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
 =======
       try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+      try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
     }
     prevUrlRef.current = u
     setPreviewUrl(u)
@@ -62,10 +80,14 @@ export default function CoverPicker({
     return () => {
       if (prevUrlRef.current) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
 =======
         try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
         prevUrlRef.current = null
       }
     }
@@ -75,10 +97,14 @@ export default function CoverPicker({
     return () => {
       if (prevUrlRef.current) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
 =======
         try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
       }
     }
   }, [])
@@ -124,6 +150,7 @@ export default function CoverPicker({
         {/* <button onClick={() => setShowDefaultModal(true)} className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
           انتخاب کاورهای دیفالت
 <<<<<<< HEAD
+<<<<<<< HEAD
           {isFormDisabled ? 'opacity-60 pointer-events-none' : ''}
         </button> */}
         <button onClick={() => setShowFrameModal(true)} className={`flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50`}>
@@ -131,6 +158,11 @@ export default function CoverPicker({
         </button> */}
         <button onClick={() => setShowFrameModal(true)} className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+          {isFormDisabled ? 'opacity-60 pointer-events-none' : ''}
+        </button> */}
+        <button onClick={() => setShowFrameModal(true)} className={`flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50`}>
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
           انتخاب کاور از فریم ویدیو
         </button>
       </div>

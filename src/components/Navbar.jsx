@@ -10,9 +10,13 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo/logo-01-01.png";
 import useLogin from "../hooks/useLogin";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import useAuthStore from "../store/useAuthStore";
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+import useAuthStore from "../store/useAuthStore";
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 import SearchInput from "./SearchInput";
 
 function Navbar() {
@@ -77,6 +81,7 @@ function Navbar() {
             </button>
             <div className="hidden md:flex items-center gap-3 ">
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
               {/* <button
                 className="p-2.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900"
@@ -92,6 +97,8 @@ function Navbar() {
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>  */}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
               {isAuthenticated ? (
                 <>
                   <Link
@@ -165,6 +172,7 @@ function Navbar() {
                 <span>خانه</span>
               </Link>
 <<<<<<< HEAD
+<<<<<<< HEAD
               {isAuthenticated && (
                 <Link
                   to={defaultDashboardRoute}
@@ -187,12 +195,18 @@ function Navbar() {
                 <Link
                   to="/dashboard/channels"
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+              {isAuthenticated && (
+                <Link
+                  to={defaultDashboardRoute}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                   onClick={closeSidebar}
                   className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
                 >
                   <span>مدیریت کانال‌ها</span>
                 </Link>
               )}
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
               {/* <Link
@@ -210,6 +224,8 @@ function Navbar() {
                 <span>ویدیوهای آپلودشده</span>
               </Link> */}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
             </nav>
 
             <div className="border-t border-gray-200 p-4 space-y-2" />

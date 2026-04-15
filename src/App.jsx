@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 =======
@@ -22,6 +23,10 @@ const RequireAdminRole = ({ children }) => {
 }
 
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+import { useEffect } from 'react'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 import Home from './pages/Home'
 import Video from './pages/Video'
 import Login from './pages/Login'
@@ -35,6 +40,9 @@ import Users from './pages/Users'
 import UserVideos from './pages/UserVideos'
 import UploadedVideos from './pages/UploadedVideos'
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 import SettingsPage from './pages/SettingsPage'
 import useAuthStore, { hydrateAuthStore } from './store/useAuthStore'
 
@@ -88,6 +96,7 @@ function AuthNavigationEffects() {
 
   return null
 }
+<<<<<<< HEAD
 
 function App() {
   return (
@@ -129,6 +138,30 @@ function App() {
       <Route path="/dashboard/user-videos" element={<RequireAuth><RequireUserRole><UploadedVideos /></RequireUserRole></RequireAuth>} />
     </Routes>
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+
+function App() {
+  return (
+    <>
+      <AuthNavigationEffects />
+      <Routes>
+        <Route path="/:username?" element={<Home />} />
+        <Route path="/search/:q" element={<Search />} />
+        <Route path="/v/:id" element={<Video />} />
+        <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
+
+        <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+        <Route path="/dashboard/channels" element={<RequireAuth><RequirePlatformAdmin><Channels /></RequirePlatformAdmin></RequireAuth>} />
+        <Route path="/dashboard/upload" element={<RequireAuth><RequirePlatformAdmin><Upload /></RequirePlatformAdmin></RequireAuth>} />
+        <Route path="/dashboard/videos" element={<RequireAuth><RequirePlatformAdmin><Videos /></RequirePlatformAdmin></RequireAuth>} />
+        <Route path="/dashboard/videos/:id" element={<RequireAuth><RequirePlatformAdmin><VideoEdit /></RequirePlatformAdmin></RequireAuth>} />
+        <Route path="/dashboard/users" element={<RequireAuth><RequirePlatformAdmin><Users /></RequirePlatformAdmin></RequireAuth>} />
+        <Route path="/dashboard/user-upload" element={<RequireAuth><RequireChannelAdmin><UserVideos /></RequireChannelAdmin></RequireAuth>} />
+        <Route path="/dashboard/user-videos" element={<RequireAuth><RequireChannelAdmin><UploadedVideos /></RequireChannelAdmin></RequireAuth>} />
+        <Route path="/dashboard/settings" element={<RequireAuth><RequireChannelAdmin><SettingsPage /></RequireChannelAdmin></RequireAuth>} />
+      </Routes>
+    </>
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   )
 }
 

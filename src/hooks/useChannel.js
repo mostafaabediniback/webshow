@@ -13,10 +13,14 @@ import {
 
 function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const queryClient = useQueryClient()
 =======
   const queryClient = useQueryClient();
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+  const queryClient = useQueryClient()
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   const {
     data: channels,
@@ -28,6 +32,9 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
     queryFn: () => getChannels(pageNumber, pageSize, filters),
     enabled: options.enabled ?? true,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   })
 
   const invalidateChannelQueries = async () => {
@@ -37,9 +44,12 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.dashboard] }),
     ])
   }
+<<<<<<< HEAD
 =======
   });
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   const createChannelMutation = useMutation({
     mutationFn: createChannel,

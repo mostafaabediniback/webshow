@@ -1,19 +1,27 @@
 import axios from 'axios'
 import { Eye } from 'iconsax-react'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useEffect, useRef, useState } from 'react'
 =======
 import { useEffect, useState } from 'react'
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+import { useEffect, useRef, useState } from 'react'
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import useChannelVideos from '../hooks/useChannelVideos'
 import { useVideo } from '../hooks/useVideo'
 import Layout from '../layouts/Layout'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { readAuthSession } from '../utils/auth'
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+import { readAuthSession } from '../utils/auth'
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
 const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
   <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,12 +39,18 @@ function Video() {
   const [isDownloading, setIsDownloading] = useState(false)
   const [videoSource, setVideoSource] = useState('')
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const [started, setStarted] = useState(false)
 
   const videoRef = useRef(null)
   const isMobile = window.innerWidth < 768
+<<<<<<< HEAD
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   useEffect(() => {
     const src = data?.data?.video_link || data?.data?.videoUrl || ''
@@ -73,10 +87,14 @@ function Video() {
     try {
       // فقط از axios استفاده می‌کنیم (آدرس کامل است)
 <<<<<<< HEAD
+<<<<<<< HEAD
       const { token } = readAuthSession()
 =======
       const token = sessionStorage.getItem('token')
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+      const { token } = readAuthSession()
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
       const res = await axios.get(videoSource, {
         responseType: 'blob',
         headers: {
@@ -121,6 +139,9 @@ function Video() {
     }
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
   const handlePlay = () => {
     const video = videoRef.current
     if (!video) return
@@ -151,8 +172,11 @@ function Video() {
       }
     }
   }, [videoSource, isMobile])
+<<<<<<< HEAD
 =======
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
 
   if (isLoading) {
     return (
@@ -197,6 +221,7 @@ function Video() {
             <div className="relative aspect-video w-full overflow-hidden rounded-lg sm:rounded-xl bg-black shadow-lg">
               <video
 <<<<<<< HEAD
+<<<<<<< HEAD
                 ref={videoRef}
                 controls
                 playsInline
@@ -215,11 +240,31 @@ function Video() {
                   }
                 }}
 =======
+=======
+                ref={videoRef}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                 controls
+                playsInline
+                autoPlay
+                preload="auto"
+                src={videoSource}
                 className="w-full h-full"
+<<<<<<< HEAD
                 poster={data.data.thumbnailUrl || data.data.cover_link || data.data.cover}
                 src={data.data.video_link || data.data.videoUrl}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                onCanPlay={() => {
+                  const v = videoRef.current
+                  if (!v) return
+
+                  const playPromise = v.play()
+                  if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                    })
+                  }
+                }}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
               />
             </div>
             <h1 className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-tight px-1">
@@ -228,6 +273,9 @@ function Video() {
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                 <Link
                   to={data?.data?.username ? `/${data?.data?.username}` : "/"} state={{ channelId: data?.data?.channel_id }}
                   className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
@@ -242,6 +290,7 @@ function Video() {
                     <p className="text-xs text-gray-500 mt-0.5">{(data?.data?.view_count || 0).toLocaleString('fa-IR')} بازدید</p>
                   </div>
                 </Link>
+<<<<<<< HEAD
 =======
                 <img
                   src={data.data.channel_image}
@@ -253,15 +302,21 @@ function Video() {
                   <p className="text-xs text-gray-500 mt-0.5">{(data.data.view_count || 0).toLocaleString('fa-IR')} بازدید</p>
                 </div>
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
               </div>
               <div className="flex items-center gap-2 flex-wrap text-gray-600">
                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
                   <Eye size={16} color="#4a5565" />
 <<<<<<< HEAD
+<<<<<<< HEAD
                   {(data?.data?.view_count || 0).toLocaleString('fa-IR')}
 =======
                   {(data.data.view_count || 0).toLocaleString('fa-IR')}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                  {(data?.data?.view_count || 0).toLocaleString('fa-IR')}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                 </span>
                 {/* <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
                   <Like1 size={16} color="#4a5565" />
@@ -294,12 +349,17 @@ function Video() {
             </div>
             <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
 <<<<<<< HEAD
+<<<<<<< HEAD
               <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 break-words ">
                 {data?.data?.description}
 =======
               <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 break-all">
                 {data.data.description}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+              <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 break-words ">
+                {data?.data?.description}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
               </p>
             </div>
           </div>

@@ -118,10 +118,14 @@ function Login() {
                 <button
                   type="submit"
 <<<<<<< HEAD
+<<<<<<< HEAD
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 active:scale-95 text-white font-medium text-sm shadow-md transition-all" disabled={isSubmitting || isLoading}
 =======
 className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 active:scale-95 text-white font-medium text-sm shadow-md transition-all"                  disabled={isSubmitting || isLoading}
 >>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
+=======
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 active:scale-95 text-white font-medium text-sm shadow-md transition-all" disabled={isSubmitting || isLoading}
+>>>>>>> 160b87080763d99c61e00cab1c10c5b9c69269af
                 >
                   {isLoading ? "در حال ورود..." : "ورود"}
                 </button>
