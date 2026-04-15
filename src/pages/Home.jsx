@@ -6,7 +6,10 @@ import VideoSkeleton from "../components/VideoSkeleton";
 import Layout from "../layouts/Layout";
 import { useLandingChannels } from "../hooks/useLandingChannels";
 import { useInfiniteLandingVideos } from "../hooks/useInfiniteLandingVideos";
+<<<<<<< HEAD
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
 const PAGE_SIZE = 25;
 
@@ -24,7 +27,10 @@ function Home() {
   const {
     data: channelsData,
     isLoading: channelsLoading,
+<<<<<<< HEAD
     refetch: channelsRefetch,
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
   } = useLandingChannels({ pageSize: 20 });
 
   const {
@@ -39,10 +45,14 @@ function Home() {
 
   const channelsList = Array.isArray(channelsData?.items) ? channelsData.items : [];
   const videosList = Array.isArray(videosData?.items) ? videosData.items : [];
+<<<<<<< HEAD
   // console.log(videosList);
   const activeChannelName = channelsList.find((channel) => channel.id === activeChannelId)?.name;
   console.log(activeChannelName);
   console.log(activeChannelId);
+=======
+  const activeChannelName = channelsList.find((channel) => channel.id === activeChannelId)?.name;
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
   const handleChannelSelect = useCallback((id) => {
     setActiveChannelId(id);
@@ -53,6 +63,7 @@ function Home() {
   }, [refetch]);
 
   useEffect(() => {
+<<<<<<< HEAD
     if (location.state?.channelId) {
       setActiveChannelId(location.state.channelId);
     }
@@ -65,6 +76,8 @@ function Home() {
   // }, [username]);
 
   useEffect(() => {
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
     const sentinel = loadMoreRef.current;
 
     if (!sentinel || !hasNextPage) {
@@ -93,8 +106,11 @@ function Home() {
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage, videosList.length]);
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
   if (channelsLoading && !channelsData) {
     return (
       <Layout>
@@ -119,7 +135,10 @@ function Home() {
               activeChannelId={activeChannelId}
               onSelect={handleChannelSelect}
               isLoading={channelsLoading}
+<<<<<<< HEAD
               isRefetch={channelsRefetch}
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
             />
           </div>
 
@@ -127,7 +146,11 @@ function Home() {
             <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-indigo-50 border border-indigo-100 shadow-sm mb-6">
               <span className="text-sm text-slate-600 flex items-center gap-2">
                 <ArrowLeft2 size={16} className="text-slate-400" />
+<<<<<<< HEAD
                 نمایش ویدیوهای <strong className="text-slate-900">{activeChannelName || videosData?.pages?.flatMap(page => page.items || page.data || [])[0]?.channel_name}</strong>
+=======
+                نمایش ویدیوهای <strong className="text-slate-900">{activeChannelName}</strong>
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
               </span>
             </div>
           )}

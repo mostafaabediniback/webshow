@@ -9,7 +9,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo/logo-01-01.png";
 import useLogin from "../hooks/useLogin";
+<<<<<<< HEAD
 import useAuthStore from "../store/useAuthStore";
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 import SearchInput from "./SearchInput";
 
 function Navbar() {
@@ -73,6 +76,22 @@ function Navbar() {
               <SearchNormal1 size={20} color="#0f172a" />
             </button>
             <div className="hidden md:flex items-center gap-3 ">
+<<<<<<< HEAD
+=======
+              {/* <button
+                className="p-2.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900"
+                title="آپلود ویدیو"
+              >
+                <VideoAdd size={22} color="#0f172a" />
+              </button>
+             <button
+                className="p-2.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900 relative"
+                title="اعلان‌ها"
+              >
+                <Notification size={22} color="#0f172a" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              </button>  */}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
               {isAuthenticated ? (
                 <>
                   <Link
@@ -145,15 +164,52 @@ function Navbar() {
               >
                 <span>خانه</span>
               </Link>
+<<<<<<< HEAD
               {isAuthenticated && (
                 <Link
                   to={defaultDashboardRoute}
+=======
+              {/* <Link
+                to="/"
+                onClick={closeSidebar}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+              >
+                <span>ویدیوهای محبوب</span>
+              </Link> */}
+              {/* <Link
+                to="/"
+                onClick={closeSidebar}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+              >
+                <span>دسته‌بندی‌ها</span>
+              </Link> */}
+              {isAuthenticated && (
+                <Link
+                  to="/dashboard/channels"
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                   onClick={closeSidebar}
                   className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
                 >
                   <span>مدیریت کانال‌ها</span>
                 </Link>
               )}
+<<<<<<< HEAD
+=======
+              {/* <Link
+                to="/dashboard/upload"
+                onClick={closeSidebar}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+              >
+                <span>آپلود ویدیو</span>
+              </Link>
+              <Link
+                to="/dashboard/videos"
+                onClick={closeSidebar}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+              >
+                <span>ویدیوهای آپلودشده</span>
+              </Link> */}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
             </nav>
 
             <div className="border-t border-gray-200 p-4 space-y-2" />

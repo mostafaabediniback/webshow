@@ -50,11 +50,15 @@ export const deleteChannel = async (id) => {
 };
 
 export const getChannelById = async (id) => {
+<<<<<<< HEAD
   const url = id
     ? `/channel/show/${id}`
     : `/channel/show`;
 
   const res = await axiosInstanceNew.get(url);
+=======
+  const res = await axiosInstanceNew.get(`/channel/show/${id}`);
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
   return res.data;
 };
 

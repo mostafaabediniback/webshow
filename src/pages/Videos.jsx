@@ -9,17 +9,28 @@ import VideoRow from "../components/VideoRow";
 import VideoModal from "../components/VideoModal";
 import ConfirmModal from "../components/ConfirmModal";
 import { usePaginationParams } from "../hooks/usePaginationParams";
+<<<<<<< HEAD
 import EditVideoModal from "../components/EditVideoModal";
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
 function Videos() {
   const { channels: chans, isLoadingChannels } = useChannel();
   const [chanId, setChanId] = useState("");
   const { page, setPage } = usePaginationParams(1);
   const { data, isLoading, isError } = useChannelVideos({ channelId: chanId, pageNumber: page, pageSize: 25 });
+<<<<<<< HEAD
   const { deleteVideoAsync, isDeleting } = useDeleteVideo();
+=======
+  const { deleteVideo, isDeleting } = useDeleteVideo();
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
+
+  useEffect(() => {
+    setPage(1);
+  }, [chanId, setPage]);
 
   useEffect(() => {
     setPage(1);
@@ -92,14 +103,21 @@ function Videos() {
             </div>
           ) : (
             <>
+<<<<<<< HEAD
               <div className="flex gap-4 flex-wrap space-y-3">
+=======
+              <div className="space-y-3">
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                 {(data?.items || []).map((v) => (
                   <VideoRow
                     key={v.id}
                     item={v}
                     onDelete={handleDelete}
                     onShow={handleShow}
+<<<<<<< HEAD
                     onEdit={setEditingVideo}
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                     isDeleting={isDeleting}
                   />
                 ))}

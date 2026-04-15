@@ -6,13 +6,23 @@ import useAuthStore from '../store/useAuthStore'
 
 function Dashboard() {
   const { totalChannels, totalVideos, isLoading } = useDashboard()
+<<<<<<< HEAD
   const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
+=======
+  const role = typeof window !== 'undefined' ? sessionStorage.getItem('role') : null
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+<<<<<<< HEAD
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {!isChannelAdmin ? (
+=======
+        {/* آمار کلی */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {role != 'admin' ? (
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
             <div className="p-6 rounded-xl border border-gray-200 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 hover:shadow-lg transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
@@ -28,7 +38,11 @@ function Dashboard() {
                 </div>
               </div>
             </div>
+<<<<<<< HEAD
           ) : null}
+=======
+          ) : (<></>)}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
           <div className="p-6 rounded-xl border border-gray-200 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
@@ -47,7 +61,12 @@ function Dashboard() {
           </div>
         </div>
 
+<<<<<<< HEAD
         {isChannelAdmin ? (
+=======
+        {/* لینک‌های سریع */}
+        {role === 'admin' ? (
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
           <div className="grid grid-cols-1 gap-4">
             <Link
               to="/dashboard/user-videos"
@@ -64,12 +83,20 @@ function Dashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<<<<<<< HEAD
+=======
+            {/* 1️⃣ کانال‌ها - نارنجی */}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
             <Link
               to="/dashboard/channels"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-orange-500 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
+<<<<<<< HEAD
                 <div className="w-12 h-12 rounded-lg bg-orange-100  flex items-center justify-center mb-3 transition-colors">
+=======
+                <div className="w-12 h-12 rounded-lg bg-orange-100 group-hover:bg-orange-500 flex items-center justify-center mb-3 transition-colors">
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                   <FolderAdd size={24} color="#F97316" className="group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">مدیریت کانال‌ها</h3>
@@ -77,12 +104,20 @@ function Dashboard() {
               </div>
             </Link>
 
+<<<<<<< HEAD
+=======
+            {/* 2️⃣ آپلود - زرد/نارنجی */}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
             <Link
               to="/dashboard/upload"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-amber-500 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
+<<<<<<< HEAD
                 <div className="w-12 h-12 rounded-lg bg-amber-100  flex items-center justify-center mb-3 transition-colors">
+=======
+                <div className="w-12 h-12 rounded-lg bg-amber-100 group-hover:bg-amber-500 flex items-center justify-center mb-3 transition-colors">
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                   <VideoAdd size={24} color="#D97706" className="group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">آپلود ویدیو</h3>
@@ -90,12 +125,20 @@ function Dashboard() {
               </div>
             </Link>
 
+<<<<<<< HEAD
+=======
+            {/* 3️⃣ ویدیوها - طلایی */}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
             <Link
               to="/dashboard/videos"
               className="group p-6 rounded-xl border-2 border-gray-200 bg-white hover:border-yellow-500 transition-all duration-200 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center">
+<<<<<<< HEAD
                 <div className="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center mb-3 transition-colors">
+=======
+                <div className="w-12 h-12 rounded-lg bg-yellow-100 group-hover:bg-yellow-500 flex items-center justify-center mb-3 transition-colors">
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                   <VideoPlay size={24} color="#EAB308" className="group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">ویدیوهای آپلودشده</h3>

@@ -12,7 +12,11 @@ import {
 } from '../services/channelApi'
 
 function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
+<<<<<<< HEAD
   const queryClient = useQueryClient()
+=======
+  const queryClient = useQueryClient();
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
   const {
     data: channels,
@@ -23,6 +27,7 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
     queryKey: [QueryKeys.channel, pageNumber, pageSize, filters],
     queryFn: () => getChannels(pageNumber, pageSize, filters),
     enabled: options.enabled ?? true,
+<<<<<<< HEAD
   })
 
   const invalidateChannelQueries = async () => {
@@ -32,6 +37,9 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.dashboard] }),
     ])
   }
+=======
+  });
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
   const createChannelMutation = useMutation({
     mutationFn: createChannel,

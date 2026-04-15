@@ -3,15 +3,20 @@ import DashboardLayout from '../layouts/DashboardLayout'
 import useChannel from '../hooks/useChannel'
 import { Add, SearchNormal1, User, Call, Lock, Eye, EyeSlash } from 'iconsax-react'
 import { toast } from 'react-toastify'
+<<<<<<< HEAD
 import ConfirmModal from '../components/ConfirmModal'
 import Modal from '../components/Modal'
 import { useCreateUser, useDeleteUser, useUpdateUser, useUpdateUserPassword, useUsersList } from '../hooks/users'
+=======
+import { useCreateUser, useUsersList } from '../hooks/users'
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
 const INITIAL_FORM = {
   name: '',
   phone_number: '',
   password: '',
   channel_id: '',
+<<<<<<< HEAD
   // username: ''
 }
 
@@ -25,6 +30,9 @@ const INITIAL_EDIT_FORM = {
 const INITIAL_PASSWORD_FORM = {
   user_id: '',
   password: '',
+=======
+  username: ''
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 }
 
 
@@ -34,11 +42,14 @@ function Users() {
   const [searchInput, setSearchInput] = useState('')
   const [searchPhoneNumber, setSearchPhoneNumber] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+<<<<<<< HEAD
   const [editForm, setEditForm] = useState(INITIAL_EDIT_FORM)
   const [passwordForm, setPasswordForm] = useState(INITIAL_PASSWORD_FORM)
   const [deleteUserId, setDeleteUserId] = useState(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
   const {
     users,
@@ -54,6 +65,7 @@ function Users() {
       setForm(INITIAL_FORM)
     }
   })
+<<<<<<< HEAD
   const { updateUser, isUpdatingUser } = useUpdateUser({
     onSuccess: () => {
       setEditForm(INITIAL_EDIT_FORM)
@@ -76,6 +88,11 @@ function Users() {
     return form.channel_id && form.phone_number && form.password && form.name
     //  && form.username
      ;
+=======
+
+  const isValidCreate = useMemo(() => {
+    return form.channel_id && form.phone_number && form.password && form.name && form.username;
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
   }, [form]);
 
 
@@ -90,7 +107,11 @@ function Users() {
       phone_number: form.phone_number,
       password: form.password,
       name: form.name,
+<<<<<<< HEAD
       // username: form.username
+=======
+      username: form.username
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
 
     })
@@ -108,6 +129,7 @@ function Users() {
   const handleFormChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
+<<<<<<< HEAD
 
   const getUserId = (user) => Number(user?.id ?? user?.user_id ?? 0)
 
@@ -164,6 +186,8 @@ function Users() {
     })
   }
 
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword)
   }
@@ -202,7 +226,11 @@ function Users() {
               </div>
             </label>
 
+<<<<<<< HEAD
             {/* <label className="space-y-2">
+=======
+            <label className="space-y-2">
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
               <span className="text-sm font-semibold text-gray-900">نام کاربری</span>
               <div className="relative">
                 <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -221,7 +249,11 @@ function Users() {
                 />
               </div>
               <p className="text-xs text-gray-500">فقط حروف کوچک انگلیسی، اعداد و _ مجاز است.</p>
+<<<<<<< HEAD
             </label> */}
+=======
+            </label>
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
 
 
@@ -304,6 +336,7 @@ function Users() {
             <p className="mt-3 text-sm text-gray-500">در حال دریافت لیست کاربران...</p>
           )}
 
+<<<<<<< HEAD
 {/* DESKTOP TABLE */}
 <div className="hidden md:block mt-5 overflow-x-auto">
   <table className="w-full text-sm">
@@ -524,6 +557,36 @@ function Users() {
         variant="danger"
         isLoading={isDeletingUser}
       />
+=======
+          <div className="mt-5 overflow-x-auto">
+            <table className="w-full min-w-[640px] text-sm">
+              <thead>
+                <tr className="text-right text-gray-500 border-b border-gray-100">
+                  <th className="pb-3 font-semibold">نام</th>
+                  <th className="pb-3 font-semibold">شماره موبایل</th>
+                  <th className="pb-3 font-semibold">شناسه کانال</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="py-8 text-center text-gray-500">نتیجه‌ای برای نمایش وجود ندارد.</td>
+                  </tr>
+                ) : (
+                  users.map((user, index) => (
+                    <tr key={user.id || index} className="border-b border-gray-100 last:border-b-0">
+                      <td className="py-4 font-medium text-gray-900">{user.name || '-'}</td>
+                      <td className="py-4 text-gray-700" >{user.phone_number || '-'}</td>
+                      <td className="py-4 text-gray-700">{user.channel.name || '-'}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
     </DashboardLayout>
   )
 }

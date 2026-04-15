@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { useState } from 'react'
+=======
+import { useEffect, useState } from 'react'
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 import { Pagination } from '@mui/material'
 import { Play } from 'iconsax-react'
 import DashboardLayout from '../layouts/DashboardLayout'
@@ -8,13 +12,17 @@ import VideoRow from '../components/VideoRow'
 import VideoModal from '../components/VideoModal'
 import ConfirmModal from '../components/ConfirmModal'
 import { usePaginationParams } from '../hooks/usePaginationParams'
+<<<<<<< HEAD
 import EditVideoModal from '../components/EditVideoModal'
 import useChannelDetail from '../hooks/useChannelDetail'
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
 const PAGE_SIZE = 25
 
 export default function UploadedVideos() {
   const { page, setPage } = usePaginationParams(1)
+<<<<<<< HEAD
   const { deleteVideoAsync, isDeleting } = useDeleteVideo()
 
   const [selectedVideoId, setSelectedVideoId] = useState(null)
@@ -34,6 +42,22 @@ export default function UploadedVideos() {
       await deleteVideoAsync(deleteConfirmId)
       setDeleteConfirmId(null)
 
+=======
+  const { deleteVideo, isDeleting } = useDeleteVideo()
+
+  const [selectedVideoId, setSelectedVideoId] = useState(null)
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
+
+  const { data: videos, isLoading: isLoadingVideos, isError } = useChannelVideos({
+    pageNumber: page,
+    pageSize: PAGE_SIZE,
+  })
+
+  const handleConfirmDelete = () => {
+    if (deleteConfirmId) {
+      deleteVideo(deleteConfirmId)
+      setDeleteConfirmId(null)
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
     }
   }
 
@@ -43,6 +67,7 @@ export default function UploadedVideos() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+<<<<<<< HEAD
           <div className=" overflow-hidden mb-4">
 
             {/* COVER */}
@@ -147,13 +172,34 @@ export default function UploadedVideos() {
           ) : (
             <>
               <div className="space-y-3 flex flex-wrap gap-4">
+=======
+          <h2 className="text-lg font-bold text-gray-900 mb-4">ویدیوهای آپلود شده من</h2>
+
+          {isLoadingVideos ? (
+            <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-20 bg-gray-100 rounded-lg animate-pulse" />)}</div>
+          ) : isError ? (
+            <div className="text-center py-12 text-red-500">خطا در بارگذاری ویدیوها</div>
+          ) : videosList.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mx-auto mb-4">
+                <Play size={32} color='#F97316' className="text-gray-400" />
+              </div>
+              <p className="text-sm text-gray-500">هنوز ویدیویی آپلود نشده است</p>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-3">
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                 {videosList.map((v) => (
                   <VideoRow
                     key={v.id}
                     item={v}
                     onDelete={(id) => setDeleteConfirmId(id)}
                     onShow={(id) => setSelectedVideoId(id)}
+<<<<<<< HEAD
                     onEdit={setEditingVideo}
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                     isDeleting={isDeleting}
                   />
                 ))}
@@ -187,6 +233,7 @@ export default function UploadedVideos() {
         variant="danger"
         isLoading={isDeleting}
       />
+<<<<<<< HEAD
       <EditVideoModal
         videoId={editingVideo?.id}
         initialVideo={editingVideo}
@@ -196,3 +243,8 @@ export default function UploadedVideos() {
     </DashboardLayout>
   )
 }
+=======
+    </DashboardLayout>
+  )
+}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad

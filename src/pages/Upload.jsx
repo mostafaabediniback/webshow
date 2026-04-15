@@ -22,6 +22,248 @@ function Upload() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [thumbnails, setThumbnails] = useState([])
   const navigate = useNavigate()
+<<<<<<< HEAD
+=======
+
+  const handleCancelAndRefresh = () => {
+    window.location.reload()
+  }
+
+  const captureFrameFromUrl = (videoUrl, timeInSeconds = 0) => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video')
+      video.crossOrigin = 'anonymous'
+      video.src = videoUrl
+      video.muted = true
+      video.playsInline = true
+      const cleanup = () => { try { video.src = '' } catch (e) { } }
+      const onError = () => {
+        cleanup()
+        reject(new Error('video load error / CORS or invalid url'))
+      }
+      video.addEventListener('loadedmetadata', () => {
+        if (!video.duration || isNaN(video.duration)) {
+          video.currentTime = 0
+        } else {
+          const t = Math.min(timeInSeconds, video.duration)
+          video.currentTime = t
+        }
+      })
+      video.addEventListener('seeked', () => {
+        try {
+          const w = video.videoWidth || 640
+          const h = video.videoHeight || 360
+          const canvas = document.createElement('canvas')
+          canvas.width = w
+          canvas.height = h
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(video, 0, 0, w, h)
+          canvas.toBlob((blob) => {
+            cleanup()
+            if (!blob) return reject(new Error('cannot capture frame'))
+            resolve(blob)
+          }, 'image/png')
+        } catch (err) {
+          cleanup()
+          reject(err)
+        }
+      })
+      video.addEventListener('error', onError)
+    })
+  }
+
+  const captureFrameFromFile = async (file, timeInSeconds = 0) => {
+    const url = URL.createObjectURL(file)
+    try {
+      const blob = await captureFrameFromUrl(url, timeInSeconds)
+      return blob
+    } finally {
+      URL.revokeObjectURL(url)
+    }
+  }
+
+  const handleVideoSelected = (file) => {
+    setVideoFile(file || null)
+    setTempPath(null)
+    setVideoStatus(file ? 'uploading' : 'idle')
+    setUploadProgress(0)
+    setThumbFile(null)
+  }
+
+  const handleVideoUploaded = (payload) => {
+    if (!payload) return
+
+    if (typeof payload === 'string') {
+      setTempPath(payload)
+      setVideoStatus('success')
+    } else if (typeof payload === 'object') {
+      setTempPath(payload.temp_path || null)
+      setVideoFile(payload.file || null)
+      setVideoStatus('success')
+    }
+
+    setUploadProgress(100)
+  }
+
+  useEffect(() => {
+    let canceled = false
+    const createdUrls = []
+
+    const generate = async () => {
+      setThumbnails([])
+      if (!videoFile && !tempPath) return
+
+      try {
+        let duration = 0
+        if (videoFile) {
+          const tmp = document.createElement('video')
+          const url = URL.createObjectURL(videoFile)
+          tmp.src = url
+          await new Promise((res, rej) => {
+            tmp.addEventListener('loadedmetadata', res)
+            tmp.addEventListener('error', rej)
+          })
+          duration = tmp.duration || 0
+          URL.revokeObjectURL(url)
+
+          const positions = [0.1, 0.5, 0.9].map(p => Math.min(duration * p, duration || 0))
+          const resArr = []
+          for (const t of positions) {
+            try {
+              const blob = await captureFrameFromFile(videoFile, t)
+              if (canceled) break
+              const u = URL.createObjectURL(blob)
+              createdUrls.push(u)
+              resArr.push({ time: t, blob, url: u })
+            } catch (err) {
+              console.warn('capture from file failed', err)
+            }
+          }
+          if (!canceled) setThumbnails(resArr)
+        } else if (tempPath) {
+          const tmp = document.createElement('video')
+          tmp.crossOrigin = 'anonymous'
+          tmp.src = tempPath
+          await new Promise((res, rej) => {
+            tmp.addEventListener('loadedmetadata', res)
+            tmp.addEventListener('error', rej)
+          })
+          duration = tmp.duration || 0
+          const positions = [0.1 * duration, 0.5 * duration, 0.9 * duration]
+          const resArr = []
+          for (const t of positions) {
+            try {
+              const blob = await captureFrameFromUrl(tempPath, t)
+              if (canceled) break
+              const u = URL.createObjectURL(blob)
+              createdUrls.push(u)
+              resArr.push({ time: t, blob, url: u })
+            } catch (err) {
+              console.warn('capture from url failed', err)
+            }
+          }
+          if (!canceled) setThumbnails(resArr)
+        }
+      } catch (err) {
+        console.warn('thumbnail generation overall error', err)
+      }
+    }
+
+    generate()
+
+    return () => {
+      canceled = true
+      createdUrls.forEach(u => URL.revokeObjectURL(u))
+    }
+  }, [videoFile, tempPath])
+
+  useEffect(() => {
+    if (!thumbFile) {
+      if (thumbPreviewUrl) {
+        try { URL.revokeObjectURL(thumbPreviewUrl) } catch (e) { }
+        setThumbPreviewUrl(null)
+      }
+      return
+    }
+    if (thumbFile instanceof File || thumbFile instanceof Blob) {
+      const u = URL.createObjectURL(thumbFile)
+      if (thumbPreviewUrl) {
+        try { URL.revokeObjectURL(thumbPreviewUrl) } catch (e) { }
+      }
+      setThumbPreviewUrl(u)
+    } else {
+      if (thumbPreviewUrl) {
+        try { URL.revokeObjectURL(thumbPreviewUrl) } catch (e) { }
+        setThumbPreviewUrl(null)
+      }
+    }
+  }, [thumbFile])
+
+  const handleUpload = async () => {
+    if (!tempPath) {
+      alert('لطفاً ابتدا فایل ویدیو را آپلود کنید')
+      return
+    }
+    if (!title.trim() || !chanId) {
+      alert('لطفاً عنوان و کانال را کامل کنید')
+      return
+    }
+    if (!thumbFile) {
+      alert('لطفاً یک تصویر کاور انتخاب کنید')
+      return
+    }
+
+    try {
+      await uploadAsync(
+        {
+          channelId: chanId,
+          title,
+          description: desc,
+          temp_path: tempPath,
+          coverFile: thumbFile
+        },
+        {
+          onSuccess: () => {
+            navigate('/dashboard/videos')
+            resetForm()
+          }
+        }
+      )
+    } catch (_error) {
+      // handled in hook
+    }
+  }
+
+  const resetForm = () => {
+    setTitle('')
+    setDesc('')
+    setVideoFile(null)
+    setThumbFile(null)
+    setThumbPreviewUrl(null)
+    setChanId('')
+    setTempPath(null)
+    setThumbnails([])
+    setVideoStatus('idle')
+    setUploadProgress(0)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (thumbPreviewUrl) {
+        try { URL.revokeObjectURL(thumbPreviewUrl) } catch (e) { }
+      }
+      thumbnails.forEach(t => { try { URL.revokeObjectURL(t.url) } catch (e) { } })
+    }
+  }, [])
+
+  const canEditMetadata = Boolean(videoFile || tempPath)
+  const isUploadReady = videoStatus === 'success' && Boolean(tempPath)
+  const uploadStatusText = useMemo(() => {
+    if (videoStatus === 'success') return 'آپلود ویدیو کامل شده و آماده انتشار است.'
+    if (videoStatus === 'uploading') return 'آپلود ویدیو در حال انجام است. می‌توانید اطلاعات ویدیو را هم‌زمان تکمیل کنید.'
+    return 'ابتدا فایل ویدیو را انتخاب کنید. پس از انتخاب فایل، می‌توانید بلافاصله اطلاعات ویدیو را وارد کنید.'
+  }, [videoStatus])
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
   const handleCancelAndRefresh = () => {
     window.location.reload()
@@ -312,7 +554,11 @@ function Upload() {
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                   placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+<<<<<<< HEAD
                   className="h-48 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+=======
+                  className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                 />
               </div>
               <div>
@@ -339,7 +585,10 @@ function Upload() {
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
                 <CoverPicker
+<<<<<<< HEAD
                   // isFormDisabled={isFormDisabled}
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                   value={thumbFile}
                   onChange={(file) => setThumbFile(file)}
                   onConfirm={(file) => {

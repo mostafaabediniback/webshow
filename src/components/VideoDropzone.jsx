@@ -2,7 +2,10 @@ import Dropzone from "dropzone"
 import { CloseCircle, DocumentUpload, TickCircle } from "iconsax-react"
 import { useEffect, useRef, useState } from "react"
 import axiosInstanceNew from "../utils/axiosConfigNew"
+<<<<<<< HEAD
 import { readAuthSession } from "../utils/auth"
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
 Dropzone.autoDiscover = false
 
@@ -36,7 +39,10 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
       chunking: true,
       forceChunking: true,
       chunkSize: 5 * 1024 * 1024,
+<<<<<<< HEAD
       maxFilesize: 2048, // in MB (2GB)
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
       retryChunks: true,
       retryChunksLimit: 3,
       maxFiles: 1,
@@ -46,7 +52,11 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
         Authorization: axiosInstanceNew.defaults.headers.common.Authorization
       },
       autoProcessQueue: true, // ✅ خودکار آپلود می‌شود
+<<<<<<< HEAD
       clickable: true,
+=======
+      clickable: false,
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
       init: function () {
         dzRef.current = this
 
@@ -54,7 +64,11 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
           currentFileRef.current = file
 
           if (previewRef.current) {
+<<<<<<< HEAD
             try { URL.revokeObjectURL(previewRef.current) } catch (e) { }
+=======
+            try { URL.revokeObjectURL(previewRef.current) } catch (e) {}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
             previewRef.current = null
           }
 
@@ -81,7 +95,11 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
           formData.append("extension", extension)
           formData.append("mimeType", file.type)
 
+<<<<<<< HEAD
           const { token } = readAuthSession()
+=======
+          const token = sessionStorage.getItem("token")
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
           if (token) {
             xhr.setRequestHeader("Authorization", `Bearer ${token}`)
           }
@@ -115,7 +133,11 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
           currentFileRef.current = null
 
           if (previewRef.current) {
+<<<<<<< HEAD
             try { URL.revokeObjectURL(previewRef.current) } catch (e) { }
+=======
+            try { URL.revokeObjectURL(previewRef.current) } catch (e) {}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
             previewRef.current = null
             setPreviewUrl("")
           }
@@ -124,11 +146,19 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
     })
 
     return () => {
+<<<<<<< HEAD
       try { dz.destroy() } catch (e) { }
       dzRef.current = null
       currentFileRef.current = null
       if (previewRef.current) {
         try { URL.revokeObjectURL(previewRef.current) } catch (e) { }
+=======
+      try { dz.destroy() } catch (e) {}
+      dzRef.current = null
+      currentFileRef.current = null
+      if (previewRef.current) {
+        try { URL.revokeObjectURL(previewRef.current) } catch (e) {}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
         previewRef.current = null
       }
     }
@@ -148,7 +178,11 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
       // Fallback: فقط preview و state
       currentFileRef.current = file
       if (previewRef.current) {
+<<<<<<< HEAD
         try { URL.revokeObjectURL(previewRef.current) } catch (e) { }
+=======
+        try { URL.revokeObjectURL(previewRef.current) } catch (e) {}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
         previewRef.current = null
       }
       const url = URL.createObjectURL(file)
@@ -171,7 +205,11 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
     }
     currentFileRef.current = null
     if (previewRef.current) {
+<<<<<<< HEAD
       try { URL.revokeObjectURL(previewRef.current) } catch (e) { }
+=======
+      try { URL.revokeObjectURL(previewRef.current) } catch (e) {}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
       previewRef.current = null
       setPreviewUrl("")
     }
@@ -197,8 +235,13 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
             </div>
 
             <p className="text-xs text-gray-500">
+<<<<<<< HEAD
               {progress === 100
                 ? "آپلود با موفقیت انجام شد!"
+=======
+              {progress === 100 
+                ? "آپلود با موفقیت انجام شد!" 
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                 : "لطفاً تا اتمام آپلود صبر کنید"
               }
             </p>
@@ -207,6 +250,7 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
       ) : (
         <div
           ref={dropzoneRef}
+<<<<<<< HEAD
           onClick={() => {
             if (fileInputRef.current) {
               fileInputRef.current.click()
@@ -215,6 +259,11 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
           className={`rounded-xl border-2 p-6 sm:p-8 text-center min-h-[180px] flex items-center justify-center transition-all ${isDragActive
               ? "border-orange-500 bg-orange-50"
               : "border-dashed border-gray-300 hover:border-orange-400 bg-gray-50/40"
+=======
+          className={`rounded-xl border-2 p-6 sm:p-8 text-center min-h-[180px] flex items-center justify-center transition-all ${isDragActive
+            ? "border-orange-500 bg-orange-50"
+            : "border-dashed border-gray-300 hover:border-orange-400 bg-gray-50/40"
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
             } ${hasFile ? "p-4" : ""}`}
         >
           <div className="space-y-3 w-full">
@@ -240,7 +289,10 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
                       ref={fileInputRef}
                       type="file"
                       accept="video/*"
+<<<<<<< HEAD
                       onClick={(e) => e.stopPropagation()}
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
                       onChange={handleFileSelected}
                       style={{
                         position: 'absolute',

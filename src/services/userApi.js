@@ -20,6 +20,7 @@ export const getUsersByPhone = async (phoneNumber = '') => {
 }
 
 export const searchUserByPhone = getUsersByPhone
+<<<<<<< HEAD
 
 export const updateUser = async (payload) => {
   const res = await axiosInstanceNew.put('/user/update', payload)
@@ -35,3 +36,5 @@ export const updateUserPassword = async (payload) => {
   const res = await axiosInstanceNew.put('/user/update-password', payload)
   return res.data
 }
+=======
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad

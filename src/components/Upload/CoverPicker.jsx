@@ -1,13 +1,24 @@
+<<<<<<< HEAD
 import { Image } from 'iconsax-react'
 import { useEffect, useRef, useState } from 'react'
 import FramePickerModal from './FramePickerModal'
+=======
+import React, { useEffect, useRef, useState } from 'react'
+import DefaultCoversModal from './DefaultCoversModal'
+import FramePickerModal from './FramePickerModal'
+import { Image } from 'iconsax-react'
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 
 export default function CoverPicker({
   value, // current cover File or null
   onChange, // (file) => void
   defaultCovers = [], // array of URLs (e.g., ['/covers/d1.png', ...])
   videoFile = null,
+<<<<<<< HEAD
   videoUrl = null,
+=======
+  videoUrl = null
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
 }) {
   const [thumbDrag, setThumbDrag] = useState(false)
   const [showDefaultModal, setShowDefaultModal] = useState(false)
@@ -19,7 +30,11 @@ export default function CoverPicker({
   useEffect(() => {
     if (!value) {
       if (prevUrlRef.current) {
+<<<<<<< HEAD
         try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
+=======
+        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
         prevUrlRef.current = null
       }
       setPreviewUrl(null)
@@ -35,14 +50,22 @@ export default function CoverPicker({
     // File or Blob
     const u = URL.createObjectURL(value)
     if (prevUrlRef.current) {
+<<<<<<< HEAD
       try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
+=======
+      try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
     }
     prevUrlRef.current = u
     setPreviewUrl(u)
 
     return () => {
       if (prevUrlRef.current) {
+<<<<<<< HEAD
         try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
+=======
+        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
         prevUrlRef.current = null
       }
     }
@@ -51,7 +74,11 @@ export default function CoverPicker({
   useEffect(() => {
     return () => {
       if (prevUrlRef.current) {
+<<<<<<< HEAD
         try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) { }
+=======
+        try { URL.revokeObjectURL(prevUrlRef.current) } catch (e) {}
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
       }
     }
   }, [])
@@ -96,9 +123,14 @@ export default function CoverPicker({
       <div className="flex gap-3 mt-3">
         {/* <button onClick={() => setShowDefaultModal(true)} className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
           انتخاب کاورهای دیفالت
+<<<<<<< HEAD
           {isFormDisabled ? 'opacity-60 pointer-events-none' : ''}
         </button> */}
         <button onClick={() => setShowFrameModal(true)} className={`flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50`}>
+=======
+        </button> */}
+        <button onClick={() => setShowFrameModal(true)} className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+>>>>>>> d0d46aa4d63b99af16f230b0b9a0bdca29f11fad
           انتخاب کاور از فریم ویدیو
         </button>
       </div>
