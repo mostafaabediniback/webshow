@@ -33,19 +33,29 @@ export const uploadVideo = async (file) => {
 };
 
 // ذخیره ویدیو
-export const storeVideo = async (channelId, { path, title, description, cover }) => {
+export const storeVideo = async (
+  channelId,
+  { path, url, title, description, cover, public_show }
+) => {
   const fd = new FormData();
-  fd.append("path", path);
+
+  // یکی از این دو باید ارسال بشه
+  if (path) fd.append("path", path);
+  if (url) fd.append("url", url);
+
   fd.append("title", title);
   fd.append("description", description || "");
 
+  // public_show (0 یا 1)
+  fd.append("public_show", public_show ? 1 : 0);
+
   if (cover) fd.append("cover", cover);
 
-  const url = channelId
+  const finalUrl = channelId
     ? `/video/store-video/${channelId}`
     : "/video/store-video";
 
-  const res = await axiosInstanceNew.post(url, fd, {
+  const res = await axiosInstanceNew.post(finalUrl, fd, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 

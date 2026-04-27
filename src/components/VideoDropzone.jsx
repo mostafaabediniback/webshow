@@ -6,7 +6,7 @@ import { readAuthSession } from "../utils/auth"
 
 Dropzone.autoDiscover = false
 
-function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
+function VideoDropzone({ onUploaded, onProgress, onFileSelected, disabled = false }) {
   const dropzoneRef = useRef(null)
   const dzRef = useRef(null)
   const fileInputRef = useRef(null)
@@ -52,6 +52,11 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
 
         this.on("addedfile", (file) => {
           currentFileRef.current = file
+
+          if (disabled) {
+            this.removeFile(file)
+            return
+          }
 
           if (previewRef.current) {
             try { URL.revokeObjectURL(previewRef.current) } catch (e) { }
@@ -136,6 +141,8 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
 
   // وقتی کاربر از طریق input فایل انتخاب کرد
   const handleFileSelected = (e) => {
+    if (disabled) return
+
     const file = e.target.files && e.target.files[0]
     if (!file) return
 
@@ -180,9 +187,17 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
   const hasFile = !!uploadedFileName
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 mt-4">
       {isUploading ? (
-        <div className="rounded-xl border-2 p-6 sm:p-8 text-center min-h-[180px] flex items-center justify-center transition-all border-dashed border-gray-300 bg-gray-50/40">
+        <div className={`rounded-xl border-2 p-6 sm:p-8 text-center min-h-[180px] flex items-center justify-center transition-all
+  ${disabled
+            ? "opacity-50 cursor-not-allowed bg-gray-100 border-gray-200"
+            : isDragActive
+              ? "border-orange-500 bg-orange-50"
+              : "border-dashed border-gray-300 hover:border-orange-400 bg-gray-50/40"
+          }
+  ${hasFile ? "p-4" : ""}
+`}>
           <div className="w-full max-w-full">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-700">پیشرفت آپلود :</span>
@@ -208,13 +223,14 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
         <div
           ref={dropzoneRef}
           onClick={() => {
+            if (disabled) return
             if (fileInputRef.current) {
               fileInputRef.current.click()
             }
           }}
           className={`rounded-xl border-2 p-6 sm:p-8 text-center min-h-[180px] flex items-center justify-center transition-all ${isDragActive
-              ? "border-orange-500 bg-orange-50"
-              : "border-dashed border-gray-300 hover:border-orange-400 bg-gray-50/40"
+            ? "border-orange-500 bg-orange-50"
+            : "border-dashed border-gray-300 hover:border-orange-400 bg-gray-50/40"
             } ${hasFile ? "p-4" : ""}`}
         >
           <div className="space-y-3 w-full">
@@ -240,6 +256,7 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected }) {
                       ref={fileInputRef}
                       type="file"
                       accept="video/*"
+                      disabled={disabled}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleFileSelected}
                       style={{

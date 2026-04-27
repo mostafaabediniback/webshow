@@ -8,6 +8,7 @@ import VideoDropzone from '../components/VideoDropzone'
 import useVideoUpload from '../hooks/useVideoUpload'
 import DashboardLayout from '../layouts/DashboardLayout'
 import useAuthStore from '../store/useAuthStore'
+import { useMemo } from 'react'
 
 
 function UserVideos() {
@@ -18,11 +19,13 @@ function UserVideos() {
   const [desc, setDesc] = useState('')
   const [thumbFile, setThumbFile] = useState(null)
   const [thumbPreview, setThumbPreview] = useState(null)
-  const [thumbDrag, setThumbDrag] = useState(false)
   const [tempPath, setTempPath] = useState(null)
   const [videoFile, setVideoFile] = useState(null)
   const [videoStatus, setVideoStatus] = useState('idle')
   const [thumbnails, setThumbnails] = useState([])
+  const [publicShow, setPublicShow] = useState(1)
+  const [videoUrl, setVideoUrl] = useState('')
+  const [uploadType, setUploadType] = useState('file') // 'file' | 'url'
   const navigate = useNavigate()
 
 
@@ -98,6 +101,9 @@ function UserVideos() {
     setVideoFile(file || null)
     setTempPath(null)
     setVideoStatus('uploading')
+
+    setVideoUrl('')
+
   }
 
   // تولید thumbnails (همان منطق Upload)
@@ -196,6 +202,20 @@ function UserVideos() {
     }
   }, [thumbFile])
 
+  const isUploadReady = videoStatus === 'success' && Boolean(tempPath)
+
+  const uploadStatusText = useMemo(() => {
+    if (uploadType === 'url') {
+      return videoUrl
+        ? 'لینک ویدیو آماده ثبت است.'
+        : 'لطفاً لینک ویدیو را وارد کنید.'
+    }
+
+    if (videoStatus === 'success') return 'آپلود ویدیو کامل شده و آماده انتشار است.'
+    if (videoStatus === 'uploading') return 'آپلود ویدیو در حال انجام است.'
+    return 'ابتدا فایل ویدیو را انتخاب کنید.'
+  }, [videoStatus, uploadType, videoUrl])
+
   const resetForm = () => {
     setTitle('')
     setDesc('')
@@ -205,6 +225,8 @@ function UserVideos() {
     setVideoFile(null)
     setVideoStatus('idle')
     setThumbnails([])
+    setVideoUrl('')
+    setPublicShow(1)
   }
   const handleCancelAndRefresh = () => {
     window.location.reload()
@@ -217,8 +239,9 @@ function UserVideos() {
       return
     }
 
-    if (!tempPath) {
-      toast.error('لطفاً ابتدا فایل ویدیو را آپلود کنید')
+    // 👇 شرط جدید
+    if (!tempPath && !videoUrl) {
+      toast.error('لطفاً ویدیو آپلود کنید یا لینک وارد کنید')
       return
     }
 
@@ -232,15 +255,16 @@ function UserVideos() {
         title: title.trim(),
         description: desc,
         temp_path: tempPath,
+        url: videoUrl,
         coverFile: thumbFile,
+        public_show: publicShow,
       })
-      // وقتی promise کامل شد:
+
       navigate('/dashboard/user-videos')
       resetForm()
-    } catch {
-      // خطاها در هوک مدیریت می‌شوند
-    }
+    } catch { }
   }
+
 
   useEffect(() => {
     return () => {
@@ -251,29 +275,76 @@ function UserVideos() {
     }
   }, [])
 
+  useEffect(() => {
+    setTempPath(null)
+    setVideoFile(null)
+    setVideoStatus('idle')
+    setVideoUrl('')
+  }, [uploadType])
+
   const isFormDisabled = videoStatus !== 'success' // غیرفعال شدن وقتی ویدیو آپلود نشده
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <div>
-            {/* <VideoDropzone
-              onUploaded={handleVideoUploaded}
-              onProgress={() => { }}
-            /> */}
+          <div className="flex justify-center mb-4">
+            <div className="flex bg-gray-100 p-1 rounded-lg">
+              <button
+                onClick={() => setUploadType('file')}
+                className={`px-4 py-2 text-sm rounded-md transition-all ${uploadType === 'file'
+                  ? 'bg-white shadow text-gray-900'
+                  : 'text-gray-500'
+                  }`}
+              >
+                آپلود فایل
+              </button>
+
+              <button
+                onClick={() => setUploadType('url')}
+                className={`px-4 py-2 text-sm rounded-md transition-all ${uploadType === 'url'
+                  ? 'bg-white shadow text-gray-900'
+                  : 'text-gray-500'
+                  }`}
+              >
+                لینک ویدیو
+              </button>
+            </div>
+          </div>
+          {uploadType === 'file' ? (
             <VideoDropzone
-              onFileSelected={handleVideoSelected}
+              onFileSelected={(file) => {
+                handleVideoSelected(file)
+                setVideoUrl('')
+              }}
               onUploaded={handleVideoUploaded}
               onProgress={() => { }}
             />
-          </div>
+          ) : (
+            <div>
+              <input
+                value={videoUrl}
+                onChange={(e) => {
+                  setVideoUrl(e.target.value)
+                  setTempPath(null)
+                  setVideoFile(null)
+                  setVideoStatus('idle')
+                }}
+                placeholder="https://example.com/video.mp4"
+                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          )}
 
           {isFormDisabled && (
             <p className='text-sm mt-4'>
               لطفا پیش از بارگذاری ویدیو <span className='text-blue-500'>قوانین اربعین تی وی</span> را مطالعه کنید
             </p>
           )}
+          <div className={`rounded-lg border px-3 py-2 mt-3 text-sm ${videoStatus === 'success' ? 'border-green-200 bg-green-50 text-green-700' : 'border-slate-200 bg-slate-50 text-slate-600'}`}>
+            {uploadStatusText}
+            {/* {videoStatus === 'uploading' && uploadProgress > 0 ? ` (${Math.round(uploadProgress)}%)` : ''} */}
+          </div>
         </div>
 
 
@@ -299,6 +370,17 @@ function UserVideos() {
                   placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
                   className="h-64 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100"
                 />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={publicShow === 1}
+                  onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
+                  className="w-4 h-4 accent-blue-600"
+                />
+                <label className="text-sm text-gray-700">
+                  نمایش عمومی ویدیو
+                </label>
               </div>
             </div>
           </div>
@@ -333,7 +415,13 @@ function UserVideos() {
         <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <button
             onClick={handleUpload}
-            disabled={!title || !tempPath || videoStatus !== 'success' || isPending || !thumbFile}
+            disabled={
+              !title ||
+              (uploadType === 'file' && !tempPath) ||
+              (uploadType === 'url' && !videoUrl) ||
+              isPending ||
+              !thumbFile
+            }
             className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"            >
             {isPending ? (
               <>در حال آپلود...</>

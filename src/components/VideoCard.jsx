@@ -2,7 +2,7 @@ import { Eye, PlayCircle } from 'iconsax-react'
 import { Link } from 'react-router-dom'
 
 function VideoCard({ video }) {
-  // console.log(video);
+  console.log(video);
   const normalizeUrl = (u) => {
     if (typeof u !== 'string') return ''
     return u.replace(/[`'"]/g, '').trim()
@@ -62,33 +62,37 @@ function VideoCard({ video }) {
         </h3>
         
         {/* Channel Info */}
-        <div className="flex items-center gap-3">
-          {/* Channel Avatar */}
-          <div className="relative flex-shrink-0">
-            <img
-              src={channelImage}
-              alt={channelName}
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl object-cover ring-2 ring-slate-100/50 shadow-lg hover:shadow-indigo-300/50 transition-all duration-300 cursor-pointer group-hover/card:ring-indigo-200/50"
-              onError={(e) => { 
-                e.target.src 
-              }}
-            />
-            {/* Online Indicator */}
-            {/* <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-400 border-2 border-white rounded-full shadow-md ring-2 ring-white/50 animate-pulse" /> */}
-          </div>
-          
-          {/* Channel Name & Description */}
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-900 line-clamp-1 group-hover/card:text-indigo-600 transition-colors">
-              {channelName}
-            </p>
-            {video.description && (
-              <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-                {video.description}
-              </p>
-            )}
-          </div>
-        </div>
+<div className="flex items-center gap-3">
+  {/* Channel Avatar + Name clickable */}
+  <Link
+    to={video.username ? `/${video.username}` : "/"}
+    state={{ channelId: video.channel_id }}
+    onClick={(e) => e.stopPropagation()}
+    className="flex items-center gap-3 flex-1 min-w-0"
+  >
+    {/* Avatar */}
+    <div className="relative flex-shrink-0">
+      <img
+        src={channelImage}
+        alt={channelName}
+        className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl object-cover ring-2 ring-slate-100/50 shadow-lg hover:shadow-indigo-300/50 transition-all duration-300"
+        onError={(e) => { e.target.src }}
+      />
+    </div>
+
+    {/* Channel Name */}
+    <div className="flex-1 min-w-0">
+      <p className="text-sm font-semibold text-slate-900 line-clamp-1 group-hover/card:text-indigo-600 transition-colors">
+        {channelName}
+      </p>
+      {video.description && (
+        <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+          {video.description}
+        </p>
+      )}
+    </div>
+  </Link>
+</div>
       </div>
 
       {/* Bottom Shine Effect */}

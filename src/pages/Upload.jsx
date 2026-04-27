@@ -21,6 +21,11 @@ function Upload() {
   const [videoStatus, setVideoStatus] = useState('idle')
   const [uploadProgress, setUploadProgress] = useState(0)
   const [thumbnails, setThumbnails] = useState([])
+  const [videoUrl, setVideoUrl] = useState('')
+  const [publicShow, setPublicShow] = useState(1)
+  const [uploadType, setUploadType] = useState('file') // 'file' | 'url'
+
+
   const navigate = useNavigate()
 
   const handleCancelAndRefresh = () => {
@@ -86,6 +91,8 @@ function Upload() {
     setVideoStatus(file ? 'uploading' : 'idle')
     setUploadProgress(0)
     setThumbFile(null)
+    setVideoUrl('')
+
   }
 
   const handleVideoUploaded = (payload) => {
@@ -197,38 +204,36 @@ function Upload() {
   }, [thumbFile])
 
   const handleUpload = async () => {
-    if (!tempPath) {
-      alert('لطفاً ابتدا فایل ویدیو را آپلود کنید')
-      return
-    }
     if (!title.trim() || !chanId) {
       alert('لطفاً عنوان و کانال را کامل کنید')
       return
     }
+
+    // 👇 شرط جدید
+    if (!tempPath && !videoUrl) {
+      alert('لطفاً ویدیو آپلود کنید یا لینک وارد کنید')
+      return
+    }
+
     if (!thumbFile) {
       alert('لطفاً یک تصویر کاور انتخاب کنید')
       return
     }
 
     try {
-      await uploadAsync(
-        {
-          channelId: chanId,
-          title,
-          description: desc,
-          temp_path: tempPath,
-          coverFile: thumbFile
-        },
-        {
-          onSuccess: () => {
-            navigate('/dashboard/videos')
-            resetForm()
-          }
-        }
-      )
-    } catch (_error) {
-      // handled in hook
-    }
+      await uploadAsync({
+        channelId: chanId,
+        title,
+        description: desc,
+        temp_path: tempPath,
+        url: videoUrl,
+        coverFile: thumbFile,
+        public_show: publicShow,
+      })
+
+      navigate('/dashboard/videos')
+      resetForm()
+    } catch { }
   }
 
   const resetForm = () => {
@@ -242,6 +247,8 @@ function Upload() {
     setThumbnails([])
     setVideoStatus('idle')
     setUploadProgress(0)
+    setVideoUrl('')
+    setPublicShow(1)
   }
 
   useEffect(() => {
@@ -253,22 +260,93 @@ function Upload() {
     }
   }, [])
 
+  useEffect(() => {
+    setTempPath(null)
+    setVideoFile(null)
+    setVideoStatus('idle')
+    setUploadProgress(0)
+    setVideoUrl('')
+  }, [uploadType])
+
   const canEditMetadata = Boolean(videoFile || tempPath)
   const isUploadReady = videoStatus === 'success' && Boolean(tempPath)
+
+
   const uploadStatusText = useMemo(() => {
+    if (uploadType === 'url') {
+      return videoUrl
+        ? 'لینک ویدیو وارد شده است.'
+        : 'لطفاً لینک ویدیو را وارد کنید.'
+    }
+
     if (videoStatus === 'success') return 'آپلود ویدیو کامل شده و آماده انتشار است.'
-    if (videoStatus === 'uploading') return 'آپلود ویدیو در حال انجام است. می‌توانید اطلاعات ویدیو را هم‌زمان تکمیل کنید.'
-    return 'ابتدا فایل ویدیو را انتخاب کنید. پس از انتخاب فایل، می‌توانید بلافاصله اطلاعات ویدیو را وارد کنید.'
-  }, [videoStatus])
+    if (videoStatus === 'uploading') return 'آپلود ویدیو در حال انجام است.'
+    return 'ابتدا فایل ویدیو را انتخاب کنید.'
+  }, [videoStatus, uploadType, videoUrl])
+
+
   const isFormDisabled = videoStatus !== 'success'
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
-            </label>
+          <div className="flex justify-center mb-4">
+            <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
+              <button
+                onClick={() => setUploadType('file')}
+                className={`px-4 py-2 text-sm rounded-md transition-all ${uploadType === 'file'
+                  ? 'bg-white shadow text-gray-900'
+                  : 'text-gray-500'
+                  }`}
+              >
+                آپلود فایل
+              </button>
+
+              <button
+                onClick={() => setUploadType('url')}
+                className={`px-4 py-2 text-sm rounded-md transition-all ${uploadType === 'url'
+                  ? 'bg-white shadow text-gray-900'
+                  : 'text-gray-500'
+                  }`}
+              >
+                لینک ویدیو
+              </button>
+            </div>
+
+          </div>
+
+          {uploadType === 'file' ? (
             <VideoDropzone
+              onFileSelected={(file) => {
+                handleVideoSelected(file)
+                setVideoUrl('')
+              }}
+              onUploaded={handleVideoUploaded}
+              onProgress={(percent) => {
+                setUploadProgress(percent)
+                if (percent > 0 && percent < 100) {
+                  setVideoStatus('uploading')
+                }
+              }}
+            />
+          ) : (
+            <div className="mt-4">
+              <input
+                value={videoUrl}
+                onChange={(e) => {
+                  setVideoUrl(e.target.value)
+                  setTempPath(null)
+                  setVideoFile(null)
+                  setVideoStatus('idle')
+                }}
+                placeholder="https://example.com/video.mp4"
+                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          )}
+          {/* <div>
+            <VideoDropzone
+              disabled={!!videoUrl}
               onFileSelected={handleVideoSelected}
               onUploaded={handleVideoUploaded}
               onProgress={(percent) => {
@@ -279,9 +357,43 @@ function Upload() {
               }}
             />
           </div>
+          <div className="mt-4">
+            <label className="block text-sm font-semibold text-gray-900 mb-2">
+              یا لینک ویدیو
+            </label>
+
+            <input
+              value={videoUrl}
+              disabled={!!videoFile || !!tempPath}
+              onChange={(e) => {
+                setVideoUrl(e.target.value)
+
+                if (e.target.value) {
+                  setTempPath(null)
+                  setVideoFile(null)
+                  setVideoStatus('idle')
+                  setUploadProgress(0)
+                }
+              }}
+              placeholder="https://example.com/video.mp4"
+              className={`h-11 px-4 rounded-lg border w-full focus:outline-none focus:ring-2 transition-all
+      ${!!videoFile || !!tempPath
+                  ? "bg-gray-100 cursor-not-allowed border-gray-200"
+                  : "border-gray-300 focus:ring-blue-500"
+                }`}
+            />
+
+            {(videoFile || tempPath) && (
+              <p className="text-center text-white bg-red-400 rounded-xl p-2 mt-2">
+                برای وارد کردن لینک، ابتدا فایل را حذف کنید
+              </p>
+            )}
+          </div> */}
 
           <div className="mt-4 space-y-2">
-            <p className='text-sm'>لطفا پیش از بارگذاری ویدیو <span className='text-blue-500'>قوانین اربعین تی وی</span> را مطالعه کنید </p>
+            {isFormDisabled && (
+              <p className='text-sm'>لطفا پیش از بارگذاری ویدیو <span className='text-blue-500'>قوانین اربعین تی وی</span> را مطالعه کنید </p>
+            )}
             <div className={`rounded-lg border px-3 py-2 text-sm ${videoStatus === 'success' ? 'border-green-200 bg-green-50 text-green-700' : canEditMetadata ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-slate-50 text-slate-600'}`}>
               {uploadStatusText}
               {videoStatus === 'uploading' && uploadProgress > 0 ? ` (${Math.round(uploadProgress)}%)` : ''}
@@ -290,7 +402,7 @@ function Upload() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2">
-          <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${canEditMetadata ? 'w-full' : 'w-full opacity-70'}`}>
+          <div className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${canEditMetadata ? 'w-full' : 'w-full '}`}>
             <h2 className="text-lg font-bold text-gray-900 mb-4">اطلاعات ویدیو</h2>
             <div className="space-y-4">
               <div>
@@ -331,6 +443,17 @@ function Upload() {
                   ))}
                 </select>
               </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={publicShow === 1}
+                  onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
+                  className="w-4 h-4 accent-blue-600"
+                />
+                <label className="text-sm text-gray-700">
+                  نمایش عمومی ویدیو
+                </label>
+              </div>
             </div>
           </div>
 
@@ -362,7 +485,14 @@ function Upload() {
         <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <button
             onClick={handleUpload}
-            disabled={!title.trim() || !tempPath || !isUploadReady || !chanId || isPending || !thumbFile}
+            disabled={
+              !title.trim() ||
+              !chanId ||
+              (uploadType === 'file' && !tempPath) ||
+              (uploadType === 'url' && !videoUrl) ||
+              isPending ||
+              !thumbFile
+            }
             className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
           >
             {isPending ? (

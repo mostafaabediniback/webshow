@@ -46,7 +46,7 @@ export default function UploadedVideos() {
           <div className=" overflow-hidden mb-4">
 
             {/* COVER */}
-            <div className="relative h-40 sm:h-52 w-full overflow-hidden rounded-2xl border">
+            <div className="relative h-40 sm:h-52 w-full overflow-hidden rounded-2xl border  border-gray-200">
               <img
                 src={channel?.background_image}
                 alt="cover"
@@ -61,11 +61,11 @@ export default function UploadedVideos() {
             <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-end gap-4 relative">
 
               {/* AVATAR */}
-              <div className="relative -mt-16 sm:-mt-20">
+              <div className="relative -mt-15 sm:-mt-20">
                 <img
                   src={channel?.image}
                   alt="avatar"
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white object-cover shadow-md"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-white object-cover shadow-md"
                 />
               </div>
 

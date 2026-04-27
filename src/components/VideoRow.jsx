@@ -20,6 +20,7 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
       {/* تصویر */}
       <div className="relative w-full h-44 bg-gray-200">
         <img
+          onClick={() => onShow(item.id)}
           src={coverImage}
           alt={title}
           className="w-full h-full object-cover"
@@ -27,15 +28,19 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
             e.target.src = "https://picsum.photos/seed/default/300/180";
           }}
         />
+                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white/95 backdrop-blur-xl px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl shadow-lg shadow-black/10 border border-white/50 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-800">
+          <Eye size={14} sm={16} color='#0f172a' className="text-indigo-500 flex-shrink-0" />
+          <span>{viewCount}</span>
+        </div>
 
         {/* وضعیت public/private */}
         <span
           className={`absolute top-2 right-2 px-2 py-1 text-xs rounded-full font-medium ${isPublic
-            ? "bg-red-100 text-red-600"
-            : "bg-green-100 text-green-700"
+            ? "bg-green-100 text-green-700"
+            : "bg-red-100 text-red-600"
             }`}
         >
-          {isPublic ? "خصوصی" : "عمومی"}
+          {isPublic ? "عمومی" : "خصوصی"}
         </span>
       </div>
 
@@ -70,12 +75,12 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
             <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" color="#1D4ED8" /> <span className="hidden sm:inline">ویرایش</span>          </button>
         )}
 
-        <button
+        {/* <button
           onClick={() => onShow(item.id)}
           disabled={isDeleting || isEditing}
           className="flex-1 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 text-gray-700 text-xs font-medium flex items-center justify-center gap-2"
         >
-          <Play className="w-5 h-5 sm:w-6 sm:h-6" color="black" /> <span className="hidden sm:inline">نمایش</span>        </button>
+          <Play className="w-5 h-5 sm:w-6 sm:h-6" color="black" /> <span className="hidden sm:inline">نمایش</span>        </button> */}
 
         <button
           onClick={() => onDelete(item.id)}
