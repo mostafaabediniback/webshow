@@ -1,141 +1,182 @@
-import axios from 'axios'
-import { Eye } from 'iconsax-react'
-import { useEffect, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import useChannelVideos from '../hooks/useChannelVideos'
-import { useVideo } from '../hooks/useVideo'
-import Layout from '../layouts/Layout'
-import { readAuthSession } from '../utils/auth'
+import axios from "axios";
+import { Eye, Share } from "iconsax-react";
+import { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import useChannelVideos from "../hooks/useChannelVideos";
+import { useVideo } from "../hooks/useVideo";
+import Layout from "../layouts/Layout";
+import { readAuthSession } from "../utils/auth";
 
-const DownloadIcon = ({ size = 16, color = '#4a5565', className = '' }) => (
-  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 3v12" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M8 11l4 4 4-4" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M21 21H3" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
+  <svg
+    className={className}
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12 3v12"
+      stroke={color}
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8 11l4 4 4-4"
+      stroke={color}
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M21 21H3"
+      stroke={color}
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
-)
+);
 
 function Video() {
-  const { id } = useParams()
-  const { data, isLoading } = useVideo(id)
-  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({ channelId: data?.data?.channel_id, pageNumber: 1, pageSize: 25 })
+  const { id } = useParams();
+  const { data, isLoading } = useVideo(id);
+  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos(
+    { channelId: data?.data?.channel_id, pageNumber: 1, pageSize: 25 },
+  );
 
-  const [isDownloading, setIsDownloading] = useState(false)
-  const [videoSource, setVideoSource] = useState('')
-  const [started, setStarted] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [videoSource, setVideoSource] = useState("");
+  const [started, setStarted] = useState(false);
 
-  const videoRef = useRef(null)
-  const isMobile = window.innerWidth < 768
+  const videoRef = useRef(null);
+  const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
-    const src = data?.data?.video_link || data?.data?.videoUrl || ''
-    setVideoSource(src)
-  }, [data])
+    const src = data?.data?.video_link || data?.data?.videoUrl || "";
+    setVideoSource(src);
+  }, [data]);
 
   const extractFilenameFromContentDisposition = (cd) => {
-    if (!cd) return null
+    if (!cd) return null;
     // try filename*=
-    let m = cd.match(/filename\*=(?:UTF-8'')?(.+)/i)
+    let m = cd.match(/filename\*=(?:UTF-8'')?(.+)/i);
     if (m && m[1]) {
       try {
-        const raw = m[1].trim().replace(/(^"|"$)/g, '')
-        return decodeURIComponent(raw)
+        const raw = m[1].trim().replace(/(^"|"$)/g, "");
+        return decodeURIComponent(raw);
       } catch {
-        return m[1].replace(/(^"|"$)/g, '')
+        return m[1].replace(/(^"|"$)/g, "");
       }
     }
-    m = cd.match(/filename="?([^"]+)"?/)
-    if (m && m[1]) return m[1]
-    return null
-  }
+    m = cd.match(/filename="?([^"]+)"?/);
+    if (m && m[1]) return m[1];
+    return null;
+  };
 
   const handleDownload = async () => {
     if (!videoSource) {
-      toast.error('آدرس ویدیو موجود نیست')
-      return
+      toast.error("آدرس ویدیو موجود نیست");
+      return;
     }
-    if (isDownloading) return
+    if (isDownloading) return;
 
-    setIsDownloading(true)
-    const safeName = (data?.data?.title || 'video').replace(/[\/\\?%*:|"<>]/g, '-').slice(0, 120)
+    setIsDownloading(true);
+    const safeName = (data?.data?.title || "video")
+      .replace(/[\/\\?%*:|"<>]/g, "-")
+      .slice(0, 120);
 
     try {
       // فقط از axios استفاده می‌کنیم (آدرس کامل است)
-      const { token } = readAuthSession()
+      const { token } = readAuthSession();
       const res = await axios.get(videoSource, {
-        responseType: 'blob',
+        responseType: "blob",
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         // در صورت نیاز می‌توانید onDownloadProgress اضافه کنید
-      })
+      });
 
-      const blob = res.data
-      let ext = '.mp4'
-      const mime = (blob && blob.type) || (res.headers && (res.headers['content-type'] || res.headers['Content-Type'])) || ''
-      if (mime.includes('webm')) ext = '.webm'
-      else if (mime.includes('ogg')) ext = '.ogg'
-      else if (mime.includes('mp4')) ext = '.mp4'
+      const blob = res.data;
+      let ext = ".mp4";
+      const mime =
+        (blob && blob.type) ||
+        (res.headers &&
+          (res.headers["content-type"] || res.headers["Content-Type"])) ||
+        "";
+      if (mime.includes("webm")) ext = ".webm";
+      else if (mime.includes("ogg")) ext = ".ogg";
+      else if (mime.includes("mp4")) ext = ".mp4";
 
-      let downloadName = `${safeName}${ext}`
-      const cdHeader = res.headers && (res.headers['content-disposition'] || res.headers['Content-Disposition'] || '')
-      const cdName = extractFilenameFromContentDisposition(cdHeader)
-      if (cdName) downloadName = cdName
+      let downloadName = `${safeName}${ext}`;
+      const cdHeader =
+        res.headers &&
+        (res.headers["content-disposition"] ||
+          res.headers["Content-Disposition"] ||
+          "");
+      const cdName = extractFilenameFromContentDisposition(cdHeader);
+      if (cdName) downloadName = cdName;
 
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = downloadName
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      setTimeout(() => URL.revokeObjectURL(url), 1000)
-      toast.success('دانلود شروع شد')
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = downloadName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast.success("دانلود شروع شد");
     } catch (err) {
-      console.error('download error', err)
+      console.error("download error", err);
       // احتمال خطای CORS یا بلاک شدن توسط سرور
       // تلاش برای باز کردن لینک مستقیم به‌عنوان fallback
       try {
-        window.open(videoSource, '_blank', 'noopener')
-        toast.info('لینک ویدیو در تب جدید باز شد. در صورت نیاز می‌توانید روی آن راست‌کلیک و Save as کنید.')
+        window.open(videoSource, "_blank", "noopener");
+        toast.info(
+          "لینک ویدیو در تب جدید باز شد. در صورت نیاز می‌توانید روی آن راست‌کلیک و Save as کنید.",
+        );
       } catch (e) {
-        toast.error('دانلود مستقیم ممکن نیست. لطفاً با پشتیبانی تماس بگیرید یا بعداً تلاش کنید.')
+        toast.error(
+          "دانلود مستقیم ممکن نیست. لطفاً با پشتیبانی تماس بگیرید یا بعداً تلاش کنید.",
+        );
       }
     } finally {
-      setIsDownloading(false)
+      setIsDownloading(false);
     }
-  }
+  };
   const handlePlay = () => {
-    const video = videoRef.current
-    if (!video) return
+    const video = videoRef.current;
+    if (!video) return;
 
     if (isMobile) {
       if (video.requestFullscreen) {
-        video.requestFullscreen()
+        video.requestFullscreen();
       } else if (video.webkitEnterFullscreen) {
-        video.webkitEnterFullscreen()
+        video.webkitEnterFullscreen();
       }
     }
-  }
+  };
   // useEffect(() => {
   //   if (!isMobile && videoRef.current) {
   //     videoRef.current.play().catch(() => { })
   //   }
   // }, [videoSource])
   useEffect(() => {
-    if (!videoSource || !videoRef.current) return
+    if (!videoSource || !videoRef.current) return;
 
     if (!isMobile) {
-      const playPromise = videoRef.current.play()
+      const playPromise = videoRef.current.play();
 
       if (playPromise !== undefined) {
         playPromise.catch(() => {
           // autoplay blocked → ignore
-        })
+        });
       }
     }
-  }, [videoSource, isMobile])
+  }, [videoSource, isMobile]);
 
   if (isLoading) {
     return (
@@ -156,7 +197,7 @@ function Video() {
           </div>
         </div>
       </Layout>
-    )
+    );
   }
 
   if (!data) {
@@ -169,7 +210,7 @@ function Video() {
           </div>
         </div>
       </Layout>
-    )
+    );
   }
 
   return (
@@ -187,13 +228,12 @@ function Video() {
                 src={videoSource}
                 className="w-full h-full"
                 onCanPlay={() => {
-                  const v = videoRef.current
-                  if (!v) return
+                  const v = videoRef.current;
+                  if (!v) return;
 
-                  const playPromise = v.play()
+                  const playPromise = v.play();
                   if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                    })
+                    playPromise.catch(() => {});
                   }
                 }}
               />
@@ -204,7 +244,8 @@ function Video() {
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <Link
-                  to={data?.data?.username ? `/${data?.data?.username}` : "/"} state={{ channelId: data?.data?.channel_id }}
+                  to={data?.data?.username ? `/${data?.data?.username}` : "/"}
+                  state={{ channelId: data?.data?.channel_id }}
                   className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                 >
                   <img
@@ -213,16 +254,21 @@ function Video() {
                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 ring-2 ring-gray-200 flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{data?.data?.channel_name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{(data?.data?.view_count || 0).toLocaleString('fa-IR')} بازدید</p>
+                    <p className="text-sm font-semibold text-gray-900 truncate">
+                      {data?.data?.channel_name}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {(data?.data?.view_count || 0).toLocaleString("fa-IR")}{" "}
+                      بازدید
+                    </p>
                   </div>
                 </Link>
               </div>
               <div className="flex items-center gap-2 flex-wrap text-gray-600">
-                <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
+                {/* <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
                   <Eye size={16} color="#4a5565" />
                   {(data?.data?.view_count || 0).toLocaleString('fa-IR')}
-                </span>
+                </span> */}
                 {/* <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
                   <Like1 size={16} color="#4a5565" />
                   {(data.data.likes || 0).toLocaleString('fa-IR')}
@@ -233,10 +279,37 @@ function Video() {
                 </span> */}
                 <button
                   type="button"
+                  onClick={async () => {
+                    const shareUrl = `${window.location.origin}/v/${id}`;
+
+                    try {
+                      if (navigator.share) {
+                        await navigator.share({
+                          title: data?.data?.title,
+                          text: data?.data?.title,
+                          url: shareUrl,
+                        });
+                      } else {
+                        await navigator.clipboard.writeText(shareUrl);
+                        toast.success("لینک ویدیو کپی شد");
+                      }
+                    } catch (err) {
+                      console.log(err);
+                    }
+                  }}
+                  className=" w-24 h-14 inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm rounded-2xl bg-green-100 px-3 py-1.5 hover:bg-green-200 transition-colors"
+                >
+                  <Share size={16} color="#166534" />
+                  اشتراک
+                </button>
+                <button
+                  type="button"
                   onClick={handleDownload}
                   disabled={isDownloading || !videoSource}
-                  className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5 hover:bg-gray-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                  title={!videoSource ? 'آدرس ویدیو موجود نیست' : 'دانلود ویدیو'}
+                  className="w-24 h-14  inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm rounded-2xl bg-blue-200 px-3 py-1.5 hover:bg-gray-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  title={
+                    !videoSource ? "آدرس ویدیو موجود نیست" : "دانلود ویدیو"
+                  }
                 >
                   {isDownloading ? (
                     <>
@@ -260,39 +333,57 @@ function Video() {
           </div>
           <aside className="hidden lg:block">
             <div className="sticky top-24 space-y-3">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">ویدیوهای مرتبط</h3>
-              {isRelatedLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex gap-3 p-2 rounded-lg">
-                    <div className="w-40 h-24 rounded-lg bg-gray-200 animate-pulse flex-shrink-0" />
-                    <div className="flex-1 space-y-2 py-1">
-                      <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-                      <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse" />
+              <h3 className="text-lg font-bold text-gray-900 mb-4">
+                ویدیوهای مرتبط
+              </h3>
+              {isRelatedLoading
+                ? Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="flex gap-3 p-2 rounded-lg">
+                      <div className="w-40 h-24 rounded-lg bg-gray-200 animate-pulse flex-shrink-0" />
+                      <div className="flex-1 space-y-2 py-1">
+                        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+                        <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse" />
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                (relatedVideos?.items || []).filter(v => String(v.id) !== String(id)).slice(0, 10).map((video) => (
-                  <Link to={`/v/${video.id}`} key={video.id} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
-                    <div className="w-40 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
-                      <img
-                        src={video.thumbnailUrl || video.cover_link || video.cover}
-                        alt={video.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => { e.currentTarget.src = "https://picsum.photos/seed/default/160/90"; }}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-semibold line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors">
-                        {video.title}
-                      </h4>
-                      <p className="text-xs text-gray-500 mt-1">{video.channelName || video.channel_name}</p>
-                      <p className="text-xs text-gray-400 mt-1">{(video.views || 0).toLocaleString('fa-IR')} بازدید</p>
-                    </div>
-                  </Link>
-                ))
-              )}
-              {!isRelatedLoading && (!(relatedVideos?.items || []).length) && (
+                  ))
+                : (relatedVideos?.items || [])
+                    .filter((v) => String(v.id) !== String(id))
+                    .slice(0, 10)
+                    .map((video) => (
+                      <Link
+                        to={`/v/${video.id}`}
+                        key={video.id}
+                        className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group"
+                      >
+                        <div className="w-40 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
+                          <img
+                            src={
+                              video.thumbnailUrl ||
+                              video.cover_link ||
+                              video.cover
+                            }
+                            alt={video.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => {
+                              e.currentTarget.src =
+                                "https://picsum.photos/seed/default/160/90";
+                            }}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-semibold line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors">
+                            {video.title}
+                          </h4>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {video.channelName || video.channel_name}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {(video.views || 0).toLocaleString("fa-IR")} بازدید
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+              {!isRelatedLoading && !(relatedVideos?.items || []).length && (
                 <p className="text-gray-500 text-sm">ویدیوی مرتبطی یافت نشد</p>
               )}
             </div>
@@ -300,7 +391,7 @@ function Video() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }
 
-export default Video
+export default Video;

@@ -65,7 +65,7 @@ export default function UploadedVideos() {
                 <img
                   src={channel?.image}
                   alt="avatar"
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-white object-cover shadow-md"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-2 border-white object-cover shadow-md"
                 />
               </div>
 

@@ -11,12 +11,6 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 const PAGE_SIZE = 25;
 
 function Home() {
-  const { username } = useParams();
-  // const navigate = useNavigate();
-
-
-  const location = useLocation(); // استفاده از useLocation
-  console.log(location);
 
   const [activeChannelId, setActiveChannelId] = useState(null);
   const loadMoreRef = useRef(null);
@@ -39,10 +33,8 @@ function Home() {
 
   const channelsList = Array.isArray(channelsData?.items) ? channelsData.items : [];
   const videosList = Array.isArray(videosData?.items) ? videosData.items : [];
-  // console.log(videosList);
   const activeChannelName = channelsList.find((channel) => channel.id === activeChannelId)?.name;
-  console.log(activeChannelName);
-  console.log(activeChannelId);
+
 
   const handleChannelSelect = useCallback((id) => {
     setActiveChannelId(id);
@@ -52,17 +44,6 @@ function Home() {
     refetch();
   }, [refetch]);
 
-  useEffect(() => {
-    if (location.state?.channelId) {
-      setActiveChannelId(location.state.channelId);
-    }
-  }, [location.state]);
-
-  // useEffect(() => {
-  //   if (username && !location.state?.channelId) {
-  //     navigate("/", { replace: true });
-  //   }
-  // }, [username]);
 
   useEffect(() => {
     const sentinel = loadMoreRef.current;

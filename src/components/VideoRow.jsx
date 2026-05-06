@@ -28,10 +28,10 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
             e.target.src = "https://picsum.photos/seed/default/300/180";
           }}
         />
-                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white/95 backdrop-blur-xl px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl shadow-lg shadow-black/10 border border-white/50 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-800">
+                {/* <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white/95 backdrop-blur-xl px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl shadow-lg shadow-black/10 border border-white/50 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-800">
           <Eye size={14} sm={16} color='#0f172a' className="text-indigo-500 flex-shrink-0" />
           <span>{viewCount}</span>
-        </div>
+        </div> */}
 
         {/* وضعیت public/private */}
         <span

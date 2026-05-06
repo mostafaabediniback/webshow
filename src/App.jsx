@@ -14,6 +14,7 @@ import UserVideos from './pages/UserVideos'
 import UploadedVideos from './pages/UploadedVideos'
 import SettingsPage from './pages/SettingsPage'
 import useAuthStore, { hydrateAuthStore } from './store/useAuthStore'
+import ProfileChannel from './pages/ProfileChannel'
 
 const RequireAuth = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
@@ -71,7 +72,8 @@ function App() {
     <>
       <AuthNavigationEffects />
       <Routes>
-        <Route path="/:username?" element={<Home />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/:username?" element={<ProfileChannel />} />
         <Route path="/search/:q" element={<Search />} />
         <Route path="/v/:id" element={<Video />} />
         <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
