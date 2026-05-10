@@ -460,7 +460,7 @@ function Upload() {
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">تصویر کاور (اجباری)</label>
+                <label className=" text-sm font-semibold text-gray-900 mb-5">تصویر کاور (اجباری)</label>
                 <CoverPicker
                   // isFormDisabled={isFormDisabled}
                   value={thumbFile}
@@ -482,7 +482,7 @@ function Upload() {
           </div>
         </div>
 
-        <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="flex gap-2  ">
           <button
             onClick={handleUpload}
             disabled={
@@ -493,7 +493,7 @@ function Upload() {
               isPending ||
               !thumbFile
             }
-            className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+            className="w-full h-12 px-6 rounded-lg bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white hover:from-orange-600 hover:via-amber-600 hover:to-yellow-600 disabled: from-gray-500 disabled:cursor-not-allowed text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
           >
             {isPending ? (
               <>در حال آپلود...</>

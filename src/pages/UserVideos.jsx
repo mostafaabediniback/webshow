@@ -412,7 +412,7 @@ function UserVideos() {
         </div>
 
 
-        <div className="flex gap-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="flex gap-2">
           <button
             onClick={handleUpload}
             disabled={

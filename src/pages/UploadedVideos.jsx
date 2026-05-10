@@ -1,52 +1,54 @@
-import { useState } from 'react'
-import { Pagination } from '@mui/material'
-import { Play } from 'iconsax-react'
-import DashboardLayout from '../layouts/DashboardLayout'
-import useChannelVideos from '../hooks/useChannelVideos'
-import useDeleteVideo from '../hooks/useDeleteVideo'
-import VideoRow from '../components/VideoRow'
-import VideoModal from '../components/VideoModal'
-import ConfirmModal from '../components/ConfirmModal'
-import { usePaginationParams } from '../hooks/usePaginationParams'
-import EditVideoModal from '../components/EditVideoModal'
-import useChannelDetail from '../hooks/useChannelDetail'
+import { useState } from "react";
+import { Pagination } from "@mui/material";
+import { Play } from "iconsax-react";
+import DashboardLayout from "../layouts/DashboardLayout";
+import useChannelVideos from "../hooks/useChannelVideos";
+import useDeleteVideo from "../hooks/useDeleteVideo";
+import VideoRow from "../components/VideoRow";
+import VideoModal from "../components/VideoModal";
+import ConfirmModal from "../components/ConfirmModal";
+import { usePaginationParams } from "../hooks/usePaginationParams";
+import EditVideoModal from "../components/EditVideoModal";
+import useChannelDetail from "../hooks/useChannelDetail";
 
-const PAGE_SIZE = 25
+const PAGE_SIZE = 25;
 
 export default function UploadedVideos() {
-  const { page, setPage } = usePaginationParams(1)
-  const { deleteVideoAsync, isDeleting } = useDeleteVideo()
+  const { page, setPage } = usePaginationParams(1);
+  const { deleteVideoAsync, isDeleting } = useDeleteVideo();
 
-  const [selectedVideoId, setSelectedVideoId] = useState(null)
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
-  const [editingVideo, setEditingVideo] = useState(null)
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [editingVideo, setEditingVideo] = useState(null);
 
-  const { data: videos, isLoading: isLoadingVideos, isFetching, isError } = useChannelVideos({
+  const {
+    data: videos,
+    isLoading: isLoadingVideos,
+    isFetching,
+    isError,
+  } = useChannelVideos({
     pageNumber: page,
     pageSize: PAGE_SIZE,
-  })
+  });
   const { data, refetch } = useChannelDetail();
   const channel = data?.data;
 
-
   const handleConfirmDelete = async () => {
     if (deleteConfirmId) {
-      await deleteVideoAsync(deleteConfirmId)
-      setDeleteConfirmId(null)
-
+      await deleteVideoAsync(deleteConfirmId);
+      setDeleteConfirmId(null);
     }
-  }
+  };
 
-  const videosList = Array.isArray(videos?.items) ? videos.items : []
+  const videosList = Array.isArray(videos?.items) ? videos.items : [];
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div className="bg-white rounded-xl  p-6 shadow-sm">
           <div className=" overflow-hidden mb-4">
-
             {/* COVER */}
-            <div className="relative h-40 sm:h-52 w-full overflow-hidden rounded-2xl border  border-gray-200">
+            <div className="relative h-40 sm:h-52 w-full overflow-hidden rounded-2xl ">
               <img
                 src={channel?.background_image}
                 alt="cover"
@@ -58,45 +60,62 @@ export default function UploadedVideos() {
             </div>
 
             {/* CONTENT */}
-            <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-end gap-4 relative">
+            <div className="relative p-4 sm:p-6">
+              <div className="flex flex-col gap-4">
+                {/* AVATAR */}
+                <div className="relative -mt-16 sm:-mt-20">
+                  <img
+                    src={channel?.image}
+                    alt="avatar"
+                    className="
+          w-24 h-24 sm:w-28 sm:h-28
+          rounded-2xl
+          object-cover
+          shadow-lg
+          border-1 border-gray-500
+          bg-white
+        "
+                  />
+                </div>
 
-              {/* AVATAR */}
-              <div className="relative -mt-15 sm:-mt-20">
-                <img
-                  src={channel?.image}
-                  alt="avatar"
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-2 border-white object-cover shadow-md"
-                />
-              </div>
+                <div className="flex gap-2 justify-between items-center flex-wrap">
+                  {/* INFO */}
+                  <div className="space-y-2">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words">
+                      {channel?.name}
+                    </h2>
 
-              {/* INFO */}
-              <div className="flex-1 space-y-1">
-                <h2 className="text-lg font-bold text-gray-900">
-                  {channel?.name}
-                </h2>
+                    <p className="text-sm text-gray-500 break-all">
+                      {channel?.username}
+                    </p>
 
-                <p className="text-sm text-gray-500">
-                  @{channel?.username}
-                </p>
+                    {channel?.description && (
+                      <p className="text-sm text-gray-600 line-clamp-2">
+                        {channel.description}
+                      </p>
+                    )}
+                  </div>
 
-                {channel?.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {channel.description}
-                  </p>
-                )}
-              </div>
-
-              {/* SOCIALS QUICK VIEW */}
-              <div className="flex gap-2 flex-wrap">
-                {channel?.socials &&
-                  Object.entries(channel.socials).map(([key, value]) => (
-                    <span
-                      key={key}
-                      className="text-xs px-2 py-1 bg-gray-100 rounded-md text-gray-600"
-                    >
-                      {key}
-                    </span>
-                  ))}
+                  {/* SOCIALS */}
+                  <div className="flex flex-wrap gap-2">
+                    {channel?.socials &&
+                      Object.entries(channel.socials).map(([key, value]) => (
+                        <span
+                          key={key}
+                          className="
+              text-xs
+              px-2 py-1
+              bg-gray-100
+              rounded-md
+              text-gray-600
+              whitespace-nowrap
+            "
+                        >
+                          {key}
+                        </span>
+                      ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -175,7 +194,11 @@ export default function UploadedVideos() {
         </div>
       </div>
 
-      <VideoModal videoId={selectedVideoId} isOpen={!!selectedVideoId} onClose={() => setSelectedVideoId(null)} />
+      <VideoModal
+        videoId={selectedVideoId}
+        isOpen={!!selectedVideoId}
+        onClose={() => setSelectedVideoId(null)}
+      />
       <ConfirmModal
         isOpen={!!deleteConfirmId}
         onClose={() => setDeleteConfirmId(null)}
@@ -194,5 +217,5 @@ export default function UploadedVideos() {
         onClose={() => setEditingVideo(null)}
       />
     </DashboardLayout>
-  )
+  );
 }

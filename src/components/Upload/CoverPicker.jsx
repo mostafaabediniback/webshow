@@ -64,7 +64,7 @@ export default function CoverPicker({
   return (
     <div>
       <div
-        className={`rounded-xl border-2 transition-all ${thumbDrag ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300 hover:border-gray-400'} p-6 flex flex-col items-center justify-center text-center cursor-pointer min-h-[150px]`}
+        className={`rounded-xl border-2 transition-all ${thumbDrag ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300 hover:border-gray-400'} p-6 mt-5 flex flex-col items-center justify-center text-center cursor-pointer min-h-[400px]`}
         onDragOver={(e) => { e.preventDefault(); setThumbDrag(true) }}
         onDragLeave={() => setThumbDrag(false)}
         onDrop={(e) => { e.preventDefault(); setThumbDrag(false); const f = e.dataTransfer.files?.[0]; if (f && f.type.startsWith('image/')) onChange(f) }}
