@@ -10,12 +10,19 @@ import VideoModal from "../components/VideoModal";
 import ConfirmModal from "../components/ConfirmModal";
 import { usePaginationParams } from "../hooks/usePaginationParams";
 import EditVideoModal from "../components/EditVideoModal";
+import { useNavigate } from "react-router-dom";
 
 function Videos() {
+  const navigate = useNavigate();
+
   const { channels: chans, isLoadingChannels } = useChannel();
   const [chanId, setChanId] = useState("");
   const { page, setPage } = usePaginationParams(1);
-  const { data, isLoading, isError } = useChannelVideos({ channelId: chanId, pageNumber: page, pageSize: 25 });
+  const { data, isLoading, isError } = useChannelVideos({
+    channelId: chanId,
+    pageNumber: page,
+    pageSize: 25,
+  });
   const { deleteVideoAsync, isDeleting } = useDeleteVideo();
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
@@ -71,13 +78,20 @@ function Videos() {
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-20 bg-gray-100 rounded-lg animate-pulse" />
+                <div
+                  key={i}
+                  className="h-20 bg-gray-100 rounded-lg animate-pulse"
+                />
               ))}
             </div>
           ) : isError ? (
             <div className="text-center py-12">
-              <p className="text-red-500 font-medium">خطا در بارگذاری ویدیوها</p>
-              <p className="text-sm text-gray-500 mt-2">لطفاً دوباره تلاش کنید</p>
+              <p className="text-red-500 font-medium">
+                خطا در بارگذاری ویدیوها
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                لطفاً دوباره تلاش کنید
+              </p>
             </div>
           ) : (data?.items || []).length === 0 ? (
             <div className="text-center py-12">
@@ -98,7 +112,8 @@ function Videos() {
                     key={v.id}
                     item={v}
                     onDelete={handleDelete}
-                    onShow={handleShow}
+                    // onShow={handleShow}
+                    onShow={(id) => navigate(`/v/${id}`)}
                     onEdit={setEditingVideo}
                     isDeleting={isDeleting}
                   />
@@ -120,11 +135,11 @@ function Videos() {
           )}
         </div>
       </div>
-      <VideoModal
+      {/* <VideoModal
         videoId={selectedVideoId}
         isOpen={!!selectedVideoId}
         onClose={() => setSelectedVideoId(null)}
-      />
+      /> */}
       <ConfirmModal
         isOpen={!!deleteConfirmId}
         onClose={() => setDeleteConfirmId(null)}

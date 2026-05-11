@@ -277,50 +277,78 @@ function Video() {
                   <Dislike size={16} color="#4a5565" />
                   {(data.data.dislikes || 0).toLocaleString('fa-IR')}
                 </span> */}
-                <button
-                  type="button"
-                  onClick={async () => {
-                    const shareUrl = `${window.location.origin}/v/${id}`;
+<button
+  type="button"
+  onClick={async () => {
+    const shareUrl = `${window.location.origin}/v/${id}`;
 
-                    try {
-                      if (navigator.share) {
-                        await navigator.share({
-                          title: data?.data?.title,
-                          text: data?.data?.title,
-                          url: shareUrl,
-                        });
-                      } else {
-                        await navigator.clipboard.writeText(shareUrl);
-                        toast.success("لینک ویدیو کپی شد");
-                      }
-                    } catch (err) {
-                      console.log(err);
-                    }
-                  }}
-                  className=" w-24 h-14 inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm rounded-2xl bg-green-100 px-3 py-1.5 hover:bg-green-200 transition-colors"
-                >
-                  <Share size={16} color="#166534" />
-                  اشتراک
-                </button>
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: data?.data?.title,
+          text: data?.data?.title,
+          url: shareUrl,
+        });
+      } else {
+        // کپی واقعی مثل Ctrl + C
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+
+        document.body.appendChild(textArea);
+
+        textArea.focus();
+        textArea.select();
+
+        document.execCommand("copy");
+
+        document.body.removeChild(textArea);
+
+        toast.success("لینک ویدیو کپی شد", {
+          position: "bottom-center",
+          style: {
+            background: "#2563eb",
+            color: "#fff",
+            fontSize: "13px",
+            borderRadius: "10px",
+            padding: "10px 14px",
+          },
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }}
+  className="w-24 h-12 font-bold inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 hover:bg-gray-200 transition-colors"
+>
+  <div className="flex gap-2 justify-center items-center">
+    <Share size={24} color="#4a5565" />
+    <span className="text-[16px]">اشتراک</span>
+  </div>
+</button>
+
                 <button
                   type="button"
                   onClick={handleDownload}
                   disabled={isDownloading || !videoSource}
-                  className="w-24 h-14  inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm rounded-2xl bg-blue-200 px-3 py-1.5 hover:bg-gray-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-24 h-12 font-bold  inline-flex items-center justify-center gap-2 text-xs sm:text-sm rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 hover:bg-gray-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   title={
                     !videoSource ? "آدرس ویدیو موجود نیست" : "دانلود ویدیو"
                   }
                 >
                   {isDownloading ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 font-bold border-gray-300 border-t-transparent rounded-full animate-spin" />
                       در حال دانلود...
                     </>
                   ) : (
-                    <>
-                      <DownloadIcon size={16} color="#4a5565" />
-                      دانلود
-                    </>
+                    <div className="flex gap-2 justify-center items-center ">
+                      <DownloadIcon size={24} color="#4a5565" />
+                      <span className="text-[16px]"> دانلود</span>
+                    </div>
                   )}
                 </button>
               </div>

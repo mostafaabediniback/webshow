@@ -41,7 +41,7 @@ function VideoCard({ video }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-all duration-500" />
 
         {/* Play Button */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {/* <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/90 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-2xl shadow-black/20 scale-75 opacity-0 group-hover/card:scale-100 group-hover/card:opacity-100 transition-all duration-500 delay-100 shadow-indigo-500/25">
             <PlayCircle
               size={28}
@@ -50,7 +50,7 @@ function VideoCard({ video }) {
               className="text-indigo-600 drop-shadow-lg"
             />
           </div>
-        </div>
+        </div> */}
 
         {/* View Count Badge */}
         {/* <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white/95 backdrop-blur-xl px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl shadow-lg shadow-black/10 border border-white/50 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-800">

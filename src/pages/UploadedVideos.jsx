@@ -10,10 +10,12 @@ import ConfirmModal from "../components/ConfirmModal";
 import { usePaginationParams } from "../hooks/usePaginationParams";
 import EditVideoModal from "../components/EditVideoModal";
 import useChannelDetail from "../hooks/useChannelDetail";
+import { useNavigate } from "react-router-dom";
 
 const PAGE_SIZE = 25;
 
 export default function UploadedVideos() {
+  const navigate = useNavigate();
   const { page, setPage } = usePaginationParams(1);
   const { deleteVideoAsync, isDeleting } = useDeleteVideo();
 
@@ -171,7 +173,8 @@ export default function UploadedVideos() {
                     key={v.id}
                     item={v}
                     onDelete={(id) => setDeleteConfirmId(id)}
-                    onShow={(id) => setSelectedVideoId(id)}
+                    // onShow={(id) => setSelectedVideoId(id)}
+                    onShow={(id) => navigate(`/v/${id}`)}
                     onEdit={setEditingVideo}
                     isDeleting={isDeleting}
                   />
@@ -194,11 +197,11 @@ export default function UploadedVideos() {
         </div>
       </div>
 
-      <VideoModal
+      {/* <VideoModal
         videoId={selectedVideoId}
         isOpen={!!selectedVideoId}
         onClose={() => setSelectedVideoId(null)}
-      />
+      /> */}
       <ConfirmModal
         isOpen={!!deleteConfirmId}
         onClose={() => setDeleteConfirmId(null)}
