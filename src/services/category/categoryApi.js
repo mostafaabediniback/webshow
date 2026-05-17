@@ -1,7 +1,7 @@
 import axiosInstanceNew from "../../utils/axiosConfigNew";
 
 export const getCategories = async () => {
-  const res = await axiosInstanceNew.get("/category");
+  const res = await axiosInstanceNew.get("/categories");
   const raw = res?.data?.data ?? res?.data;
   return Array.isArray(raw) ? raw : [];
 };
