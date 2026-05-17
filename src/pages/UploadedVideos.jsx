@@ -31,6 +31,7 @@ export default function UploadedVideos() {
   } = useChannelVideos({
     pageNumber: page,
     pageSize: PAGE_SIZE,
+    enabled: true, // 👈 مهم
   });
   const { data, refetch } = useChannelDetail();
   const channel = data?.data;

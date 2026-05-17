@@ -35,8 +35,16 @@ function Upload() {
   const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
   const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
   const [isPlaylistModalOpen, setPlaylistModalOpen] = useState(false);
-  const { data: categories = [], isLoading: isLoadingCategories, isError: isCategoriesError } = useCategories();
-  const { data: playlists = [], isLoading: isLoadingPlaylists, isError: isPlaylistsError } = usePlaylists(chanId);
+  const {
+    data: categories = [],
+    isLoading: isLoadingCategories,
+    isError: isCategoriesError,
+  } = useCategories();
+  const {
+    data: playlists = [],
+    isLoading: isLoadingPlaylists,
+    isError: isPlaylistsError,
+  } = usePlaylists(chanId);
   const createCategoryMutation = useCreateCategory();
   const createPlaylistMutation = useCreatePlaylist();
 
@@ -398,79 +406,108 @@ function Upload() {
             </div>
           </div>
         </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full flex flex-col gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-900 mb-2">
+              عنوان ویدیو <span className="text-red-500">*</span>
+            </label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="عنوان ویدیو را وارد کنید"
+              className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-900 mb-2">
+              توضیحات
+            </label>
+            <textarea
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+              className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-900 mb-2">
+              انتخاب کانال <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={chanId}
+              onChange={(e) => setChanId(e.target.value)}
+              disabled={isLoadingChannels}
+              className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              <option value="">انتخاب کانال</option>
+              {(chans || []).map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* PUBLIC SWITCH */}
+          <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 mt-2">
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-800">
+                نمایش عمومی ویدیو
+              </span>
+              <span className="text-xs text-gray-500">
+                در صورت فعال بودن، ویدیو برای همه کاربران قابل مشاهده است
+              </span>
+            </div>
+
+            <label className="relative inline-flex cursor-pointer items-center">
+              <input
+                type="checkbox"
+                checked={publicShow === 1}
+                onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
+                className="sr-only peer"
+              />
+
+              <div
+                className="
+      h-6 w-11 rounded-[10px] bg-gray-300 
+      peer-checked:bg-blue-600 
+      transition-colors duration-300
+      after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+      after:h-5 after:w-5 after:rounded-full after:bg-white
+      after:transition-all after:duration-300
+      peer-checked:after:translate-x-5
+      
+    "
+              />
+            </label>
+          </div>
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-2 justify-center sm:justify-between pt-2">
           <div
             className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${canEditMetadata ? "w-full" : "w-full "}`}
           >
-            <h2 className="text-lg font-bold text-gray-900 mb-4">
-              اطلاعات ویدیو
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  عنوان ویدیو <span className="text-red-500">*</span>
-                </label>
-                <input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="عنوان ویدیو را وارد کنید"
-                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  توضیحات
-                </label>
-                <textarea
-                  value={desc}
-                  onChange={(e) => setDesc(e.target.value)}
-                  placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                  className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  انتخاب کانال <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={chanId}
-                  onChange={(e) => setChanId(e.target.value)}
-                  disabled={isLoadingChannels}
-                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                  <option value="">انتخاب کانال</option>
-                  {(chans || []).map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={publicShow === 1}
-                  onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
-                  className="w-4 h-4 accent-blue-600"
-                />
-                <label className="text-sm text-gray-700">
-                  نمایش عمومی ویدیو
-                </label>
-              </div>
+            <div className="space-y-6">
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-semibold text-gray-900">
                     دسته‌بندی‌ها
                   </label>
-                  <button type="button" onClick={() => setCategoryModalOpen(true)} className="text-xs text-blue-600 hover:underline">
+                  <button
+                    type="button"
+                    onClick={() => setCategoryModalOpen(true)}
+                    className="text-xs text-blue-600 hover:underline"
+                  >
                     + ایجاد دسته‌بندی
                   </button>
                 </div>
                 {isLoadingCategories ? (
-                  <p className="text-sm text-gray-500">در حال بارگذاری دسته‌بندی‌ها...</p>
+                  <p className="text-sm text-gray-500">
+                    در حال بارگذاری دسته‌بندی‌ها...
+                  </p>
                 ) : isCategoriesError ? (
-                  <p className="text-sm text-red-600">خطا در دریافت دسته‌بندی‌ها</p>
+                  <p className="text-sm text-red-600">
+                    خطا در دریافت دسته‌بندی‌ها
+                  </p>
                 ) : (
                   <MultiSelect
                     options={categories}
@@ -485,32 +522,72 @@ function Upload() {
                   <label className="block text-sm font-semibold text-gray-900">
                     پلی‌لیست (اختیاری)
                   </label>
-                  <button type="button" onClick={() => setPlaylistModalOpen(true)} className="text-xs text-blue-600 hover:underline" disabled={!chanId}>
+                  <button
+                    type="button"
+                    onClick={() => setPlaylistModalOpen(true)}
+                    className="text-xs text-blue-600 hover:underline"
+                    disabled={!chanId}
+                  >
                     + ایجاد پلی‌لیست
                   </button>
                 </div>
-                {!chanId ? (
-                  <p className="text-sm text-gray-500">ابتدا کانال را انتخاب کنید.</p>
-                ) : isLoadingPlaylists ? (
-                  <p className="text-sm text-gray-500">در حال بارگذاری پلی‌لیست‌ها...</p>
-                ) : isPlaylistsError ? (
-                  <p className="text-sm text-red-600">خطا در دریافت پلی‌لیست‌ها</p>
-                ) : playlists.length === 0 ? (
-                  <p className="text-sm text-gray-500">پلی‌لیستی وجود ندارد.</p>
-                ) : (
-                  <select
-                    value={selectedPlaylistId}
-                    onChange={(e) => setSelectedPlaylistId(e.target.value)}
-                    className="h-11 px-4 rounded-lg border border-gray-300 w-full"
-                  >
-                    <option value="">بدون پلی‌لیست</option>
-                    {playlists.map((playlist) => (
-                      <option key={playlist.id} value={playlist.id}>
-                        {playlist.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
+                <div className="rounded-lg border border-gray-200 bg-white">
+                  {!chanId ? (
+                    <div className="p-3 text-sm text-gray-500">
+                      ابتدا کانال را انتخاب کنید.
+                    </div>
+                  ) : isLoadingPlaylists ? (
+                    <div className="p-3 text-sm text-gray-500">
+                      در حال بارگذاری پلی‌لیست‌ها...
+                    </div>
+                  ) : isPlaylistsError ? (
+                    <div className="p-3 text-sm text-red-600">
+                      خطا در دریافت پلی‌لیست‌ها
+                    </div>
+                  ) : playlists.length === 0 ? (
+                    <div className="p-3 text-sm text-gray-500">
+                      پلی‌لیستی وجود ندارد.
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <select
+                        value={selectedPlaylistId}
+                        onChange={(e) => setSelectedPlaylistId(e.target.value)}
+                        className="
+          w-full h-11
+          appearance-none
+          bg-transparent
+          px-4 pr-10
+          text-sm text-gray-700
+          rounded-lg
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+        "
+                      >
+                        <option value="">انتخاب پلی‌لیست</option>
+                        {playlists.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      {/* icon */}
+                      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                        <svg
+                          className="w-4 h-4"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -543,7 +620,7 @@ function Upload() {
         </div>
 
         <div className="flex gap-2 justify-end ">
-                  <button
+          <button
             onClick={handleCancelAndRefresh}
             className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50"
           >
@@ -593,7 +670,6 @@ function Upload() {
               </>
             )}
           </button>
-  
         </div>
       </div>
       <CategoryModal

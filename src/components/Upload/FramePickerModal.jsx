@@ -7,8 +7,7 @@ export default function FramePickerModal({
   videoFile,
   onSelect,
 }) {
-  console.log('videoFile:', videoFile)
-console.log('isFile:', videoFile instanceof File)
+
   const videoRef = useRef(null);
   const [videoSrc, setVideoSrc] = useState(null);
   const [duration, setDuration] = useState(0);
@@ -80,7 +79,6 @@ console.log('isFile:', videoFile instanceof File)
         const frame = await captureAt(time);
         frames.push(frame);
       } catch (e) {
-        console.log("frame error", e);
       }
     }
     setSuggested(frames);

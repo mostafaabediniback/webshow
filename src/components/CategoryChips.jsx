@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 function CategoryChips({ channels, activeChannelId, onSelect }) {
   const navigate = useNavigate();
 
-  console.log(onSelect);
-  console.log(activeChannelId);
+
   const list = Array.isArray(channels) ? channels : (channels ? [channels] : [])
   // useEffect(() => {
   //   isRefetch()

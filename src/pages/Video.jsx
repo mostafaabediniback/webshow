@@ -44,9 +44,14 @@ const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
 function Video() {
   const { id } = useParams();
   const { data, isLoading } = useVideo(id);
-  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos(
-    { channelId: data?.data?.channel_id, pageNumber: 1, pageSize: 25 },
-  );
+  console.log(data?.data?.username)
+  console.log(data?.data)
+const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
+  channelId: data?.data?.channel_id,
+  pageNumber: 1,
+  pageSize: 25,
+  enabled: !!data?.data?.channel_id, // 👈 مهم
+})
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [videoSource, setVideoSource] = useState("");
@@ -319,7 +324,6 @@ function Video() {
                         });
                       }
                     } catch (err) {
-                      console.log(err);
                     }
                   }}
                   className="w-24 h-12 font-bold inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 hover:bg-gray-200 transition-colors"
