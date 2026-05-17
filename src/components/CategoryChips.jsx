@@ -19,7 +19,7 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
       >
         <div 
         onClick={() => navigate("/")}
-          className={`w-14 h-14 rounded-xl overflow-hidden border-2 shadow-sm flex items-center justify-center transition-all duration-200 ${activeChannelId === null
+          className={`w-16 h-16 rounded-xl overflow-hidden border-2 shadow-sm flex items-center justify-center transition-all duration-200 ${activeChannelId === null
               ? 'border-indigo-500 bg-indigo-50'
               : 'border-slate-200 bg-slate-100 hover:border-slate-300'
             }`}
@@ -40,12 +40,13 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
           <button
             key={channel.id}
             onClick={() => onSelect(channel.id)}
-            className={`flex flex-col items-center gap-2 flex-shrink-0 transition-all duration-200 ${isActive ? 'scale-105' : 'opacity-75 hover:opacity-100 hover:scale-[1.02]'
-              }`}
+            className={`flex flex-col items-center gap-2 flex-shrink-0 transition-all duration-200 
+              //${isActive ? 'scale-105' : 'opacity-75 hover:opacity-100 hover:scale-[1.02]'}//
+              `}
           >
             <div
             onClick={() => navigate("/")}
-              className={`w-14 h-14 rounded-xl overflow-hidden border-2 shadow-sm transition-all duration-200 ${isActive
+              className={`w-16 h-16 rounded-xl overflow-hidden border-2 shadow-sm transition-all duration-200 ${isActive
                   ? 'border-indigo-500 ring-2 ring-indigo-200'
                   : 'border-slate-200 hover:border-slate-300'
                 }`}

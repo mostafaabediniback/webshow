@@ -3,6 +3,7 @@ export const AUTH_STORAGE_KEYS = {
   userId: 'user_id',
   role: 'role',
   channelId: 'channel_id',
+  name: 'name',
 }
 
 const hasWindow = () => typeof window !== 'undefined'
@@ -37,6 +38,7 @@ export const readAuthSession = () => {
       userId: null,
       role: '',
       channelId: null,
+      name: "",
     }
   }
 
@@ -45,10 +47,11 @@ export const readAuthSession = () => {
     userId: storage.getItem(AUTH_STORAGE_KEYS.userId),
     role: normalizeRole(storage.getItem(AUTH_STORAGE_KEYS.role)),
     channelId: storage.getItem(AUTH_STORAGE_KEYS.channelId),
+    name: storage.getItem(AUTH_STORAGE_KEYS.name),
   }
 }
 
-export const writeAuthSession = ({ token, userId, role, channelId } = {}) => {
+export const writeAuthSession = ({ token, userId, role, channelId ,name} = {}) => {
   const storage = getStorage()
   if (!storage) return readAuthSession()
 
@@ -57,6 +60,7 @@ export const writeAuthSession = ({ token, userId, role, channelId } = {}) => {
     [AUTH_STORAGE_KEYS.userId, userId],
     [AUTH_STORAGE_KEYS.role, normalizeRole(role)],
     [AUTH_STORAGE_KEYS.channelId, channelId],
+    [AUTH_STORAGE_KEYS.name, name],
   ]
 
   pairs.forEach(([key, value]) => {

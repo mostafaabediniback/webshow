@@ -3,6 +3,7 @@ import { CloseCircle, DocumentUpload, TickCircle } from "iconsax-react"
 import { useEffect, useRef, useState } from "react"
 import axiosInstanceNew from "../utils/axiosConfigNew"
 import { readAuthSession } from "../utils/auth"
+import logoUpload from "../assets/logo/logo-upload.png"
 
 Dropzone.autoDiscover = false
 
@@ -205,10 +206,11 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected, disabled = fals
             </div>
 
             <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden mb-3">
-              <div
-                className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 h-2.5 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
+<div
+  className="bg-gradient-to-r to-blue-500 via-sky-500 from-orange-500 h-2.5 rounded-full transition-all duration-300"
+  style={{ width: `${progress}%` }}
+/>
+
             </div>
 
             <p className="text-xs text-gray-500">
@@ -236,8 +238,10 @@ function VideoDropzone({ onUploaded, onProgress, onFileSelected, disabled = fals
           <div className="space-y-3 w-full">
             {!hasFile ? (
               <>
-                <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mx-auto">
-                  <DocumentUpload size={32} className="text-orange-600" color="#F97316" />
+                <div className="w-48 h-16 rounded-full  flex items-center justify-center mx-auto my-10">
+                  <img src={logoUpload} alt="" />
+                  {/* <div>{logoUpload}</div> */}
+                  {/* <DocumentUpload size={32} className="text-orange-600" color="#F97316" /> */}
                 </div>
                 <div>
                   <p className="text-2xl font-semibold text-gray-900 mb-2">بارگذاری ویدیو</p>
