@@ -512,13 +512,6 @@ function Upload() {
         </div>
 
         <div className="flex gap-2 justify-end ">
-                  <button
-            onClick={handleCancelAndRefresh}
-            className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50"
-          >
-            <CloseCircle size={16} color="#fb2c36" />
-            انصراف
-          </button>
           <button
             onClick={handleUpload}
             disabled={
@@ -562,7 +555,13 @@ function Upload() {
               </>
             )}
           </button>
-  
+          <button
+            onClick={handleCancelAndRefresh}
+            className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50"
+          >
+            <CloseCircle size={16} color="#fb2c36" />
+            انصراف
+          </button>
         </div>
       </div>
 

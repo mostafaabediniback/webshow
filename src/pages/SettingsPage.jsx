@@ -14,7 +14,7 @@ function SettingsPage() {
   const [activeTab, setActiveTab] = useState('channel')
 
   return (
-
+    <DashboardLayout>
 
 
       <div className="flex flex-col p-3 sm:p-6">
@@ -53,6 +53,7 @@ function SettingsPage() {
           {activeTab === 'social' && <SocialSettings />}
         </div>
       </div>
+    </DashboardLayout>
   )
 }
 

@@ -277,58 +277,58 @@ function Video() {
                   <Dislike size={16} color="#4a5565" />
                   {(data.data.dislikes || 0).toLocaleString('fa-IR')}
                 </span> */}
-                <button
-                  type="button"
-                  onClick={async () => {
-                    const shareUrl = `${window.location.origin}/v/${id}`;
+<button
+  type="button"
+  onClick={async () => {
+    const shareUrl = `${window.location.origin}/v/${id}`;
 
-                    try {
-                      if (navigator.share) {
-                        await navigator.share({
-                          title: data?.data?.title,
-                          text: data?.data?.title,
-                          url: shareUrl,
-                        });
-                      } else {
-                        // کپی واقعی مثل Ctrl + C
-                        const textArea = document.createElement("textarea");
-                        textArea.value = shareUrl;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: data?.data?.title,
+          text: data?.data?.title,
+          url: shareUrl,
+        });
+      } else {
+        // کپی واقعی مثل Ctrl + C
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
 
-                        textArea.style.position = "fixed";
-                        textArea.style.left = "-999999px";
-                        textArea.style.top = "-999999px";
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
 
-                        document.body.appendChild(textArea);
+        document.body.appendChild(textArea);
 
-                        textArea.focus();
-                        textArea.select();
+        textArea.focus();
+        textArea.select();
 
-                        document.execCommand("copy");
+        document.execCommand("copy");
 
-                        document.body.removeChild(textArea);
+        document.body.removeChild(textArea);
 
-                        toast.success("لینک ویدیو کپی شد", {
-                          position: "bottom-center",
-                          style: {
-                            background: "#2563eb",
-                            color: "#fff",
-                            fontSize: "13px",
-                            borderRadius: "10px",
-                            padding: "10px 14px",
-                          },
-                        });
-                      }
-                    } catch (err) {
-                      console.log(err);
-                    }
-                  }}
-                  className="w-24 h-12 font-bold inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 hover:bg-gray-200 transition-colors"
-                >
-                  <div className="flex gap-2 justify-center items-center">
-                    <Share size={24} color="#4a5565" />
-                    <span className="text-[16px]">اشتراک</span>
-                  </div>
-                </button>
+        toast.success("لینک ویدیو کپی شد", {
+          position: "bottom-center",
+          style: {
+            background: "#2563eb",
+            color: "#fff",
+            fontSize: "13px",
+            borderRadius: "10px",
+            padding: "10px 14px",
+          },
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }}
+  className="w-24 h-12 font-bold inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 hover:bg-gray-200 transition-colors"
+>
+  <div className="flex gap-2 justify-center items-center">
+    <Share size={24} color="#4a5565" />
+    <span className="text-[16px]">اشتراک</span>
+  </div>
+</button>
 
                 <button
                   type="button"
@@ -359,7 +359,7 @@ function Video() {
               </p>
             </div>
           </div>
-          <aside className=" lg:block">
+          <aside className="hidden lg:block">
             <div className="sticky top-24 space-y-3">
               <h3 className="text-lg font-bold text-gray-900 mb-4">
                 ویدیوهای مرتبط

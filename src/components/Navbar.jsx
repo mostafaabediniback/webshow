@@ -1,4 +1,10 @@
-import { CloseCircle, Logout, Menu, SearchNormal1, User } from "iconsax-react";
+import {
+  CloseCircle,
+  Logout,
+  Menu,
+  SearchNormal1,
+  User
+} from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo/logo-01-01.png";
@@ -11,9 +17,7 @@ function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { LogOut, isLoggingOut } = useLogin();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const defaultDashboardRoute = useAuthStore(
-    (state) => state.defaultDashboardRoute,
-  );
+  const defaultDashboardRoute = useAuthStore((state) => state.defaultDashboardRoute);
 
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -56,11 +60,7 @@ function Navbar() {
               onClick={closeSidebar}
               className="flex items-center gap-2"
             >
-              <img
-                src={logo}
-                alt="اربعین تی وی"
-                className="h-8 sm:h-9 md:h-10 w-auto"
-              />
+              <img src={logo} alt="اربعین تی وی" className="h-8 sm:h-9 md:h-10 w-auto" />
             </Link>
             <div className="hidden md:block flex-1 max-w-2xl mx-8">
               <SearchInput />
@@ -94,12 +94,10 @@ function Navbar() {
               ) : (
                 <Link
                   to="/login"
-                  className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                  className="h-10 px-4 rounded-full border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
                 >
                   <User size={18} color="#0f172a" />
-                  <span className="text-[16px]"> 
-                    ورود
-                  </span>
+                  ورود
                 </Link>
               )}
             </div>
@@ -121,9 +119,8 @@ function Navbar() {
       )}
 
       <aside
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
-          isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isSidebarOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
