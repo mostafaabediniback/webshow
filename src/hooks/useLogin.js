@@ -53,8 +53,10 @@ const useLogin = () => {
         token,
         userId: user?.id ?? null,
         role: roleName,
+        name: user?.name ?? null,
         channelId,
       })
+    
 
       if (user?.phone_number) {
         setPhoneNumber(user.phone_number)

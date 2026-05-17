@@ -4,12 +4,6 @@ import { useNavigate } from "react-router-dom";
 import cover from "../assets/img/cover.jpg";
 import CoverPicker from "../components/Upload/CoverPicker";
 import VideoDropzone from "../components/VideoDropzone";
-import CategoryMultiSelect from "../components/Upload/CategoryMultiSelect";
-import Modal from "../components/Modal";
-import useCategories from "../hooks/category/useCategories";
-import useCreateCategory from "../hooks/category/useCreateCategory";
-import useChannelPlaylists from "../hooks/playlist/useChannelPlaylists";
-import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import useChannel from "../hooks/useChannel";
 import useVideoUpload from "../hooks/useVideoUpload";
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -30,19 +24,8 @@ function Upload() {
   const [videoUrl, setVideoUrl] = useState("");
   const [publicShow, setPublicShow] = useState(1);
   const [uploadType, setUploadType] = useState("file"); // 'file' | 'url'
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
-  const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
-  const [isPlaylistModalOpen, setPlaylistModalOpen] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState("");
-  const [newPlaylistName, setNewPlaylistName] = useState("");
-  const [newPlaylistPublic, setNewPlaylistPublic] = useState(true);
 
   const navigate = useNavigate();
-  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
-  const createCategoryMutation = useCreateCategory();
-  const { data: playlists = [], isLoading: isLoadingPlaylists } = useChannelPlaylists(chanId || undefined);
-  const createPlaylistMutation = useCreatePlaylist(chanId || undefined);
 
   const handleCancelAndRefresh = () => {
     window.location.reload();
@@ -256,8 +239,6 @@ function Upload() {
         url: videoUrl,
         coverFile: thumbFile,
         public_show: publicShow,
-        categories: selectedCategories,
-        playlist_id: selectedPlaylistId || undefined,
       });
 
       navigate("/dashboard/videos");
@@ -278,8 +259,6 @@ function Upload() {
     setUploadProgress(0);
     setVideoUrl("");
     setPublicShow(1);
-    setSelectedCategories([]);
-    setSelectedPlaylistId("");
   };
 
   useEffect(() => {
@@ -449,27 +428,6 @@ function Upload() {
                   ))}
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">دسته‌بندی‌ها</label>
-                <CategoryMultiSelect
-                  categories={categories}
-                  value={selectedCategories}
-                  onChange={setSelectedCategories}
-                  onCreateClick={() => setCategoryModalOpen(true)}
-                  isLoading={isLoadingCategories}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">پلی‌لیست</label>
-                <div className="flex gap-2">
-                  <select value={selectedPlaylistId} onChange={(e) => setSelectedPlaylistId(e.target.value)} className="h-11 px-4 rounded-lg border border-gray-300 w-full">
-                    <option value="">بدون پلی‌لیست</option>
-                    {(playlists || []).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                  </select>
-                  <button type="button" onClick={() => setPlaylistModalOpen(true)} className="px-3 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs">پلی‌لیست جدید</button>
-                </div>
-                {isLoadingPlaylists && <p className="text-xs text-gray-500 mt-1">در حال بارگذاری پلی‌لیست‌ها...</p>}
-              </div>
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -512,6 +470,13 @@ function Upload() {
         </div>
 
         <div className="flex gap-2 justify-end ">
+                  <button
+            onClick={handleCancelAndRefresh}
+            className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50"
+          >
+            <CloseCircle size={16} color="#fb2c36" />
+            انصراف
+          </button>
           <button
             onClick={handleUpload}
             disabled={
@@ -555,30 +520,9 @@ function Upload() {
               </>
             )}
           </button>
-          <button
-            onClick={handleCancelAndRefresh}
-            className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50"
-          >
-            <CloseCircle size={16} color="#fb2c36" />
-            انصراف
-          </button>
+  
         </div>
       </div>
-
-      <Modal isOpen={isCategoryModalOpen} onClose={() => setCategoryModalOpen(false)} title="ایجاد دسته‌بندی" size="sm">
-        <div className="space-y-3">
-          <input value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} className="h-10 px-3 border rounded-lg w-full" placeholder="نام دسته‌بندی"/>
-          <button className="h-10 w-full rounded-lg bg-blue-600 text-white" onClick={async () => { const created = await createCategoryMutation.mutateAsync({ name: newCategoryName }); setSelectedCategories((prev) => [...new Set([...prev, Number(created?.id)])]); setNewCategoryName(""); setCategoryModalOpen(false); }}>ایجاد</button>
-        </div>
-      </Modal>
-
-      <Modal isOpen={isPlaylistModalOpen} onClose={() => setPlaylistModalOpen(false)} title="ایجاد پلی‌لیست" size="sm">
-        <div className="space-y-3">
-          <input value={newPlaylistName} onChange={(e) => setNewPlaylistName(e.target.value)} className="h-10 px-3 border rounded-lg w-full" placeholder="نام پلی‌لیست"/>
-          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={newPlaylistPublic} onChange={(e)=>setNewPlaylistPublic(e.target.checked)} /> عمومی</label>
-          <button className="h-10 w-full rounded-lg bg-blue-600 text-white" onClick={async () => { const created = await createPlaylistMutation.mutateAsync({ name: newPlaylistName, is_public: newPlaylistPublic }); setSelectedPlaylistId(String(created?.id || "")); setNewPlaylistName(""); setPlaylistModalOpen(false); }}>ایجاد</button>
-        </div>
-      </Modal>
     </DashboardLayout>
   );
 }

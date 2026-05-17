@@ -35,7 +35,7 @@ export const uploadVideo = async (file) => {
 // ذخیره ویدیو
 export const storeVideo = async (
   channelId,
-  { path, url, title, description, cover, public_show, categories = [] }
+  { path, url, title, description, cover, public_show }
 ) => {
   const fd = new FormData();
 
@@ -50,10 +50,6 @@ export const storeVideo = async (
   fd.append("public_show", public_show ? 1 : 0);
 
   if (cover) fd.append("cover", cover);
-
-  if (Array.isArray(categories)) {
-    categories.forEach((id) => fd.append("categories[]", id));
-  }
 
   const finalUrl = channelId
     ? `/video/store-video/${channelId}`
