@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import defaultCover from "../assets/img/cover.jpg";
 import { storeVideo } from "../services/videoApi";
+import { addVideoToPlaylist } from "../services/playlist/playlistApi";
 
 const fileFromUrl = async (url) => {
   const res = await fetch(url);
@@ -21,6 +22,8 @@ const useVideoUpload = () => {
       url,
       coverFile,
       public_show,
+      categories = [],
+      playlist_id,
     }) => {
       // 👇 اینجا شرط اصلی
       if (!temp_path && !url) {
@@ -35,14 +38,22 @@ const useVideoUpload = () => {
         finalCover = await fileFromUrl(finalCover);
       }
 
-      return storeVideo(channelId, {
+      const stored = await storeVideo(channelId, {
         path: temp_path,
         url,
         title,
         description,
         cover: finalCover,
         public_show,
+        categories,
       });
+
+      const videoId = stored?.data?.id || stored?.id;
+      if (playlist_id && videoId) {
+        await addVideoToPlaylist({ playlist_id: Number(playlist_id), video_id: Number(videoId) });
+      }
+
+      return stored;
     },
 
     onSuccess: (_, vars) => {
