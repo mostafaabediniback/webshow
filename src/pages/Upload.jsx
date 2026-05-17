@@ -3,8 +3,15 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import cover from "../assets/img/cover.jpg";
 import CoverPicker from "../components/Upload/CoverPicker";
+import CategoryModal from "../components/Upload/CategoryModal";
+import MultiSelect from "../components/Upload/MultiSelect";
+import PlaylistModal from "../components/Upload/PlaylistModal";
 import VideoDropzone from "../components/VideoDropzone";
+import useCreateCategory from "../hooks/category/useCreateCategory";
+import useCategories from "../hooks/category/useCategories";
 import useChannel from "../hooks/useChannel";
+import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
+import usePlaylists from "../hooks/playlist/usePlaylists";
 import useVideoUpload from "../hooks/useVideoUpload";
 import DashboardLayout from "../layouts/DashboardLayout";
 
@@ -24,6 +31,14 @@ function Upload() {
   const [videoUrl, setVideoUrl] = useState("");
   const [publicShow, setPublicShow] = useState(1);
   const [uploadType, setUploadType] = useState("file"); // 'file' | 'url'
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
+  const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [isPlaylistModalOpen, setPlaylistModalOpen] = useState(false);
+  const { data: categories = [], isLoading: isLoadingCategories, isError: isCategoriesError } = useCategories();
+  const { data: playlists = [], isLoading: isLoadingPlaylists, isError: isPlaylistsError } = usePlaylists(chanId);
+  const createCategoryMutation = useCreateCategory();
+  const createPlaylistMutation = useCreatePlaylist();
 
   const navigate = useNavigate();
 
@@ -239,6 +254,8 @@ function Upload() {
         url: videoUrl,
         coverFile: thumbFile,
         public_show: publicShow,
+        categories: selectedCategories,
+        playlist_id: selectedPlaylistId || null,
       });
 
       navigate("/dashboard/videos");
@@ -259,6 +276,8 @@ function Upload() {
     setUploadProgress(0);
     setVideoUrl("");
     setPublicShow(1);
+    setSelectedCategories([]);
+    setSelectedPlaylistId("");
   };
 
   useEffect(() => {
@@ -439,6 +458,60 @@ function Upload() {
                   نمایش عمومی ویدیو
                 </label>
               </div>
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-semibold text-gray-900">
+                    دسته‌بندی‌ها
+                  </label>
+                  <button type="button" onClick={() => setCategoryModalOpen(true)} className="text-xs text-blue-600 hover:underline">
+                    + ایجاد دسته‌بندی
+                  </button>
+                </div>
+                {isLoadingCategories ? (
+                  <p className="text-sm text-gray-500">در حال بارگذاری دسته‌بندی‌ها...</p>
+                ) : isCategoriesError ? (
+                  <p className="text-sm text-red-600">خطا در دریافت دسته‌بندی‌ها</p>
+                ) : (
+                  <MultiSelect
+                    options={categories}
+                    value={selectedCategories}
+                    onChange={setSelectedCategories}
+                    placeholder="جستجوی دسته‌بندی..."
+                  />
+                )}
+              </div>
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-semibold text-gray-900">
+                    پلی‌لیست (اختیاری)
+                  </label>
+                  <button type="button" onClick={() => setPlaylistModalOpen(true)} className="text-xs text-blue-600 hover:underline" disabled={!chanId}>
+                    + ایجاد پلی‌لیست
+                  </button>
+                </div>
+                {!chanId ? (
+                  <p className="text-sm text-gray-500">ابتدا کانال را انتخاب کنید.</p>
+                ) : isLoadingPlaylists ? (
+                  <p className="text-sm text-gray-500">در حال بارگذاری پلی‌لیست‌ها...</p>
+                ) : isPlaylistsError ? (
+                  <p className="text-sm text-red-600">خطا در دریافت پلی‌لیست‌ها</p>
+                ) : playlists.length === 0 ? (
+                  <p className="text-sm text-gray-500">پلی‌لیستی وجود ندارد.</p>
+                ) : (
+                  <select
+                    value={selectedPlaylistId}
+                    onChange={(e) => setSelectedPlaylistId(e.target.value)}
+                    className="h-11 px-4 rounded-lg border border-gray-300 w-full"
+                  >
+                    <option value="">بدون پلی‌لیست</option>
+                    {playlists.map((playlist) => (
+                      <option key={playlist.id} value={playlist.id}>
+                        {playlist.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
             </div>
           </div>
 
@@ -523,6 +596,22 @@ function Upload() {
   
         </div>
       </div>
+      <CategoryModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+        isPending={createCategoryMutation.isPending}
+        onSubmit={async (payload) => {
+          await createCategoryMutation.mutateAsync(payload);
+        }}
+      />
+      <PlaylistModal
+        isOpen={isPlaylistModalOpen}
+        onClose={() => setPlaylistModalOpen(false)}
+        isPending={createPlaylistMutation.isPending}
+        onSubmit={async (payload) => {
+          await createPlaylistMutation.mutateAsync(payload);
+        }}
+      />
     </DashboardLayout>
   );
 }
