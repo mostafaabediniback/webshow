@@ -1,3 +1,5 @@
+// SocialSettings.jsx
+
 import { useEffect, useState } from "react";
 import {
   FaTelegram,
@@ -5,31 +7,48 @@ import {
   FaInstagram,
   FaGlobe,
 } from "react-icons/fa";
+
 import useChannelDetail from "../../hooks/useChannelDetail";
 import useChannel from "../../hooks/useChannel";
 import { toast } from "react-toastify";
 
 const SOCIAL_CONFIG = [
-  { name: "telegram", label: "Telegram", icon: FaTelegram },
-  { name: "youtube", label: "YouTube", icon: FaYoutube },
-  { name: "instagram", label: "Instagram", icon: FaInstagram },
-  { name: "eitaa", label: "Eitaa", icon: FaGlobe },
-  { name: "bale", label: "Bale", icon: FaGlobe },
-  // { name: "aparat", label: "Aparat", icon: FaGlobe },
+  {
+    name: "telegram",
+    label: "Telegram",
+    icon: FaTelegram,
+  },
+  {
+    name: "youtube",
+    label: "YouTube",
+    icon: FaYoutube,
+  },
+  {
+    name: "instagram",
+    label: "Instagram",
+    icon: FaInstagram,
+  },
+  {
+    name: "eitaa",
+    label: "Eitaa",
+    icon: FaGlobe,
+  },
+  {
+    name: "bale",
+    label: "Bale",
+    icon: FaGlobe,
+  },
 ];
+
 function SocialSettings() {
-  const { updateChannelInfo, isUpdatingChannelInfo } = useChannel(1, 10, {}, { enabled: false });
+  const { updateChannelInfo, isUpdatingChannelInfo } =
+    useChannel(1, 10, {}, { enabled: false });
+
   const { data, refetch } = useChannelDetail();
-  const [description, setDescription] = useState("");
-
-  // useEffect(() => {
-  //   refetch()
-  // }, [])
-
 
   const [socials, setSocials] = useState({});
+  const [description, setDescription] = useState("");
 
-  // 👇 گرفتن دیتا از API
   useEffect(() => {
     if (data?.data) {
       setSocials(data.data.socials || {});
@@ -44,65 +63,107 @@ function SocialSettings() {
     }));
   };
 
-
   const handleSubmit = () => {
-    try {
-      updateChannelInfo(
-        {
-          description,
-          socials,
+    updateChannelInfo(
+      {
+        description,
+        socials,
+      },
+      {
+        onSuccess: () => {
+          toast.success("اطلاعات ذخیره شد");
+          refetch();
         },
-        {
-          onSuccess: () => {
-            toast.success("اطلاعات شبکه‌های اجتماعی با موفقیت ذخیره شد");
-            refetch();
-          },
-          onError: (error) => {
-            toast.error(
-              error?.response?.data?.message ||
-              "خطا در ذخیره اطلاعات کانال"
-            );
-          },
-        }
-      );
-    } catch (error) {
-      // فقط خطاهای sync رو می‌گیره (معمولاً اتفاق نمیفته)
-      toast.error("خطای غیرمنتظره رخ داد");
-    }
+      }
+    );
   };
 
   return (
-    <div className="space-y-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
+    <div className="space-y-6">
 
       {/* HEADER */}
-      <h2 className="text-lg font-semibold">
-        شبکه‌های اجتماعی
-      </h2>
+      <div>
+        <h2 className="text-2xl font-black text-gray-800">
+          شبکه‌های اجتماعی
+        </h2>
 
-      <div className="space-y-2">
-        <label className="text-sm text-gray-600 font-medium">
+        <p className="text-sm text-gray-500 mt-1">
+          لینک شبکه‌های اجتماعی و توضیحات کانال خود را
+          مدیریت کنید.
+        </p>
+      </div>
+
+      {/* DESCRIPTION */}
+      <div
+        className="
+          rounded-3xl
+          border border-gray-100
+          bg-white
+          p-5
+          shadow-sm
+          space-y-3
+        "
+      >
+        <label className="font-semibold text-gray-700">
           توضیحات کانال
         </label>
 
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="توضیحات کانال خود را وارد کنید..."
-          className="w-full border border-gray-300 rounded-lg p-3 outline-none resize-none h-28"
+          className="
+            w-full
+            h-36
+            rounded-2xl
+            border border-gray-200
+            bg-gray-50
+            p-4
+            resize-none
+            outline-none
+            transition-all
+            focus:bg-white
+            focus:border-orange-400
+            focus:ring-4
+            focus:ring-orange-100
+          "
         />
+
+        <div className="text-xs text-gray-400 text-left">
+          {description.length}/500
+        </div>
       </div>
 
-      {/* INPUTS */}
-      <div className="space-y-3">
+      {/* SOCIALS */}
+      <div className="space-y-4">
         {SOCIAL_CONFIG.map((item) => {
           const Icon = item.icon;
 
           return (
             <div
               key={item.name}
-              className="flex items-center gap-3 rounded-lg border border-gray-300 px-3 py-2"
+              className="
+                flex items-center gap-4
+                rounded-2xl
+                border border-gray-200
+                bg-gray-50
+                px-4 py-3
+                transition-all
+                hover:bg-white
+                hover:border-orange-300
+              "
             >
-              <Icon className="text-gray-500 text-lg" />
+              <div
+                className="
+                  w-12 h-12
+                  rounded-2xl
+                  bg-white
+                  border border-gray-200
+                  flex items-center justify-center
+                  shadow-sm
+                "
+              >
+                <Icon className="text-gray-600 text-lg" />
+              </div>
 
               <input
                 type="text"
@@ -111,7 +172,13 @@ function SocialSettings() {
                   handleChange(item.name, e.target.value)
                 }
                 placeholder={`لینک ${item.label}`}
-                className="w-full outline-none "
+                className="
+                  flex-1
+                  bg-transparent
+                  outline-none
+                  text-sm
+                  placeholder:text-gray-400
+                "
               />
             </div>
           );
@@ -119,64 +186,92 @@ function SocialSettings() {
       </div>
 
       {/* BUTTON */}
-      <button
-        onClick={handleSubmit}
-        disabled={isUpdatingChannelInfo}
-        className={`px-4 py-2 rounded-lg text-white transition ${isUpdatingChannelInfo
-          ? "bg-orange-300 cursor-not-allowed"
-          : "bg-orange-500 hover:bg-orange-600"
-          }`}
-      >
-        {isUpdatingChannelInfo
-          ? "در حال ذخیره..."
-          : "ذخیره تغییرات"}
-      </button>
+      <div className="flex justify-end">
+        <button
+          onClick={handleSubmit}
+          disabled={isUpdatingChannelInfo}
+          className="
+            h-12
+            px-8
+            rounded-2xl
+            bg-orange-500
+            hover:bg-orange-600
+            disabled:bg-orange-300
+            text-white
+            font-medium
+            transition-all
+            shadow-lg shadow-orange-500/20
+          "
+        >
+          {isUpdatingChannelInfo
+            ? "در حال ذخیره..."
+            : "ذخیره تغییرات"}
+        </button>
+      </div>
 
       {/* PREVIEW */}
-      <div className="pt-4 border-t space-y-3">
-        <h3 className="text-sm font-semibold text-gray-600">
-          پیش‌نمایش اطلاعات
+      <div
+        className="
+          rounded-3xl
+          border border-gray-100
+          bg-white
+          p-5
+          shadow-sm
+          space-y-4
+        "
+      >
+        <h3 className="font-bold text-gray-700">
+          پیش‌نمایش لینک‌ها
         </h3>
 
-        {data?.data?.socials &&
-          Object.values(data.data.socials).some(Boolean) ? (
-          <div className="grid sm:grid-cols-2 gap-3">
-            {SOCIAL_CONFIG.map((item) => {
-              const value = data.data.socials?.[item.name];
-              if (!value) return null;
+        <div className="grid sm:grid-cols-2 gap-3">
+          {SOCIAL_CONFIG.map((item) => {
+            const value = socials?.[item.name];
 
-              const Icon = item.icon;
+            if (!value) return null;
 
-              return (
+            const Icon = item.icon;
+
+            return (
+              <a
+                key={item.name}
+                href={value}
+                target="_blank"
+                rel="noreferrer"
+                className="
+                  flex items-center gap-4
+                  rounded-2xl
+                  border border-gray-200
+                  p-4
+                  hover:border-orange-300
+                  hover:bg-orange-50
+                  transition-all
+                "
+              >
                 <div
-                  key={item.name}
-                  className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50 hover:bg-gray-100 transition"
+                  className="
+                    w-11 h-11
+                    rounded-xl
+                    bg-gray-100
+                    flex items-center justify-center
+                  "
                 >
-                  <Icon className="text-gray-500 text-lg" />
-
-                  <div className="flex flex-col overflow-hidden">
-                    <span className="text-xs text-gray-500">
-                      {item.label}
-                    </span>
-
-                    <a
-                      href={value}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm text-blue-600 hover:underline truncate"
-                    >
-                      {value}
-                    </a>
-                  </div>
+                  <Icon className="text-gray-700" />
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="text-sm text-gray-400 bg-gray-50 border rounded-lg p-4 text-center">
-            هنوز شبکه اجتماعی ثبت نشده
-          </div>
-        )}
+
+                <div className="overflow-hidden">
+                  <p className="text-sm font-medium">
+                    {item.label}
+                  </p>
+
+                  <p className="text-xs text-gray-500 truncate">
+                    {value}
+                  </p>
+                </div>
+              </a>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

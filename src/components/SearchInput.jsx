@@ -45,7 +45,7 @@ function SearchInput() {
   }, [searchData])
 
   return (
-    <form onSubmit={onSubmit} className="flex-1 max-w-xl">
+    <form onSubmit={onSubmit} className="flex-1 max-w-xl ">
       <div className="relative group">
         <input
           value={q}
@@ -57,7 +57,7 @@ function SearchInput() {
             }
           }}
           placeholder="جستجو در ویدیوها"
-          className="w-full h-11 rounded-[10px] border border-gray-300 bg-gray-50 hover:bg-white hover:border-gray-400 px-4 pr-12 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white text-sm placeholder:text-gray-400"
+          className="w-full h-11 rounded-[10px] no-focus-visible border border-gray-300 bg-gray-50 hover:bg-white hover:border-gray-400 px-4 pr-12 transition-all duration-200 focus:outline-none focus:ring-2   focus:bg-white text-sm placeholder:text-gray-400"
         />
         {q && (
           <button
@@ -113,7 +113,7 @@ function SearchInput() {
                   <button
                     type="button"
                     onClick={() => navigate(`/search/${encodeURIComponent(q.trim())}`)}
-                    className="w-full text-right px-4 py-3 bg-gray-50 hover:bg-gray-100 text-sm text-blue-700"
+                    className="w-full text-right px-4 py-3 bg-gray-50 hover:bg-gray-100 text-sm "
                   >
                     مشاهده همه نتایج
                   </button>

@@ -80,6 +80,24 @@ body {
   box-sizing: border-box;
 }
 
+
+/* Interactive cursor consistency */
+button:not(:disabled):not([aria-disabled="true"]),
+a[href]:not([aria-disabled="true"]),
+summary:not([aria-disabled="true"]),
+label:has(input[type="checkbox"]):not([aria-disabled="true"]),
+label:has(input[type="radio"]):not([aria-disabled="true"]),
+input[type="checkbox"]:not(:disabled):not([aria-disabled="true"]),
+input[type="radio"]:not(:disabled):not([aria-disabled="true"]),
+[role="button"]:not([aria-disabled="true"]),
+[role="tab"]:not([aria-disabled="true"]),
+[role="menuitem"]:not([aria-disabled="true"]),
+[role="option"]:not([aria-disabled="true"]),
+[role="link"]:not([aria-disabled="true"]),
+[tabindex]:not([tabindex="-1"]):not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
@@ -89,6 +107,10 @@ html {
 *:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
+}
+.no-focus-visible:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Custom scrollbar */

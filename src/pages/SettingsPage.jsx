@@ -11,49 +11,54 @@ const TABS = [
 ]
 
 function SettingsPage() {
-  const [activeTab, setActiveTab] = useState('channel')
+  const [activeTab, setActiveTab] = useState("channel");
 
   return (
+    <div className="flex flex-col gap-6">
 
+      {/* Header */}
+      <div className="border-b pb-4">
+        <h1 className="text-2xl font-bold text-gray-800">
+          تنظیمات کانال
+        </h1>
 
-
-      <div className="flex flex-col p-3 sm:p-6">
-
-        {/* Tabs */}
-        <div className="mb-6">
-          <div className="flex gap-2 overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
-            {TABS.map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`
-            flex-shrink-0
-            px-3 sm:px-4
-            py-1.5 sm:py-2
-            text-xs sm:text-sm
-            rounded-lg
-            transition-all
-            border
-            ${activeTab === tab.key
-                    ? 'bg-orange-500 text-white border-orange-500 shadow'
-                    : 'text-gray-600 border-gray-200 hover:bg-gray-100'
-                  }
-          `}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div>
-          {activeTab === 'channel' && <ChannelSettings />}
-          {activeTab === 'profile' && <ProfileSettings />}
-          {activeTab === 'social' && <SocialSettings />}
-        </div>
+        <p className="text-sm text-gray-500 mt-1">
+          اطلاعات کانال، پروفایل و شبکه‌های اجتماعی خود را مدیریت کنید.
+        </p>
       </div>
-  )
+
+      {/* Tabs */}
+      <div className="bg-gray-100 p-1 rounded-2xl flex gap-1 overflow-x-auto">
+        {TABS.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`
+              flex-1 min-w-fit
+              px-4 py-3
+              rounded-xl
+              text-sm font-medium
+              transition-all duration-200
+              ${
+                activeTab === tab.key
+                  ? "bg-white text-orange-500 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }
+            `}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-6 shadow-sm">
+        {activeTab === "channel" && <ChannelSettings />}
+        {activeTab === "profile" && <ProfileSettings />}
+        {activeTab === "social" && <SocialSettings />}
+      </div>
+    </div>
+  );
 }
 
 export default SettingsPage

@@ -63,11 +63,11 @@ function Navbar() {
               />
             </Link>
             <div className="hidden md:block flex-1 max-w-2xl mx-8">
-              <SearchInput />
+              <SearchInput className="no-focus-visible md:hidden p-2 rounded-lg hover:bg-gray-100 text-slate-900 touch-manipulation" />
             </div>
             <button
               onClick={toggleSearch}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors  text-slate-900 touch-manipulation"
+              className="no-focus-visible md:hidden p-2 rounded-lg hover:bg-gray-100 text-slate-900 touch-manipulation"
               aria-label="جستجو"
             >
               <SearchNormal1 size={20} color="#0f172a" />
@@ -97,9 +97,7 @@ function Navbar() {
                   className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
                 >
                   <User size={18} color="#0f172a" />
-                  <span className="text-[16px]"> 
-                    ورود
-                  </span>
+                  <span className="text-[16px]">ورود</span>
                 </Link>
               )}
             </div>

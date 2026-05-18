@@ -492,13 +492,13 @@ function Upload() {
                   <label className="block text-sm font-semibold text-gray-900">
                     دسته‌بندی‌ها
                   </label>
-                  <button
+                  {/* <button
                     type="button"
                     onClick={() => setCategoryModalOpen(true)}
                     className="text-xs text-blue-600 hover:underline"
                   >
                     + ایجاد دسته‌بندی
-                  </button>
+                  </button> */}
                 </div>
                 {isLoadingCategories ? (
                   <p className="text-sm text-gray-500">
