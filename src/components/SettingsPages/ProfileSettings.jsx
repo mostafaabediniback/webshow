@@ -36,7 +36,7 @@ function ProfileSettings() {
   }, [profile]);
 
   const inputClass =
-    "w-full h-12 rounded-2xl border border-gray-200 bg-gray-50 px-4 text-sm outline-none transition-all focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-100";
+    "w-full h-12 rounded-[10px] border border-gray-200 bg-gray-50 px-4 text-sm outline-none transition-all focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-100";
 
   return (
     <div className="space-y-6">
@@ -44,7 +44,7 @@ function ProfileSettings() {
       {/* PROFILE */}
       <div
         className="
-          rounded-3xl
+          rounded-[10px]
           border border-gray-100
           bg-white
           p-6
@@ -92,7 +92,7 @@ function ProfileSettings() {
           className="
             h-12
             px-6
-            rounded-2xl
+            rounded-[10px]
             bg-orange-500
             hover:bg-orange-600
             disabled:bg-orange-300
@@ -110,7 +110,7 @@ function ProfileSettings() {
       {/* PASSWORD */}
       <div
         className="
-          rounded-3xl
+          rounded-[10px]
           border border-gray-100
           bg-white
           p-6
@@ -171,7 +171,7 @@ function ProfileSettings() {
           className="
             h-12
             px-6
-            rounded-2xl
+            rounded-[10px]
             bg-gray-900
             hover:bg-black
             disabled:bg-gray-400

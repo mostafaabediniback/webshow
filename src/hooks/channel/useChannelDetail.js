@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { QueryKeys } from '../enums'
-import { getChannelById } from '../services/channelApi'
+import { getChannelById } from '../../services/channelApi'
+import { QueryKeys } from '../../enums'
 
 const useChannelDetail = (id, options = {}) => {
   return useQuery({

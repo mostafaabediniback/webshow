@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteVideo } from "../services/videoApi";
+import { deleteVideo } from "../../services/videoApi";
 import { toast } from "react-toastify";
 
 function useDeleteVideo() {

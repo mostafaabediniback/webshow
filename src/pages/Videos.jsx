@@ -1,16 +1,14 @@
-import DashboardLayout from "../layouts/DashboardLayout";
+import { Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import EditVideoModal from "../components/EditVideoModal";
+import VideoRow from "../components/VideoRow";
 import useChannel from "../hooks/channel/useChannel";
 import useChannelVideos from "../hooks/channel/useChannelVideos";
-import useDeleteVideo from "../hooks/video/useDeleteVideo";
-import { Pagination } from "@mui/material";
-import { Play } from "iconsax-react";
-import VideoRow from "../components/VideoRow";
-import VideoModal from "../components/VideoModal";
 import { usePaginationParams } from "../hooks/ui/usePaginationParams";
-import EditVideoModal from "../components/EditVideoModal";
-import { useNavigate } from "react-router-dom";
-import { EmptyState, ErrorMessage, Spinner, ConfirmModal } from "../ui";
+import useDeleteVideo from "../hooks/video/useDeleteVideo";
+import DashboardLayout from "../layouts/DashboardLayout";
+import { ConfirmModal, EmptyState, ErrorMessage, Spinner } from "../ui";
 
 function Videos() {
   const navigate = useNavigate();

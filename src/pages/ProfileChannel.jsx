@@ -1,19 +1,18 @@
-import React, {
+import {
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from "react";
 import { useLocation } from "react-router-dom";
-import { PlayCircle } from "iconsax-react";
 
-import Layout from "../layouts/Layout";
 import VideoGrid from "../components/VideoGrid";
 import VideoSkeleton from "../components/VideoSkeleton";
+import Layout from "../layouts/Layout";
 
 import useChannelDetail from "../hooks/channel/useChannelDetail";
-import { useInfiniteLandingVideos } from "../hooks/video/useInfiniteLandingVideos";
 import { useInfiniteScroll } from "../hooks/ui/useInfiniteScroll";
+import { useInfiniteLandingVideos } from "../hooks/video/useInfiniteLandingVideos";
 import { EmptyState, ErrorMessage } from "../ui";
 
 const PAGE_SIZE = 25;

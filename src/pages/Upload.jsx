@@ -8,12 +8,12 @@ import PlaylistModal from "../components/Upload/PlaylistModal";
 import VideoDropzone from "../components/VideoDropzone";
 import useCategories from "../hooks/category/useCategories";
 import useCreateCategory from "../hooks/category/useCreateCategory";
+import useChannel from "../hooks/channel/useChannel";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
-import useChannel from "../hooks/channel/useChannel";
 import useVideoUpload from "../hooks/video/useVideoUpload";
-import { Button } from "../ui";
 import DashboardLayout from "../layouts/DashboardLayout";
+import { Button } from "../ui";
 
 function Upload() {
   const { channels: chans, isLoadingChannels } = useChannel();
@@ -614,7 +614,8 @@ function Upload() {
           <Button
             variant="secondary"
             onClick={handleCancelAndRefresh}
-            icon={<CloseCircle size={16} />}
+            icon={<CloseCircle size={16}             color="currentColor"
+ />}
             className="hover:border-red-300 hover:text-red-700 hover:bg-red-50"
           >
             انصراف
@@ -629,7 +630,8 @@ function Upload() {
               !thumbFile
             }
             isLoading={isPending}
-            icon={<TickCircle size={20} />}
+            icon={<TickCircle size={20}             color="currentColor"
+ />}
             className="h-12"
           >
             انتشار ویدیو

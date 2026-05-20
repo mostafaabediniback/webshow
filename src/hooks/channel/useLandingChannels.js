@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getLandingChannels } from "../services/videoApi";
-import { usePaginationParams } from "../hooks/usePaginationParams";
+import { getLandingChannels } from "../../services/videoApi";
+import { usePaginationParams } from "../ui/usePaginationParams";
 
 export const useLandingChannels = (initialPage = 1) => {
   const { page, setPage } = usePaginationParams(initialPage);

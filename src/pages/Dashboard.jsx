@@ -24,7 +24,7 @@ function Dashboard() {
                   )}
                 </div>
                 <div className="w-14 h-14 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg">
-                  <FolderAdd size={28} className="text-white" color="#ffffff" />
+                  <FolderAdd size={28} className="text-white" color="#ffffff"  />
                 </div>
               </div>
             </div>

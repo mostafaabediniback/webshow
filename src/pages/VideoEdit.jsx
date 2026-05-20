@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, Link } from 'react-router-dom'
 import { getLocalVideos, updateLocalVideo } from '../services/api'
 import { useMemo, useState } from 'react'
-import useChannel from '../hooks/useChannel'
+import useChannel from '../hooks/channel/useChannel'
 
 function VideoEdit() {
   const { id } = useParams()

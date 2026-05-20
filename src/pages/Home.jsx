@@ -1,14 +1,13 @@
-import { ArrowLeft2, PlayCircle } from "iconsax-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowLeft2 } from "iconsax-react";
+import { useCallback, useState } from "react";
 import CategoryChips from "../components/CategoryChips";
 import VideoGrid from "../components/VideoGrid";
 import VideoSkeleton from "../components/VideoSkeleton";
-import Layout from "../layouts/Layout";
 import { useLandingChannels } from "../hooks/channel/useLandingChannels";
-import { useInfiniteLandingVideos } from "../hooks/video/useInfiniteLandingVideos";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useInfiniteScroll } from "../hooks/ui/useInfiniteScroll";
-import { EmptyState, ErrorMessage, Button } from "../ui";
+import { useInfiniteLandingVideos } from "../hooks/video/useInfiniteLandingVideos";
+import Layout from "../layouts/Layout";
+import { EmptyState, ErrorMessage } from "../ui";
 
 const PAGE_SIZE = 25;
 
@@ -84,7 +83,8 @@ function Home() {
           {activeChannelId && (
             <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-indigo-50 border border-indigo-100 shadow-sm mb-6">
               <span className="text-sm text-slate-600 flex items-center gap-2">
-                <ArrowLeft2 size={16} className="text-slate-400" />
+                <ArrowLeft2 size={16} className="text-slate-400"             color="currentColor"
+ />
                 نمایش ویدیوهای <strong className="text-slate-900">{activeChannelName || videosData?.pages?.flatMap(page => page.items || page.data || [])[0]?.channel_name}</strong>
               </span>
             </div>

@@ -1,4 +1,5 @@
-import { Edit2, Eye, Play, Trash } from "iconsax-react";
+import { Edit2, Eye, Trash } from "iconsax-react";
+import { Button } from "../ui";
 
 function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
   const coverImage =
@@ -16,7 +17,6 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
 
   return (
     <div className="flex flex-col justify-between w-72 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all overflow-hidden">
-
       {/* تصویر */}
       <div className="relative w-full h-44 bg-gray-200">
         <img
@@ -28,17 +28,16 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
             e.target.src = "https://picsum.photos/seed/default/300/180";
           }}
         />
-                {/* <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white/95 backdrop-blur-xl px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl shadow-lg shadow-black/10 border border-white/50 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-800">
+        {/* <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white/95 backdrop-blur-xl px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl shadow-lg shadow-black/10 border border-white/50 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-800">
           <Eye size={14} sm={16} color='#0f172a' className="text-indigo-500 flex-shrink-0" />
           <span>{viewCount}</span>
         </div> */}
 
         {/* وضعیت public/private */}
         <span
-          className={`absolute top-2 right-2 px-2 py-1 text-xs rounded-full font-medium ${isPublic
-            ? "bg-green-100 text-green-700"
-            : "bg-red-100 text-red-600"
-            }`}
+          className={`absolute top-2 right-2 px-2 py-1 text-xs rounded-full font-medium ${
+            isPublic ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+          }`}
         >
           {isPublic ? "عمومی" : "خصوصی"}
         </span>
@@ -64,15 +63,17 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
       </div>
 
       {/* دکمه‌ها */}
-      <div className="flex items-center gap-2 p-3 border-t border-gray-100">
-
+      <div className="flex items-center justify-between gap-2 p-3 border-t border-gray-100">
         {onEdit && (
-          <button
+          <Button
             onClick={() => onEdit(item)}
             disabled={isDeleting || isEditing}
-            className="flex-1 h-10 rounded-lg border border-blue-200 hover:bg-blue-50 hover:border-blue-500 text-blue-700 text-xs font-medium flex items-center justify-center gap-2"
+            variant="outline"
+            className="w-full"
           >
-            <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" color="#1D4ED8" /> <span className="hidden sm:inline">ویرایش</span>          </button>
+            <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" color="#1D4ED8" />{" "}
+            <span className="hidden sm:inline">ویرایش</span>{" "}
+          </Button>
         )}
 
         {/* <button
@@ -82,14 +83,18 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
         >
           <Play className="w-5 h-5 sm:w-6 sm:h-6" color="black" /> <span className="hidden sm:inline">نمایش</span>        </button> */}
 
-        <button
+        <Button
           onClick={() => onDelete(item.id)}
           disabled={isDeleting}
-          className="flex-1 h-10 rounded-lg bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white text-xs font-medium flex items-center justify-center gap-2"
+          variant="dangeroutline"
+          className="w-full"
         >
-          <Trash className="w-5 h-5 sm:w-6 sm:h-6" color="#FFF" />
+          <Trash
+            className="w-4 h-4 sm:w-5 sm:h-5 "
+            color="currentColor"
+          />
           <span className="hidden sm:inline">حذف</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

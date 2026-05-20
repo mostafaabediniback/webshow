@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getLandingVideos } from "../services/videoApi";
+import { getLandingVideos } from "../../services/videoApi";
 
 export const useLandingVideos = (channelId, pageNumber, pageSize = 25) => {
   return useQuery({

@@ -4,7 +4,7 @@ import VideoGrid from '../components/VideoGrid'
 import VideoSkeleton from '../components/VideoSkeleton'
 import useSearch from '../hooks/video/useSearch'
 import Layout from '../layouts/Layout'
-import { EmptyState, ErrorMessage, Button } from '../ui'
+import { Button, EmptyState, ErrorMessage } from '../ui'
 
 function Search() {
   const { q } = useParams()
@@ -18,7 +18,8 @@ function Search() {
             as={Link}
             to="/"
             variant="ghost"
-            icon={<ArrowLeft2 size={18} />}
+            icon={<ArrowLeft2 size={18}             color="currentColor"
+ />}
             size="sm"
           >
             بازگشت به خانه

@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getLandingVideos } from "../services/videoApi";
+import { getLandingVideos } from "../../services/videoApi";
 
 export const useInfiniteLandingVideos = (channelId, pageSize = 25) => {
   return useInfiniteQuery({

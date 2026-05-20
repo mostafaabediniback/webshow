@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import defaultCover from "../assets/img/cover.jpg";
-import { storeVideo } from "../services/videoApi";
+import defaultCover from "../../assets/img/cover.jpg";
+import { storeVideo } from "../../services/videoApi";
 
 const fileFromUrl = async (url) => {
   const res = await fetch(url);

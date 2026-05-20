@@ -96,7 +96,7 @@ function SocialSettings() {
       {/* DESCRIPTION */}
       <div
         className="
-          rounded-3xl
+          rounded-[10px]
           border border-gray-100
           bg-white
           p-5
@@ -114,7 +114,7 @@ function SocialSettings() {
           className="
             w-full
             h-36
-            rounded-2xl
+            rounded-[10px]
             border border-gray-200
             bg-gray-50
             p-4
@@ -143,7 +143,7 @@ function SocialSettings() {
               key={item.name}
               className="
                 flex items-center gap-4
-                rounded-2xl
+                rounded-[10px]
                 border border-gray-200
                 bg-gray-50
                 px-4 py-3
@@ -155,7 +155,7 @@ function SocialSettings() {
               <div
                 className="
                   w-12 h-12
-                  rounded-2xl
+                  rounded-[10px]
                   bg-white
                   border border-gray-200
                   flex items-center justify-center
@@ -193,7 +193,7 @@ function SocialSettings() {
           className="
             h-12
             px-8
-            rounded-2xl
+            rounded-[10px]
             bg-orange-500
             hover:bg-orange-600
             disabled:bg-orange-300
@@ -212,7 +212,7 @@ function SocialSettings() {
       {/* PREVIEW */}
       <div
         className="
-          rounded-3xl
+          rounded-[10px]
           border border-gray-100
           bg-white
           p-5
@@ -240,7 +240,7 @@ function SocialSettings() {
                 rel="noreferrer"
                 className="
                   flex items-center gap-4
-                  rounded-2xl
+                  rounded-[10px]
                   border border-gray-200
                   p-4
                   hover:border-orange-300

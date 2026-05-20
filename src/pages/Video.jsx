@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Eye, Share } from "iconsax-react";
+import { Share } from "iconsax-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";

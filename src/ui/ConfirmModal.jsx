@@ -1,5 +1,5 @@
-import { Modal, Button } from '../ui'
 import { Danger, Warning2 } from 'iconsax-react'
+import { Button, Modal } from '../ui'
 
 /**
  * کامپوننت Modal تایید برای عملیات‌های حساس مثل حذف

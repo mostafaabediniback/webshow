@@ -1,19 +1,13 @@
+import { Add, Category, Edit2, Music, SearchNormal1 } from "iconsax-react";
 import { useMemo, useState } from "react";
-import DashboardLayout from "../layouts/DashboardLayout";
-import {
-  Add,
-  SearchNormal1,
-  Category,
-  Music,
-  Edit2,
-} from "iconsax-react";
 import { toast } from "react-toastify";
-import { Modal, Button } from "../ui";
 import {
   useCategories,
   useCreateCategory,
   useUpdateCategory,
 } from "../hooks/category";
+import DashboardLayout from "../layouts/DashboardLayout";
+import { Button, Modal } from "../ui";
 
 const INITIAL_FORM = {
   title: "",
@@ -33,10 +27,8 @@ function Categories() {
   const [editForm, setEditForm] = useState(INITIAL_EDIT_FORM);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const {
-    data: categories = [],
-    isLoading: isLoadingCategories,
-  } = useCategories();
+  const { data: categories = [], isLoading: isLoadingCategories } =
+    useCategories();
 
   const { createCategory, isCreatingCategory } = useCreateCategory({
     onSuccess: () => {
@@ -125,8 +117,8 @@ function Categories() {
             </p>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-2xl bg-blue-50 text-blue-700 border border-blue-100">
-            <Category size={20} />
+          <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-[10px] bg-blue-50 text-blue-700 border border-blue-100">
+            <Category size={20} color="currentColor" />
             <span className="font-semibold text-sm">
               {categories.length} دسته‌بندی
             </span>
@@ -134,7 +126,7 @@ function Categories() {
         </div>
 
         {/* CREATE */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-md hover:shadow-lg transition-all duration-300">
+        <div className="bg-white rounded-[10px] border border-gray-100 p-6 shadow-md hover:shadow-lg transition-all duration-300">
           <h2 className="text-lg font-bold text-gray-900 mb-5">
             ساخت دسته‌بندی جدید
           </h2>
@@ -153,13 +145,10 @@ function Categories() {
 
                 <input
                   value={form.title}
-                  onChange={(e) =>
-                    handleFormChange("title", e.target.value)
-                  }
+                  onChange={(e) => handleFormChange("title", e.target.value)}
                   className="
-                    h-11 w-full rounded-xl
+                    h-11 w-full rounded-[8px]
                     border border-gray-200
-                    bg-gray-50
                     pr-4 pl-10
                     focus:outline-none
                     focus:ring-2
@@ -178,10 +167,7 @@ function Categories() {
                   type="checkbox"
                   checked={form.can_have_audio}
                   onChange={(e) =>
-                    handleFormChange(
-                      "can_have_audio",
-                      e.target.checked,
-                    )
+                    handleFormChange("can_have_audio", e.target.checked)
                   }
                   className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
@@ -197,7 +183,7 @@ function Categories() {
             onClick={handleCreate}
             disabled={!isValidCreate}
             isLoading={isCreatingCategory}
-            icon={<Add size={18} />}
+            icon={<Add size={18} color="currentColor" />}
             className="mt-5"
           >
             ایجاد دسته‌بندی
@@ -205,7 +191,7 @@ function Categories() {
         </div>
 
         {/* LIST */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-md hover:shadow-lg transition-all duration-300">
+        <div className="bg-white rounded-[10px] border border-gray-100 p-6 shadow-md hover:shadow-lg transition-all duration-300">
           <h2 className="text-lg font-bold text-gray-900 mb-5">
             لیست دسته‌بندی‌ها
           </h2>
@@ -216,14 +202,11 @@ function Categories() {
               <input
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && handleSearch()
-                }
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 placeholder="جستجو در عنوان دسته‌بندی..."
                 className="
-                  h-11 w-full rounded-xl
+                  h-11 w-full rounded-[10px]
                   border border-gray-200
-                  bg-gray-50
                   px-4
                   focus:outline-none
                   focus:ring-2
@@ -237,7 +220,7 @@ function Categories() {
             <Button
               variant="secondary"
               onClick={handleSearch}
-              icon={<SearchNormal1 size={18} />}
+              icon={<SearchNormal1 size={18} color="currentColor" />}
               className="bg-blue-50 border-blue-100 text-blue-700 hover:bg-blue-100"
             >
               جستجو
@@ -255,19 +238,17 @@ function Categories() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-right text-gray-500 border-b border-gray-100 bg-gray-50">
-                  <th className="py-4 px-2 font-semibold rounded-r-xl">
+                  <th className="py-4 px-2 font-semibold rounded-r-[10px]">
                     شناسه
                   </th>
 
-                  <th className="py-4 px-2 font-semibold">
-                    عنوان
-                  </th>
+                  <th className="py-4 px-2 font-semibold">عنوان</th>
 
                   <th className="py-4 px-2 font-semibold text-center">
                     قابلیت صوت
                   </th>
 
-                  <th className="py-4 px-2 font-semibold text-center rounded-l-xl">
+                  <th className="py-4 px-2 font-semibold text-center rounded-l-[10px]">
                     عملیات
                   </th>
                 </tr>
@@ -276,10 +257,7 @@ function Categories() {
               <tbody>
                 {filteredCategories.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={4}
-                      className="py-10 text-center text-gray-500"
-                    >
+                    <td colSpan={4} className="py-10 text-center text-gray-500">
                       نتیجه‌ای برای نمایش وجود ندارد.
                     </td>
                   </tr>
@@ -289,9 +267,7 @@ function Categories() {
                       key={category.id}
                       className="border-b border-gray-100 hover:bg-blue-50/40 transition-all duration-200"
                     >
-                      <td className="py-4 px-2 text-gray-400">
-                        {category.id}
-                      </td>
+                      <td className="py-4 px-2 text-gray-400">{category.id}</td>
 
                       <td className="py-4 px-2 font-medium text-gray-800">
                         {category.title || "-"}
@@ -299,12 +275,12 @@ function Categories() {
 
                       <td className="py-4 px-2 text-center">
                         {category.can_have_audio ? (
-                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                            <Music size={14} />
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-[10px] bg-green-100 text-green-700 text-xs font-semibold">
+                            <Music size={14} color="currentColor" />
                             دارد
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-semibold">
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-[10px] bg-gray-100 text-gray-500 text-xs font-semibold">
                             ندارد
                           </span>
                         )}
@@ -312,11 +288,9 @@ function Categories() {
 
                       <td className="py-4 px-2 text-center">
                         <button
-                          onClick={() =>
-                            openEditModal(category)
-                          }
+                          onClick={() => openEditModal(category)}
                           className="
-                            h-9 px-4 rounded-lg
+                            h-9 px-4 rounded-[10px]
                             bg-blue-50
                             text-blue-700
                             border border-blue-100
@@ -326,7 +300,7 @@ function Categories() {
                             inline-flex items-center gap-2
                           "
                         >
-                          <Edit2 size={14} />
+                          <Edit2 size={14} color="currentColor" />
                           ویرایش
                         </button>
                       </td>
@@ -348,7 +322,7 @@ function Categories() {
                 <div
                   key={category.id}
                   className="
-                    p-4 rounded-2xl
+                    p-4 rounded-[10px]
                     border border-gray-100
                     bg-white
                     shadow-md
@@ -368,12 +342,12 @@ function Categories() {
                     </div>
 
                     {category.can_have_audio ? (
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                        <Music size={14} />
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-[10px] bg-green-100 text-green-700 text-xs font-semibold">
+                        <Music size={14} color="currentColor" />
                         صوت
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-semibold">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-[10px] bg-gray-100 text-gray-500 text-xs font-semibold">
                         بدون صوت
                       </span>
                     )}
@@ -382,7 +356,7 @@ function Categories() {
                   <button
                     onClick={() => openEditModal(category)}
                     className="
-                      h-10 w-full mt-4 rounded-xl
+                      h-10 w-full mt-4 rounded-[10px]
                       bg-blue-50
                       text-blue-700
                       border border-blue-100
@@ -392,7 +366,7 @@ function Categories() {
                       inline-flex items-center justify-center gap-2
                     "
                   >
-                    <Edit2 size={16} />
+                    <Edit2 size={16} color="currentColor" />
                     ویرایش دسته‌بندی
                   </button>
                 </div>
@@ -442,9 +416,8 @@ function Categories() {
                 }))
               }
               className="
-                h-11 w-full rounded-xl
+                h-11 w-full rounded-[10px]
                 border border-gray-200
-                bg-gray-50
                 px-4
                 focus:outline-none
                 focus:ring-2

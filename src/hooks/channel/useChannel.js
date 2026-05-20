@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import { QueryKeys } from '../enums'
+import { QueryKeys } from '../../enums'
 import {
   changeChannelImage,
   changeProfileChannelImage,
@@ -9,7 +9,7 @@ import {
   getChannels,
   updateChannel,
   updateChannelInfo,
-} from '../services/channelApi'
+} from '../../services/channelApi'
 
 function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
   const queryClient = useQueryClient()

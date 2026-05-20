@@ -11,11 +11,11 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import useAuthStore from "../store/useAuthStore";
-import useChannelDetail from "../hooks/useChannelDetail";
 import user from "../assets/img/user.png";
 import { useState } from "react";
-import Modal from "../components/Modal";
 import SettingsPage from "../pages/SettingsPage";
+import useChannelDetail from "../hooks/channel/useChannelDetail";
+import Modal from "../ui/Modal";
 
 const PLATFORM_ADMIN_NAV = [
   { to: "/dashboard", label: "داشبورد", icon: Home2 },

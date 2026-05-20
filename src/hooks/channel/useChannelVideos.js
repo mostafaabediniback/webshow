@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getAllVideos, getVideosByChannel } from '../services/videoApi'
+import { getAllVideos, getVideosByChannel } from '../../services/videoApi'
 
 const useChannelVideos = ({
   channelId,

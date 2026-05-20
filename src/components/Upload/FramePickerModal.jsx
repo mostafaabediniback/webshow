@@ -11,7 +11,7 @@ export default function FramePickerModal({
   const videoRef = useRef(null);
   const [videoSrc, setVideoSrc] = useState(null);
   const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);[]
   const [playing, setPlaying] = useState(false);
   const [suggested, setSuggested] = useState([]);
 
@@ -190,7 +190,8 @@ export default function FramePickerModal({
                 className="bg-gray-100 hover:bg-gray-200 p-3 sm:p-4 rounded-3xl text-sm sm:text-base w-full sm:w-auto"
               >
                 <div className="flex gap-2 justify-center">
-                  <ScanBarcode size={24} color="#24364A" />
+                  <ScanBarcode size={24}             color="currentColor"
+ />
                   <span>انتخاب فریم فعلی ({Math.floor(currentTime)}s)</span>
                 </div>
               </button>

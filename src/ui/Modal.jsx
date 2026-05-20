@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
 import { CloseCircle } from 'iconsax-react'
+import { useEffect } from 'react'
 
 /**
  * کامپوننت Modal سفارشی

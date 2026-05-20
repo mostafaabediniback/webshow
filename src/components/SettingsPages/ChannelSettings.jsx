@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { toast } from "react-toastify";
-import useChannel from "../../hooks/useChannel";
-import useChannelDetail from "../../hooks/useChannelDetail";
 import ImageUploader from "../ImageUploader";
+import useChannel from "../../hooks/channel/useChannel";
+import useChannelDetail from "../../hooks/channel/useChannelDetail";
 
 function ChannelSettings({ channelId }) {
   const [channelImage, setChannelImage] = useState(null);
@@ -57,7 +57,7 @@ function ChannelSettings({ channelId }) {
         {/* LEFT */}
         <div
           className="
-            rounded-3xl
+            rounded-[10px]
             border border-gray-100
             bg-white
             p-6
@@ -91,7 +91,7 @@ function ChannelSettings({ channelId }) {
         {/* RIGHT */}
         <div
           className="
-            rounded-3xl
+            rounded-[10px]
             border border-gray-100
             bg-gray-50
             p-6
@@ -106,7 +106,7 @@ function ChannelSettings({ channelId }) {
           </div>
 
           {data?.data?.background_image ? (
-            <div className="relative overflow-hidden rounded-3xl group h-full">
+            <div className="relative overflow-hidden rounded-[10px] group h-full">
               <img
                 src={data.data.background_image}
                 className="
@@ -123,7 +123,7 @@ function ChannelSettings({ channelId }) {
               className="
                 flex-1
                 border-2 border-dashed
-                rounded-3xl
+                rounded-[10px]
                 flex items-center justify-center
                 text-gray-400
               "
@@ -140,7 +140,7 @@ function ChannelSettings({ channelId }) {
         {/* LEFT */}
         <div
           className="
-            rounded-3xl
+            rounded-[10px]
             border border-gray-100
             bg-white
             p-6
@@ -173,7 +173,7 @@ function ChannelSettings({ channelId }) {
         {/* RIGHT */}
         <div
           className="
-            rounded-3xl
+            rounded-[10px]
             border border-gray-100
             bg-gray-50
             p-6
@@ -187,7 +187,7 @@ function ChannelSettings({ channelId }) {
                 src={data.data.image}
                 className="
                   w-40 h-40
-                  rounded-[32px]
+                  rounded-[10px]
                   object-cover
                   border-4 border-white
                   shadow-xl
@@ -196,13 +196,13 @@ function ChannelSettings({ channelId }) {
                 "
               />
 
-              <div className="absolute inset-0 rounded-[32px] bg-black/0 group-hover:bg-black/10 transition" />
+              <div className="absolute inset-0 rounded-[10px] bg-black/0 group-hover:bg-black/10 transition" />
             </div>
           ) : (
             <div
               className="
                 w-40 h-40
-                rounded-[32px]
+                rounded-[10px]
                 border-2 border-dashed
                 flex items-center justify-center
                 text-gray-400
@@ -222,7 +222,7 @@ function ChannelSettings({ channelId }) {
           className="
             h-12
             px-8
-            rounded-2xl
+            rounded-[10px]
             bg-orange-500
             hover:bg-orange-600
             disabled:bg-orange-300

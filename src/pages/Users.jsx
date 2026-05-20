@@ -1,87 +1,94 @@
-import { useMemo, useState } from 'react'
-import DashboardLayout from '../layouts/DashboardLayout'
-import useChannel from '../hooks/channel/useChannel'
-import { Add, SearchNormal1, User, Call, Lock, Eye, EyeSlash } from 'iconsax-react'
-import { toast } from 'react-toastify'
-import { Modal, Button, ConfirmModal } from '../ui'
-import { useCreateUser, useDeleteUser, useUpdateUser, useUpdateUserPassword, useUsersList } from '../hooks/users'
+import {
+  Add,
+  Call,
+  Eye,
+  EyeSlash,
+  Lock,
+  SearchNormal1,
+  User,
+} from "iconsax-react";
+import { useMemo, useState } from "react";
+import { toast } from "react-toastify";
+import useChannel from "../hooks/channel/useChannel";
+import {
+  useCreateUser,
+  useDeleteUser,
+  useUpdateUser,
+  useUpdateUserPassword,
+  useUsersList,
+} from "../hooks/users";
+import DashboardLayout from "../layouts/DashboardLayout";
+import { Button, ConfirmModal, Modal } from "../ui";
 
 const INITIAL_FORM = {
-  name: '',
-  phone_number: '',
-  password: '',
-  channel_id: '',
+  name: "",
+  phone_number: "",
+  password: "",
+  channel_id: "",
   // username: ''
-}
+};
 
 const INITIAL_EDIT_FORM = {
-  user_id: '',
-  name: '',
-  phone_number: '',
+  user_id: "",
+  name: "",
+  phone_number: "",
   // username: '',
-}
+};
 
 const INITIAL_PASSWORD_FORM = {
-  user_id: '',
-  password: '',
-}
-
+  user_id: "",
+  password: "",
+};
 
 function Users() {
-  const { channels, isLoadingChannels } = useChannel()
-  const [form, setForm] = useState(INITIAL_FORM)
-  const [searchInput, setSearchInput] = useState('')
-  const [searchPhoneNumber, setSearchPhoneNumber] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [editForm, setEditForm] = useState(INITIAL_EDIT_FORM)
-  const [passwordForm, setPasswordForm] = useState(INITIAL_PASSWORD_FORM)
-  const [deleteUserId, setDeleteUserId] = useState(null)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+  const { channels, isLoadingChannels } = useChannel();
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchPhoneNumber, setSearchPhoneNumber] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [editForm, setEditForm] = useState(INITIAL_EDIT_FORM);
+  const [passwordForm, setPasswordForm] = useState(INITIAL_PASSWORD_FORM);
+  const [deleteUserId, setDeleteUserId] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
-  const {
-    users,
-    isLoadingUsers,
-    isFetchingUsers,
-  } = useUsersList(searchPhoneNumber)
+  const { users, isLoadingUsers, isFetchingUsers } =
+    useUsersList(searchPhoneNumber);
 
-  const {
-    createUser,
-    isCreatingUser,
-  } = useCreateUser({
+  const { createUser, isCreatingUser } = useCreateUser({
     onSuccess: () => {
-      setForm(INITIAL_FORM)
-    }
-  })
+      setForm(INITIAL_FORM);
+    },
+  });
   const { updateUser, isUpdatingUser } = useUpdateUser({
     onSuccess: () => {
-      setEditForm(INITIAL_EDIT_FORM)
-      setIsEditModalOpen(false)
+      setEditForm(INITIAL_EDIT_FORM);
+      setIsEditModalOpen(false);
     },
-  })
+  });
   const { deleteUser, isDeletingUser } = useDeleteUser({
     onSuccess: () => {
-      setDeleteUserId(null)
+      setDeleteUserId(null);
     },
-  })
+  });
   const { updateUserPassword, isUpdatingUserPassword } = useUpdateUserPassword({
     onSuccess: () => {
-      setPasswordForm(INITIAL_PASSWORD_FORM)
-      setIsPasswordModalOpen(false)
+      setPasswordForm(INITIAL_PASSWORD_FORM);
+      setIsPasswordModalOpen(false);
     },
-  })
+  });
 
   const isValidCreate = useMemo(() => {
-    return form.channel_id && form.phone_number && form.password && form.name
-    //  && form.username
-     ;
+    return (
+      form.channel_id && form.phone_number && form.password && form.name
+      //  && form.username
+    );
   }, [form]);
-
 
   const handleCreate = async () => {
     if (!isValidCreate) {
-      toast.error('لطفاً همه فیلدها را کامل کنید')
-      return
+      toast.error("لطفاً همه فیلدها را کامل کنید");
+      return;
     }
 
     await createUser({
@@ -90,52 +97,53 @@ function Users() {
       password: form.password,
       name: form.name,
       // username: form.username
-
-
-    })
-  }
+    });
+  };
 
   const handleSearch = async () => {
     if (!searchInput.trim()) {
-      toast.error('شماره موبایل را وارد کنید')
-      return
+      toast.error("شماره موبایل را وارد کنید");
+      return;
     }
 
-    setSearchPhoneNumber(searchInput.trim())
-  }
+    setSearchPhoneNumber(searchInput.trim());
+  };
 
   const handleFormChange = (key, value) => {
-    setForm((prev) => ({ ...prev, [key]: value }))
-  }
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
 
-  const getUserId = (user) => Number(user?.id ?? user?.user_id ?? 0)
+  const getUserId = (user) => Number(user?.id ?? user?.user_id ?? 0);
 
   const openEditModal = (user) => {
-    const userId = getUserId(user)
+    const userId = getUserId(user);
     setEditForm({
       user_id: userId,
-      name: user?.name || '',
-      phone_number: user?.phone_number || '',
+      name: user?.name || "",
+      phone_number: user?.phone_number || "",
       // username: user?.username || '',
-    })
-    setIsEditModalOpen(true)
-  }
+    });
+    setIsEditModalOpen(true);
+  };
 
   const openPasswordModal = (user) => {
-    const userId = getUserId(user)
+    const userId = getUserId(user);
     setPasswordForm({
       user_id: String(userId),
-      password: '',
-    })
-    setIsPasswordModalOpen(true)
-  }
+      password: "",
+    });
+    setIsPasswordModalOpen(true);
+  };
 
   const handleUpdateUser = async () => {
-    if (!editForm.user_id || !editForm.name || !editForm.phone_number 
+    if (
+      !editForm.user_id ||
+      !editForm.name ||
+      !editForm.phone_number
       // || !editForm.username
     ) {
-      toast.error('لطفاً همه فیلدهای ویرایش کاربر را کامل کنید')
-      return
+      toast.error("لطفاً همه فیلدهای ویرایش کاربر را کامل کنید");
+      return;
     }
 
     await updateUser({
@@ -143,29 +151,29 @@ function Users() {
       name: editForm.name,
       phone_number: editForm.phone_number,
       // username: editForm.username,
-    })
-  }
+    });
+  };
 
   const handleDeleteUser = async () => {
-    if (!deleteUserId) return
-    await deleteUser(deleteUserId)
-  }
+    if (!deleteUserId) return;
+    await deleteUser(deleteUserId);
+  };
 
   const handleUpdatePassword = async () => {
     if (!passwordForm.user_id || !passwordForm.password) {
-      toast.error('برای تغییر رمز عبور، همه فیلدها الزامی هستند')
-      return
+      toast.error("برای تغییر رمز عبور، همه فیلدها الزامی هستند");
+      return;
     }
 
     await updateUserPassword({
       password: passwordForm.password,
       user_id: passwordForm.user_id,
-    })
-  }
+    });
+  };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   return (
     <DashboardLayout>
@@ -175,12 +183,18 @@ function Users() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="space-y-2">
-              <span className="text-sm font-semibold text-gray-900">نام و نام خانوادگی</span>
+              <span className="text-sm font-semibold text-gray-900">
+                نام و نام خانوادگی
+              </span>
               <div className="relative">
-                <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <User
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  color="currentColor"
+                />
                 <input
                   value={form.name}
-                  onChange={(e) => handleFormChange('name', e.target.value)}
+                  onChange={(e) => handleFormChange("name", e.target.value)}
                   className="h-11 w-full rounded-lg border border-gray-300 pr-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="مثلاً علی محمدی"
                 />
@@ -188,12 +202,20 @@ function Users() {
             </label>
 
             <label className="space-y-2">
-              <span className="text-sm font-semibold text-gray-900">شماره موبایل</span>
+              <span className="text-sm font-semibold text-gray-900">
+                شماره موبایل
+              </span>
               <div className="relative">
-                <Call size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Call
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  color="currentColor"
+                />
                 <input
                   value={form.phone_number}
-                  onChange={(e) => handleFormChange('phone_number', e.target.value)}
+                  onChange={(e) =>
+                    handleFormChange("phone_number", e.target.value)
+                  }
                   className="h-11 w-full rounded-lg border border-gray-300 pr-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="0912xxxxxxx"
                   dir="ltr"
@@ -222,17 +244,20 @@ function Users() {
               <p className="text-xs text-gray-500">فقط حروف کوچک انگلیسی، اعداد و _ مجاز است.</p>
             </label> */}
 
-
-
             <label className="space-y-2">
-              <span className="text-sm font-semibold text-gray-900">رمز عبور</span>
+              <span className="text-sm font-semibold text-gray-900">
+                رمز عبور
+              </span>
               <div className="relative">
-                <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Lock
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  color="currentColor"
+                />
                 <input
-                  type={showPassword ? "text" : "password"} 
-                
+                  type={showPassword ? "text" : "password"}
                   value={form.password}
-                  onChange={(e) => handleFormChange('password', e.target.value)}
+                  onChange={(e) => handleFormChange("password", e.target.value)}
                   className="h-11 w-full rounded-lg border border-gray-300 pr-12 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="******"
                   dir="ltr"
@@ -244,9 +269,9 @@ function Users() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   {showPassword ? (
-                    <EyeSlash size={18} color="#6B7280" />
+                    <EyeSlash size={18} color="currentColor" />
                   ) : (
-                    <Eye size={18} color="#6B7280" />
+                    <Eye size={18} color="currentColor" />
                   )}
                 </button>
               </div>
@@ -256,13 +281,15 @@ function Users() {
               <span className="text-sm font-semibold text-gray-900">کانال</span>
               <select
                 value={form.channel_id}
-                onChange={(e) => handleFormChange('channel_id', e.target.value)}
+                onChange={(e) => handleFormChange("channel_id", e.target.value)}
                 disabled={isLoadingChannels}
                 className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">انتخاب کانال</option>
                 {(channels || []).map((channel) => (
-                  <option key={channel.id} value={channel.id}>{channel.name}</option>
+                  <option key={channel.id} value={channel.id}>
+                    {channel.name}
+                  </option>
                 ))}
               </select>
             </label>
@@ -272,7 +299,7 @@ function Users() {
             onClick={handleCreate}
             disabled={!isValidCreate}
             isLoading={isCreatingUser}
-            icon={<Add size={18} />}
+            icon={<Add size={18} color="currentColor" />}
             className="mt-5"
           >
             ایجاد کاربر
@@ -280,7 +307,9 @@ function Users() {
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">جستجوی کاربران</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-4">
+            جستجوی کاربران
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
             <input
@@ -288,132 +317,137 @@ function Users() {
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="شماره موبایل کاربر را وارد کنید"
               className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-
             />
             <Button
               variant="outline"
               onClick={handleSearch}
               disabled={!searchInput.trim()}
               isLoading={isFetchingUsers}
-              icon={<SearchNormal1 size={18} />}
+              icon={<SearchNormal1 size={18} color="currentColor" />}
             >
               جستجو
             </Button>
           </div>
 
           {isLoadingUsers && (
-            <p className="mt-3 text-sm text-gray-500">در حال دریافت لیست کاربران...</p>
+            <p className="mt-3 text-sm text-gray-500">
+              در حال دریافت لیست کاربران...
+            </p>
           )}
 
-{/* DESKTOP TABLE */}
-<div className="hidden md:block mt-5 overflow-x-auto">
-  <table className="w-full text-sm">
-    <thead>
-      <tr className="text-right text-gray-500 border-b border-gray-100">
-        <th className="pb-3 font-semibold">نام</th>
-        <th className="pb-3 font-semibold">شماره موبایل</th>
-        <th className="pb-3 font-semibold">شناسه کانال</th>
-        <th className="pb-3 font-semibold">عملیات</th>
-      </tr>
-    </thead>
-    <tbody>
-      {users.length === 0 ? (
-        <tr>
-          <td colSpan={4} className="py-8 text-center text-gray-500">
-            نتیجه‌ای برای نمایش وجود ندارد.
-          </td>
-        </tr>
-      ) : (
-        users.map((user, index) => (
-          <tr key={user.id || index} className="border-b border-gray-100">
-            <td className="py-4 font-medium">{user.name || '-'}</td>
-            <td className="py-4">{user.phone_number || '-'}</td>
-            <td className="py-4">{user.channel?.name || '-'}</td>
-            <td className="py-4">
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => openEditModal(user)}
-                  className="border-blue-200 text-blue-700 hover:bg-blue-50"
-                >
-                  ویرایش
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => openPasswordModal(user)}
-                  className="border-yellow-200 text-yellow-700 hover:bg-yellow-50"
-                >
-                  تغییر رمز
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setDeleteUserId(getUserId(user))}
-                  className="border-red-200 text-red-700 hover:bg-red-50"
-                >
-                  حذف
-                </Button>
+          {/* DESKTOP TABLE */}
+          <div className="hidden md:block mt-5 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-right text-gray-500 border-b border-gray-100">
+                  <th className="pb-3 font-semibold">نام</th>
+                  <th className="pb-3 font-semibold">شماره موبایل</th>
+                  <th className="pb-3 font-semibold">شناسه کانال</th>
+                  <th className="pb-3 font-semibold">عملیات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-gray-500">
+                      نتیجه‌ای برای نمایش وجود ندارد.
+                    </td>
+                  </tr>
+                ) : (
+                  users.map((user, index) => (
+                    <tr
+                      key={user.id || index}
+                      className="border-b border-gray-100"
+                    >
+                      <td className="py-4 font-medium">{user.name || "-"}</td>
+                      <td className="py-4">{user.phone_number || "-"}</td>
+                      <td className="py-4">{user.channel?.name || "-"}</td>
+                      <td className="py-4">
+                        <div className="flex gap-2 flex-wrap">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openEditModal(user)}
+                            className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                          >
+                            ویرایش
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openPasswordModal(user)}
+                            className="border-yellow-200 text-yellow-700 hover:bg-yellow-50"
+                          >
+                            تغییر رمز
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setDeleteUserId(getUserId(user))}
+                            className="border-red-200 text-red-700 hover:bg-red-50"
+                          >
+                            حذف
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* MOBILE CARD */}
+          <div className="md:hidden mt-5 space-y-4">
+            {users.length === 0 ? (
+              <div className="text-center text-gray-500 py-8">
+                نتیجه‌ای برای نمایش وجود ندارد.
               </div>
-            </td>
-          </tr>
-        ))
-      )}
-    </tbody>
-  </table>
-</div>
+            ) : (
+              users.map((user, index) => (
+                <div
+                  key={user.id || index}
+                  className="p-4 rounded-xl border border-gray-100 shadow-sm"
+                >
+                  <div className="mb-2">
+                    <p className="text-xs text-gray-400">نام</p>
+                    <p className="font-medium">{user.name || "-"}</p>
+                  </div>
 
-{/* MOBILE CARD */}
-<div className="md:hidden mt-5 space-y-4">
-  {users.length === 0 ? (
-    <div className="text-center text-gray-500 py-8">
-      نتیجه‌ای برای نمایش وجود ندارد.
-    </div>
-  ) : (
-    users.map((user, index) => (
-      <div key={user.id || index} className="p-4 rounded-xl border border-gray-100 shadow-sm">
-        
-        <div className="mb-2">
-          <p className="text-xs text-gray-400">نام</p>
-          <p className="font-medium">{user.name || '-'}</p>
-        </div>
+                  <div className="mb-2">
+                    <p className="text-xs text-gray-400">شماره موبایل</p>
+                    <p dir="ltr">{user.phone_number || "-"}</p>
+                  </div>
 
-        <div className="mb-2">
-          <p className="text-xs text-gray-400">شماره موبایل</p>
-          <p dir="ltr">{user.phone_number || '-'}</p>
-        </div>
+                  <div className="mb-3">
+                    <p className="text-xs text-gray-400">کانال</p>
+                    <p>{user.channel?.name || "-"}</p>
+                  </div>
 
-        <div className="mb-3">
-          <p className="text-xs text-gray-400">کانال</p>
-          <p>{user.channel?.name || '-'}</p>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <button
-            onClick={() => openEditModal(user)}
-            className="h-9 w-full rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 text-xs font-semibold"
-          >
-            ویرایش
-          </button>
-          <button
-            onClick={() => openPasswordModal(user)}
-            className="h-9 w-full rounded-lg border border-yellow-200 text-yellow-700 hover:bg-yellow-50 text-xs font-semibold"
-          >
-            تغییر رمز
-          </button>
-          <button
-            onClick={() => setDeleteUserId(getUserId(user))}
-            className="h-9 w-full rounded-lg border border-red-200 text-red-700 hover:bg-red-50 text-xs font-semibold"
-          >
-            حذف
-          </button>
-        </div>
-
-      </div>
-    ))
-  )}
-</div>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => openEditModal(user)}
+                      className="h-9 w-full rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 text-xs font-semibold"
+                    >
+                      ویرایش
+                    </button>
+                    <button
+                      onClick={() => openPasswordModal(user)}
+                      className="h-9 w-full rounded-lg border border-yellow-200 text-yellow-700 hover:bg-yellow-50 text-xs font-semibold"
+                    >
+                      تغییر رمز
+                    </button>
+                    <button
+                      onClick={() => setDeleteUserId(getUserId(user))}
+                      className="h-9 w-full rounded-lg border border-red-200 text-red-700 hover:bg-red-50 text-xs font-semibold"
+                    >
+                      حذف
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
@@ -422,7 +456,7 @@ function Users() {
         onClose={() => setIsEditModalOpen(false)}
         title="ویرایش کاربر"
         size="md"
-        footer={(
+        footer={
           <div className="flex items-center justify-end gap-3">
             <Button
               variant="secondary"
@@ -431,30 +465,36 @@ function Users() {
             >
               انصراف
             </Button>
-            <Button
-              onClick={handleUpdateUser}
-              isLoading={isUpdatingUser}
-            >
+            <Button onClick={handleUpdateUser} isLoading={isUpdatingUser}>
               ذخیره تغییرات
             </Button>
           </div>
-        )}
+        }
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className="space-y-2">
             <span className="text-sm font-semibold text-gray-900">نام</span>
             <input
               value={editForm.name}
-              onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((prev) => ({ ...prev, name: e.target.value }))
+              }
               className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="نام کاربر"
             />
           </label>
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-gray-900">شماره موبایل</span>
+            <span className="text-sm font-semibold text-gray-900">
+              شماره موبایل
+            </span>
             <input
               value={editForm.phone_number}
-              onChange={(e) => setEditForm((prev) => ({ ...prev, phone_number: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((prev) => ({
+                  ...prev,
+                  phone_number: e.target.value,
+                }))
+              }
               className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="0912xxxxxxx"
               dir="ltr"
@@ -484,7 +524,7 @@ function Users() {
         onClose={() => setIsPasswordModalOpen(false)}
         title="تغییر رمز عبور کاربر"
         size="sm"
-        footer={(
+        footer={
           <div className="flex items-center justify-end gap-3">
             <Button
               variant="secondary"
@@ -500,16 +540,25 @@ function Users() {
               تغییر رمز
             </Button>
           </div>
-        )}
+        }
       >
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">شناسه کاربر: {passwordForm.user_id || '-'}</p>
+          <p className="text-sm text-gray-600">
+            شناسه کاربر: {passwordForm.user_id || "-"}
+          </p>
           <label className="space-y-2 block">
-            <span className="text-sm font-semibold text-gray-900">رمز عبور جدید</span>
+            <span className="text-sm font-semibold text-gray-900">
+              رمز عبور جدید
+            </span>
             <input
               type="password"
               value={passwordForm.password}
-              onChange={(e) => setPasswordForm((prev) => ({ ...prev, password: e.target.value }))}
+              onChange={(e) =>
+                setPasswordForm((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
               className="h-11 w-full rounded-lg border border-gray-300 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="رمز عبور جدید را وارد کنید"
               dir="ltr"
@@ -530,7 +579,7 @@ function Users() {
         isLoading={isDeletingUser}
       />
     </DashboardLayout>
-  )
+  );
 }
 
-export default Users
+export default Users;

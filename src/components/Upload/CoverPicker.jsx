@@ -123,7 +123,11 @@ export default function CoverPicker({
             className="flex flex-col items-center gap-3 cursor-pointer"
           >
             <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
-              <Image size={32} color="#4a5565" className="text-purple-600" />
+              <Image
+                size={32}
+                color="currentColor"
+                className="text-purple-600"
+              />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">

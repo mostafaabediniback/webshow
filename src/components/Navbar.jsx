@@ -2,9 +2,9 @@ import { CloseCircle, Logout, Menu, SearchNormal1, User } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo/logo-01-01.png";
-import useLogin from "../hooks/useLogin";
 import useAuthStore from "../store/useAuthStore";
 import SearchInput from "./SearchInput";
+import useLogin from "../hooks/auth/useLogin";
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -49,7 +49,7 @@ function Navbar() {
               className="md:hidden p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900 touch-manipulation"
               aria-label="منو"
             >
-              <Menu size={20} color="#0f172a" />
+              <Menu size={20} color="currentColor" />
             </button>
             <Link
               to="/"
@@ -70,7 +70,7 @@ function Navbar() {
               className="no-focus-visible md:hidden p-2 rounded-lg hover:bg-gray-100 text-slate-900 touch-manipulation"
               aria-label="جستجو"
             >
-              <SearchNormal1 size={20} color="#0f172a" />
+              <SearchNormal1 size={20} color="currentColor" />
             </button>
             <div className="hidden md:flex items-center gap-3 ">
               {isAuthenticated ? (
@@ -87,7 +87,7 @@ function Navbar() {
                     className="h-10 px-4 rounded-[10px] border border-red-300 bg-white hover:bg-red-50 active:bg-red-100 text-sm font-medium flex items-center gap-2 text-red-600 transition-colors shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
                     title="خروج از حساب کاربری"
                   >
-                    <Logout size={18} color="#dc2626" />
+                    <Logout size={18} color="currentColor" />
                     {isLoggingOut ? "در حال خروج..." : "خروج"}
                   </button>
                 </>
@@ -96,7 +96,7 @@ function Navbar() {
                   to="/login"
                   className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
                 >
-                  <User size={18} color="#0f172a" />
+                  <User size={18} color="currentColor" />
                   <span className="text-[16px]">ورود</span>
                 </Link>
               )}
@@ -133,7 +133,7 @@ function Navbar() {
               className="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
               aria-label="بستن منو"
             >
-              <CloseCircle size={24} color="#0f172a" />
+              <CloseCircle size={24} color="currentColor" />
             </button>
           </div>
 

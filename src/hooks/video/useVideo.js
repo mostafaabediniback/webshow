@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getVideoDetail } from '../services/videoApi'
+import { getVideoDetail } from '../../services/videoApi'
 
 export const useVideo = (id) => {
   return useQuery({

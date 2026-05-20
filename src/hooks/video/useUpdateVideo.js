@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { updateVideo } from "../services/videoApi";
+import { updateVideo } from "../../services/videoApi";
 
 function useUpdateVideo() {
   const queryClient = useQueryClient();

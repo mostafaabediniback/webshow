@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { getChannels } from "../services/channelApi";
-import { getAllVideos } from "../services/videoApi";
-import { QueryKeys } from "../enums";
+import { getChannels } from "../../services/channelApi";
+import { getAllVideos } from "../../services/videoApi";
+import { QueryKeys } from "../../enums";
 
 function useDashboard() {
   // دریافت لیست کانال‌ها
