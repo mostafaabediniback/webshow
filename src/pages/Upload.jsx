@@ -3,15 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import cover from "../assets/img/cover.jpg";
 import CoverPicker from "../components/Upload/CoverPicker";
-import CategoryModal from "../components/Upload/CategoryModal";
 import MultiSelect from "../components/Upload/MultiSelect";
 import PlaylistModal from "../components/Upload/PlaylistModal";
 import VideoDropzone from "../components/VideoDropzone";
-import useCreateCategory from "../hooks/category/useCreateCategory";
 import useCategories from "../hooks/category/useCategories";
-import useChannel from "../hooks/useChannel";
+import useCreateCategory from "../hooks/category/useCreateCategory";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
+import useChannel from "../hooks/useChannel";
 import useVideoUpload from "../hooks/useVideoUpload";
 import DashboardLayout from "../layouts/DashboardLayout";
 
@@ -31,9 +30,8 @@ function Upload() {
   const [videoUrl, setVideoUrl] = useState("");
   const [publicShow, setPublicShow] = useState(1);
   const [uploadType, setUploadType] = useState("file"); // 'file' | 'url'
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState("");
   const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
-  const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
   const [isPlaylistModalOpen, setPlaylistModalOpen] = useState(false);
   const {
     data: categories = [],
@@ -262,7 +260,7 @@ function Upload() {
         url: videoUrl,
         coverFile: thumbFile,
         public_show: publicShow,
-        categories: selectedCategories,
+        categories: selectedCategories ? [selectedCategories] : [],
         playlist_id: selectedPlaylistId || null,
       });
 
@@ -492,13 +490,6 @@ function Upload() {
                   <label className="block text-sm font-semibold text-gray-900">
                     دسته‌بندی‌ها
                   </label>
-                  {/* <button
-                    type="button"
-                    onClick={() => setCategoryModalOpen(true)}
-                    className="text-xs text-blue-600 hover:underline"
-                  >
-                    + ایجاد دسته‌بندی
-                  </button> */}
                 </div>
                 {isLoadingCategories ? (
                   <p className="text-sm text-gray-500">
@@ -671,14 +662,6 @@ function Upload() {
           </button>
         </div>
       </div>
-      <CategoryModal
-        isOpen={isCategoryModalOpen}
-        onClose={() => setCategoryModalOpen(false)}
-        isPending={createCategoryMutation.isPending}
-        onSubmit={async (payload) => {
-          await createCategoryMutation.mutateAsync(payload);
-        }}
-      />
       <PlaylistModal
         isOpen={isPlaylistModalOpen}
         onClose={() => setPlaylistModalOpen(false)}

@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import cover from "../assets/img/cover.jpg";
-import CategoryModal from "../components/Upload/CategoryModal";
 import CoverPicker from "../components/Upload/CoverPicker";
 import MultiSelect from "../components/Upload/MultiSelect";
 import PlaylistModal from "../components/Upload/PlaylistModal";
@@ -36,7 +35,6 @@ function UserVideos() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
 
-  const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
   const [isPlaylistModalOpen, setPlaylistModalOpen] = useState(false);
 
   const {
@@ -474,13 +472,7 @@ function UserVideos() {
                     دسته‌بندی‌ها
                   </label>
 
-                  {/* <button
-                    type="button"
-                    onClick={() => setCategoryModalOpen(true)}
-                    className="text-xs text-blue-600 hover:underline"
-                  >
-                    + ایجاد دسته‌بندی
-                  </button> */}
+
                 </div>
 
                 {isLoadingCategories ? (
@@ -652,14 +644,6 @@ focus:outline-none focus:ring-2 focus:ring-blue-500          "
           </button>
         </div>
       </div>
-      <CategoryModal
-        isOpen={isCategoryModalOpen}
-        onClose={() => setCategoryModalOpen(false)}
-        isPending={createCategoryMutation.isPending}
-        onSubmit={async (payload) => {
-          await createCategoryMutation.mutateAsync(payload);
-        }}
-      />
 
       <PlaylistModal
         isOpen={isPlaylistModalOpen}

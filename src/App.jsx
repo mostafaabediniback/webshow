@@ -10,6 +10,7 @@ import Videos from './pages/Videos'
 import VideoEdit from './pages/VideoEdit'
 import Search from './pages/Search'
 import Users from './pages/Users'
+import Categories from './pages/Categories'
 import UserVideos from './pages/UserVideos'
 import UploadedVideos from './pages/UploadedVideos'
 import SettingsPage from './pages/SettingsPage'
@@ -84,6 +85,7 @@ function App() {
         <Route path="/dashboard/videos" element={<RequireAuth><RequirePlatformAdmin><Videos /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/videos/:id" element={<RequireAuth><RequirePlatformAdmin><VideoEdit /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/users" element={<RequireAuth><RequirePlatformAdmin><Users /></RequirePlatformAdmin></RequireAuth>} />
+        <Route path="/dashboard/categories" element={<RequireAuth><RequirePlatformAdmin><Categories /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/user-upload" element={<RequireAuth><RequireChannelAdmin><UserVideos /></RequireChannelAdmin></RequireAuth>} />
         <Route path="/dashboard/user-videos" element={<RequireAuth><RequireChannelAdmin><UploadedVideos /></RequireChannelAdmin></RequireAuth>} />
         <Route path="/dashboard/settings" element={<RequireAuth><RequireChannelAdmin><SettingsPage /></RequireChannelAdmin></RequireAuth>} />

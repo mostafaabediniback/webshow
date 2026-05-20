@@ -1,4 +1,5 @@
 import {
+  Category,
   FolderAdd,
   Home2,
   People,
@@ -19,6 +20,7 @@ import SettingsPage from "../pages/SettingsPage";
 const PLATFORM_ADMIN_NAV = [
   { to: "/dashboard", label: "داشبورد", icon: Home2 },
   { to: "/dashboard/channels", label: "کانال‌ها", icon: FolderAdd },
+  { to: "/dashboard/categories", label: "دسته‌بندی‌ها", icon: Category },
   { to: "/dashboard/upload", label: "بارگذاری ویدیو", icon: VideoAdd },
   { to: "/dashboard/videos", label: "ویدیوهای من", icon: VideoPlay },
   { to: "/dashboard/users", label: "کاربران", icon: People },

@@ -1,0 +1,4836 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "ArbaeenTV",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login",
+        "deprecated": false,
+        "description": "### Login\n\nUsed for both admin and user login.\n\n#### Parameters\n\n| **Parameter** | **Rules** |\n| --- | --- |\n| phone_number | required  <br>string  <br>valid  <br>format: 09######### |\n| password | required  <br>string |",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone_number": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "phone_number",
+                  "password"
+                ]
+              },
+              "example": {
+                "phone_number": "09121111111",
+                "password": "Admin@12135"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "phone_number": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "phone_number",
+                            "created_at",
+                            "updated_at"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "token",
+                        "user"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "token": "38|rrGqT0hfM4uDNFGJnMds2LXz6J7lJrobu616HFWU9625a907",
+                    "user": {
+                      "id": 1,
+                      "phone_number": "09121111111",
+                      "username": "super_admin",
+                      "name": null,
+                      "role": "SUPER_ADMIN",
+                      "created_at": "2025-12-21 09:31:38",
+                      "updated_at": "2026-03-25 11:39:50"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "deprecated": false,
+        "description": "### Logout\n\nUse for both admin and user logout. Just need token.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "message"
+                  ]
+                },
+                "example": {
+                  "status": "success",
+                  "message": "با موفقیت از حساب کاربری خارج شدید"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/landing/videos": {
+      "get": {
+        "summary": "Video",
+        "deprecated": false,
+        "description": "Endpoint to get list of video for landing. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "query",
+            "description": "ID of channel",
+            "required": false,
+            "example": "4",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "data": [
+                        {
+                          "id": 8,
+                          "channel_name": "Test Channel 10",
+                          "channel_image": "",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "rez",
+                          "channel_id": 2
+                        },
+                        {
+                          "id": 21,
+                          "channel_name": "Test8",
+                          "channel_image": "http://dl1.videoir.com/35/conversions/PANO_20240829_112334-thumbnail.webp",
+                          "cover_link": "http://dl1.videoir.com/30/conversions/image-thumbnail.webp",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": null,
+                          "channel_id": 14
+                        },
+                        {
+                          "id": 20,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "http://dl1.videoir.com/28/conversions/Screenshot-2026-03-28-at-4.05.17 PM-thumbnail.webp",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 19,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "http://dl1.videoir.com/26/conversions/Screenshot-2026-03-28-at-4.05.17 PM-thumbnail.webp",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 18,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "http://dl1.videoir.com/24/conversions/Screenshot-2026-03-28-at-4.05.17 PM-thumbnail.webp",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 17,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "docker course",
+                          "description": "docker course movie",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 16,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "http://dl1.videoir.com/22/Screenshot-2026-03-27-at-2.54.22 PM.png",
+                          "view_count": 0,
+                          "title": "new title",
+                          "description": "new description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 15,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 14,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 13,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 12,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 11,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 10,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 9,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 4,
+                          "channel_name": "Test",
+                          "channel_image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                          "cover_link": "",
+                          "view_count": 3,
+                          "title": "mine",
+                          "description": "test description",
+                          "username": "reza_abdoli1",
+                          "channel_id": 6
+                        },
+                        {
+                          "id": 6,
+                          "channel_name": "Test Channel 2",
+                          "channel_image": "",
+                          "cover_link": "http://dl1.videoir.com/11/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_test",
+                          "channel_id": 4
+                        },
+                        {
+                          "id": 7,
+                          "channel_name": "Test Channel 10",
+                          "channel_image": "",
+                          "cover_link": "",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "rez",
+                          "channel_id": 2
+                        }
+                      ],
+                      "links": {
+                        "first": "http://localhost/api/landing/videos?page=1",
+                        "last": "http://localhost/api/landing/videos?page=1",
+                        "prev": null,
+                        "next": null
+                      },
+                      "meta": {
+                        "current_page": 1,
+                        "from": 1,
+                        "last_page": 1,
+                        "links": [
+                          {
+                            "url": null,
+                            "label": "&laquo; Previous",
+                            "page": null,
+                            "active": false
+                          },
+                          {
+                            "url": "http://localhost/api/landing/videos?page=1",
+                            "label": "1",
+                            "page": 1,
+                            "active": true
+                          },
+                          {
+                            "url": null,
+                            "label": "Next &raquo;",
+                            "page": null,
+                            "active": false
+                          }
+                        ],
+                        "path": "http://localhost/api/landing/videos",
+                        "per_page": 25,
+                        "to": 17,
+                        "total": 17
+                      },
+                      "status": "success"
+                    }
+                  },
+                  "2": {
+                    "summary": "Success with param",
+                    "value": {
+                      "data": [
+                        {
+                          "id": 6,
+                          "channel_name": "Test Channel 2",
+                          "channel_image": "",
+                          "cover_link": "http://dl1.videoir.com/11/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                          "view_count": 0,
+                          "title": "test title",
+                          "description": "test description",
+                          "username": "reza_test",
+                          "channel_id": 4
+                        }
+                      ],
+                      "links": {
+                        "first": "http://localhost/api/landing/videos?page=1",
+                        "last": "http://localhost/api/landing/videos?page=1",
+                        "prev": null,
+                        "next": null
+                      },
+                      "meta": {
+                        "current_page": 1,
+                        "from": 1,
+                        "last_page": 1,
+                        "links": [
+                          {
+                            "url": null,
+                            "label": "&laquo; Previous",
+                            "page": null,
+                            "active": false
+                          },
+                          {
+                            "url": "http://localhost/api/landing/videos?page=1",
+                            "label": "1",
+                            "page": 1,
+                            "active": true
+                          },
+                          {
+                            "url": null,
+                            "label": "Next &raquo;",
+                            "page": null,
+                            "active": false
+                          }
+                        ],
+                        "path": "http://localhost/api/landing/videos",
+                        "per_page": 10,
+                        "to": 1,
+                        "total": 1
+                      },
+                      "status": "success"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/landing/channels": {
+      "get": {
+        "summary": "Channel",
+        "deprecated": false,
+        "description": "Endpoint to get channels list for landing",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 2,
+                      "name": "Test Channel 10",
+                      "image": "",
+                      "username": "rez"
+                    },
+                    {
+                      "id": 14,
+                      "name": "Test8",
+                      "image": "http://dl1.videoir.com/35/conversions/PANO_20240829_112334-thumbnail.webp",
+                      "username": null
+                    },
+                    {
+                      "id": 6,
+                      "name": "Test",
+                      "image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 4,
+                      "name": "Test Channel 2",
+                      "image": "",
+                      "username": "reza_test"
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/landing/channels?page=1",
+                    "last": "http://localhost/api/landing/channels?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/landing/channels?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/landing/channels",
+                    "per_page": 10,
+                    "to": 4,
+                    "total": 4
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/channel/create": {
+      "post": {
+        "summary": "Create Channel",
+        "deprecated": false,
+        "description": "### New Channel\n\nWith this endpoint ypu can create new channel. For this endpoint need token and below rules.\n\n#### Parameters\n\n| **Parameter** | **Rules** |\n| --- | --- |\n| name | required  <br>string  <br>unique |\n| user_id | optional  <br>int  <br>exists |",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "channel name",
+                    "example": "Test",
+                    "type": "string"
+                  },
+                  "slug": {
+                    "description": "slug name for channel. Just contains english small letters, numbers and _. (This is not changable)",
+                    "example": "",
+                    "type": "string"
+                  },
+                  "image": {
+                    "format": "binary",
+                    "type": "string",
+                    "description": "Image with valid format and lower than 4 MB",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "examples": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        },
+                        "updated_at": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "created_at",
+                        "updated_at"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 15,
+                    "name": "Test Channel",
+                    "image": "http://dl1.videoir.com/36/conversions/Screenshot-2026-03-29-at-9.19.22 PM-thumbnail.webp",
+                    "username": null,
+                    "created_at": "2026-03-29 17:50:54",
+                    "updated_at": "2026-03-29 17:50:54",
+                    "admin": {
+                      "id": null,
+                      "phone_number": null,
+                      "name": null,
+                      "username": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel": {
+      "get": {
+        "summary": "Channels",
+        "deprecated": false,
+        "description": "### Channels\n\nWith this endpoint you can get all of channels.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "created_at",
+                          "updated_at"
+                        ]
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "first": {
+                          "type": "string"
+                        },
+                        "last": {
+                          "type": "string"
+                        },
+                        "prev": {
+                          "type": "null"
+                        },
+                        "next": {
+                          "type": "null"
+                        }
+                      },
+                      "required": [
+                        "first",
+                        "last",
+                        "prev",
+                        "next"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "page": {
+                                "type": "integer",
+                                "nullable": true
+                              },
+                              "active": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "url",
+                              "label",
+                              "page",
+                              "active"
+                            ]
+                          }
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "current_page",
+                        "from",
+                        "last_page",
+                        "links",
+                        "path",
+                        "per_page",
+                        "to",
+                        "total"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data",
+                    "links",
+                    "meta"
+                  ]
+                },
+                "example": {
+                  "status": "success",
+                  "data": [
+                    {
+                      "id": 2,
+                      "name": "Test Channel 10",
+                      "image": "",
+                      "username": "rez",
+                      "created_at": "2025-12-21 13:32:06",
+                      "updated_at": "2025-12-21 13:32:06",
+                      "admin": []
+                    },
+                    {
+                      "id": 4,
+                      "name": "Test Channel 2",
+                      "image": "",
+                      "username": "reza_test",
+                      "created_at": "2025-12-22 17:01:00",
+                      "updated_at": "2026-03-23 12:14:37",
+                      "admin": []
+                    },
+                    {
+                      "id": 5,
+                      "name": "Test Channel 3",
+                      "image": "",
+                      "username": null,
+                      "created_at": "2025-12-22 17:01:07",
+                      "updated_at": "2025-12-22 17:01:07",
+                      "admin": []
+                    },
+                    {
+                      "id": 6,
+                      "name": "Test",
+                      "image": "http://dl1.videoir.com/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                      "username": "reza_abdoli1",
+                      "created_at": "2025-12-27 12:00:22",
+                      "updated_at": "2025-12-27 12:00:22",
+                      "admin": []
+                    },
+                    {
+                      "id": 7,
+                      "name": "Test2",
+                      "image": "",
+                      "username": null,
+                      "created_at": "2026-03-08 11:26:47",
+                      "updated_at": "2026-03-08 11:26:47",
+                      "admin": []
+                    },
+                    {
+                      "id": 8,
+                      "name": "Test3",
+                      "image": "",
+                      "username": null,
+                      "created_at": "2026-03-08 11:28:21",
+                      "updated_at": "2026-03-08 11:28:21",
+                      "admin": []
+                    },
+                    {
+                      "id": 9,
+                      "name": "Test4",
+                      "image": "",
+                      "username": null,
+                      "created_at": "2026-03-08 11:29:13",
+                      "updated_at": "2026-03-08 11:29:13",
+                      "admin": []
+                    },
+                    {
+                      "id": 11,
+                      "name": "Test5",
+                      "image": "http://dl1.videoir.com/32/conversions/squer-thumbnail.webp",
+                      "username": null,
+                      "created_at": "2026-03-28 14:56:08",
+                      "updated_at": "2026-03-28 14:56:08",
+                      "admin": []
+                    },
+                    {
+                      "id": 12,
+                      "name": "Test6",
+                      "image": "http://dl1.videoir.com/33/conversions/squer-thumbnail.webp",
+                      "username": null,
+                      "created_at": "2026-03-28 15:03:50",
+                      "updated_at": "2026-03-28 15:03:50",
+                      "admin": []
+                    },
+                    {
+                      "id": 13,
+                      "name": "Test7",
+                      "image": "http://dl1.videoir.com/34/conversions/logo-thumbnail.webp",
+                      "username": null,
+                      "created_at": "2026-03-28 15:13:22",
+                      "updated_at": "2026-03-28 15:13:22",
+                      "admin": []
+                    },
+                    {
+                      "id": 14,
+                      "name": "Test8",
+                      "image": "http://dl1.videoir.com/35/conversions/PANO_20240829_112334-thumbnail.webp",
+                      "username": null,
+                      "created_at": "2026-03-28 15:22:31",
+                      "updated_at": "2026-03-28 15:22:31",
+                      "admin": []
+                    },
+                    {
+                      "id": 15,
+                      "name": "Test Channel",
+                      "image": "http://dl1.videoir.com/36/conversions/Screenshot-2026-03-29-at-9.19.22 PM-thumbnail.webp",
+                      "username": null,
+                      "created_at": "2026-03-29 17:50:54",
+                      "updated_at": "2026-03-29 17:50:54",
+                      "admin": []
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/channel?page=1",
+                    "last": "http://localhost/api/channel?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/channel?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/channel",
+                    "per_page": 25,
+                    "to": 12,
+                    "total": 12
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/channel/show/{channel_id}": {
+      "get": {
+        "summary": "Channel",
+        "deprecated": false,
+        "description": "### Channel\n\nWith this enpoint ypu can get specific channel. Need channel id in Url.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        },
+                        "updated_at": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "created_at",
+                        "updated_at"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 21,
+                    "name": "New Test Channel",
+                    "image": "https://dl1.arbaeentv.com/media/new_test_channel/channel_info/images/images/conversions/background-thumbnail.webp",
+                    "background_image": "https://dl1.arbaeentv.com/media/new_test_channel/channel_info/images/background/conversions/background-background.webp",
+                    "username": "new_test_channel",
+                    "description": "Test description",
+                    "socials": {
+                      "youtube": "youtube_link",
+                      "telegram": "telegram_id"
+                    },
+                    "created_at": "2026-04-04 12:51:15",
+                    "updated_at": "2026-04-04 18:51:29",
+                    "admin": []
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/update/{channel_id}": {
+      "put": {
+        "summary": "Update",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "name",
+                  "user_id"
+                ]
+              },
+              "example": {
+                "name": "test channel",
+                "user_id": 2
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        },
+                        "updated_at": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "created_at",
+                        "updated_at"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 1,
+                    "name": "updated name",
+                    "created_at": "2025-12-02 20:23:52",
+                    "updated_at": "2025-12-08 09:43:01"
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/delete/{channel_id}": {
+      "delete": {
+        "summary": "Delete",
+        "deprecated": false,
+        "description": "With this endpoint you can delete existing channel. Just need token and channel id in url.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "message": "کانال با موفقیت حذف شد"
+                    }
+                  },
+                  "2": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "message": "کانال با موفقیت حذف شد"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/change-image/{channel_id}": {
+      "post": {
+        "summary": "Change Image",
+        "deprecated": false,
+        "description": "Change existing channel image. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "format": "binary",
+                    "type": "string",
+                    "description": "Image in valid format and lower than 4 MB. ",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "image"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 6,
+                    "name": "Test",
+                    "image": "localhost:80/storage/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                    "created_at": "2025-12-27 12:00:22",
+                    "updated_at": "2025-12-27 12:00:22"
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/search/{channel_name}": {
+      "get": {
+        "summary": "Search",
+        "deprecated": false,
+        "description": "Endpoint to search between channels by name.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_name",
+            "in": "path",
+            "description": "channel for search",
+            "required": true,
+            "example": "Test channel",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": [
+                    {
+                      "id": 2,
+                      "name": "Test Channel 10",
+                      "image": "",
+                      "username": "rez",
+                      "created_at": "2025-12-21 13:32:06",
+                      "updated_at": "2025-12-21 13:32:06",
+                      "admin": {
+                        "id": 5,
+                        "phone_number": "09121111113",
+                        "name": "reza",
+                        "username": "rez"
+                      }
+                    },
+                    {
+                      "id": 4,
+                      "name": "Test Channel 2",
+                      "image": "",
+                      "username": "reza_test",
+                      "created_at": "2025-12-22 17:01:00",
+                      "updated_at": "2026-03-23 12:14:37",
+                      "admin": {
+                        "id": 13,
+                        "phone_number": "09301908225",
+                        "name": "MohammadReza Abdoli",
+                        "username": "reza_test"
+                      }
+                    },
+                    {
+                      "id": 5,
+                      "name": "Test Channel 3",
+                      "image": "",
+                      "username": null,
+                      "created_at": "2025-12-22 17:01:07",
+                      "updated_at": "2025-12-22 17:01:07",
+                      "admin": {
+                        "id": 3,
+                        "phone_number": "09122222223",
+                        "name": null,
+                        "username": null
+                      }
+                    },
+                    {
+                      "id": 15,
+                      "name": "Test Channel",
+                      "image": "http://dl1.videoir.com/36/conversions/Screenshot-2026-03-29-at-9.19.22 PM-thumbnail.webp",
+                      "username": null,
+                      "created_at": "2026-03-29 17:50:54",
+                      "updated_at": "2026-03-29 17:50:54",
+                      "admin": {
+                        "id": null,
+                        "phone_number": null,
+                        "name": null,
+                        "username": null
+                      }
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/channel/search/Test%20?page=1",
+                    "last": "http://localhost/api/channel/search/Test%20?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/channel/search/Test%20?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/channel/search/Test%20",
+                    "per_page": 50,
+                    "to": 4,
+                    "total": 4
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/create-attach-user": {
+      "post": {
+        "summary": "Create user and attach to channel",
+        "deprecated": false,
+        "description": "With this endpoint you can create user and attach it to channel at same time. ",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "channel_id": {
+                    "type": "integer",
+                    "description": "ID of channel"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "description": "phone number of new user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "password of new user"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name of new user"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "username of new user"
+                  }
+                },
+                "required": [
+                  "channel_id",
+                  "phone_number",
+                  "password",
+                  "name",
+                  "username"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 9,
+                    "name": "Test4",
+                    "image": "",
+                    "username": "test_user",
+                    "created_at": "2026-03-08 11:29:13",
+                    "updated_at": "2026-03-30 10:48:53",
+                    "admin": {
+                      "id": 16,
+                      "phone_number": "09123333333",
+                      "name": "Test User",
+                      "username": "test_user"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/attach-user": {
+      "post": {
+        "summary": "Attach user to channel",
+        "deprecated": false,
+        "description": "Endpoint to attach user to channel",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "integer"
+                  },
+                  "channel_id": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "user_id",
+                  "channel_id"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 13,
+                    "name": "Test7",
+                    "image": "http://dl1.videoir.com/34/conversions/logo-thumbnail.webp",
+                    "username": "bot",
+                    "created_at": "2026-03-28 15:13:22",
+                    "updated_at": "2026-03-30 11:09:34",
+                    "admin": {
+                      "id": 15,
+                      "phone_number": "09121111112",
+                      "name": "bot",
+                      "username": "bot"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/change-status/{channel_id}": {
+      "put": {
+        "summary": "Change Status",
+        "deprecated": false,
+        "description": "End point to change channel status. Just for Super Admin.\nStatus just can be 'active' or 'inactive'. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "ID of target channel",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "description": "Status just can be 'active' or 'inactive'"
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/change-background/{channel_id}": {
+      "post": {
+        "summary": "Change or Add Background",
+        "deprecated": false,
+        "description": "Endpoint to change channel background. \n**Note: channe_id in url just need for Super Admin to change specific channel background. If Admin call this route, we don't need channel_id. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "format": "binary",
+                    "type": "string",
+                    "description": "Image want to upload",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "image"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 21,
+                    "name": "New Test Channel",
+                    "image": "",
+                    "username": "new_test_channel",
+                    "description": null,
+                    "socials": null,
+                    "created_at": "2026-04-04 12:51:15",
+                    "updated_at": "2026-04-04 12:51:15",
+                    "admin": {
+                      "id": null,
+                      "phone_number": null,
+                      "name": null,
+                      "username": "new_test_channel"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/channel/update-info/{channel_id}": {
+      "put": {
+        "summary": "Update Channel Info",
+        "deprecated": false,
+        "description": "With this endpoint you can update extra information of channel. In this endpoint, channel_id in url is just for Super Admin. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "socials": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                }
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 21,
+                    "name": "New Test Channel",
+                    "image": "http://dl1.videoir.com/new_test_channel/channel_info/images/images/conversions/background-thumbnail.webp",
+                    "username": "new_test_channel",
+                    "description": "Test description",
+                    "socials": {
+                      "telegram": "telegram_id",
+                      "youtube": "youtube_link"
+                    },
+                    "created_at": "2026-04-04 12:51:15",
+                    "updated_at": "2026-04-04 18:51:29",
+                    "admin": {
+                      "id": null,
+                      "phone_number": null,
+                      "name": null,
+                      "username": "new_test_channel"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/search/{search}": {
+      "get": {
+        "summary": "Search",
+        "deprecated": false,
+        "description": "With this endpoint you can search in channel by name and videos by title. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": {
+                    "channels": [
+                      {
+                        "id": 2,
+                        "name": "Test Channel",
+                        "image": "",
+                        "created_at": "2025-12-21 13:32:06",
+                        "updated_at": "2025-12-21 13:32:06"
+                      },
+                      {
+                        "id": 4,
+                        "name": "Test Channel 2",
+                        "image": "",
+                        "created_at": "2025-12-22 17:01:00",
+                        "updated_at": "2025-12-22 17:01:00"
+                      },
+                      {
+                        "id": 5,
+                        "name": "Test Channel 3",
+                        "image": "",
+                        "created_at": "2025-12-22 17:01:07",
+                        "updated_at": "2025-12-22 17:01:07"
+                      },
+                      {
+                        "id": 6,
+                        "name": "Test",
+                        "image": "localhost:80/storage/8/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                        "created_at": "2025-12-27 12:00:22",
+                        "updated_at": "2025-12-27 12:00:22"
+                      }
+                    ],
+                    "videos": [
+                      {
+                        "id": 4,
+                        "channel_name": "Test",
+                        "cover_link": "localhost:80/storage/9/695cc20311220.mp4",
+                        "title": "test title"
+                      },
+                      {
+                        "id": 5,
+                        "channel_name": "Test",
+                        "cover_link": "localhost:80/storage/10/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                        "title": "test title"
+                      },
+                      {
+                        "id": 6,
+                        "channel_name": "Test",
+                        "cover_link": "localhost:80/storage/11/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                        "title": "test title"
+                      }
+                    ]
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/video/store-video/{channel_id}": {
+      "post": {
+        "summary": "Store Video",
+        "deprecated": false,
+        "description": "### Store video\n\nWith this endpoint yopu can attach uploaded video to an existing channel.\n\nFor this endpoint need token and below rules:\n\n#### Parameters\n\n| **Parameter** | **Rules** |\n| --- | --- |\n| path | required  <br>string  <br>exists |\n| title | required  <br>string |\n| description | optional  <br>string |\n| cover | optional  <br>file  <br>formats: jpg, png, jpeg |",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "example": "temp/692f4ca8ce8f0.mp4",
+                    "type": "string"
+                  },
+                  "title": {
+                    "example": "test title 2",
+                    "type": "string"
+                  },
+                  "description": {
+                    "example": "test description 2",
+                    "type": "string"
+                  },
+                  "cover": {
+                    "description": "valid formats: jpg",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "url": {
+                    "example": "https://dl1.arbaeentv.com/media/binahayat/302/videos/videos/6a00b2cc7961c.mp4",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "title",
+                  "description",
+                  "cover",
+                  "url"
+                ]
+              },
+              "examples": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/video/upload": {
+      "post": {
+        "summary": "Upload",
+        "deprecated": false,
+        "description": "Document in html file.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/video/{channel_id}": {
+      "get": {
+        "summary": "Get videos",
+        "deprecated": false,
+        "description": "### Get Videos\n\nWith this endpoint you can get videos of specific channel.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "optional",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": [
+                    {
+                      "id": 8,
+                      "channel_name": "Test Channel 10",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza"
+                    },
+                    {
+                      "id": 23,
+                      "channel_name": "Test",
+                      "cover_link": "http://dl1.videoir.com/39/conversions/Screenshot-2026-03-30-at-11.01.56 AM-thumbnail.webp",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 22,
+                      "channel_name": "Test",
+                      "cover_link": "http://dl1.videoir.com/37/conversions/Screenshot-2026-03-29-at-9.19.22 PM-thumbnail.webp",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 20,
+                      "channel_name": "Test",
+                      "cover_link": "http://dl1.videoir.com/28/conversions/Screenshot-2026-03-28-at-4.05.17 PM-thumbnail.webp",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 19,
+                      "channel_name": "Test",
+                      "cover_link": "http://dl1.videoir.com/26/conversions/Screenshot-2026-03-28-at-4.05.17 PM-thumbnail.webp",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 18,
+                      "channel_name": "Test",
+                      "cover_link": "http://dl1.videoir.com/24/conversions/Screenshot-2026-03-28-at-4.05.17 PM-thumbnail.webp",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 17,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "docker course",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 16,
+                      "channel_name": "Test",
+                      "cover_link": "http://dl1.videoir.com/22/Screenshot-2026-03-27-at-2.54.22 PM.png",
+                      "title": "new title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 15,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 14,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 13,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 12,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 11,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 10,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 9,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 4,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "mine",
+                      "view_count": 5,
+                      "username": "reza_abdoli1"
+                    },
+                    {
+                      "id": 6,
+                      "channel_name": "Test Channel 2",
+                      "cover_link": "http://dl1.videoir.com/11/Screenshot-2026-01-06-at-11.35.08 AM.png",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_test"
+                    },
+                    {
+                      "id": 7,
+                      "channel_name": "Test Channel 10",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza"
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/video?page=1",
+                    "last": "http://localhost/api/video?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/video?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/video",
+                    "per_page": 25,
+                    "to": 18,
+                    "total": 18
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/video/show/{video_id}": {
+      "get": {
+        "summary": "Video",
+        "deprecated": false,
+        "description": "### Video\n\nWith this endpoint you can get specific video.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "examples": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 14,
+                    "channel_id": 6,
+                    "channel_name": "Test",
+                    "channel_image": "https://dl1.arbaeentv.com/media/reza_abdoli1/channel_info/images/images/Screenshot-2025-12-27-at-4.26.46 PM.png",
+                    "video_link": "https://dl1.arbaeentv.com/media/reza_abdoli1/14/videos/videos/69c293070b15a.mp4",
+                    "video_links": [
+                      "",
+                      "",
+                      "https://dl1.arbaeentv.com/media/reza_abdoli1/14/videos/720/006-Setting-up-the-front-end.mp4",
+                      "https://dl1.arbaeentv.com/media/reza_abdoli1/14/videos/1080/006-Setting-up-the-front-end.mp4"
+                    ],
+                    "audio_link": "https://dl1.arbaeentv.com/media/reza_abdoli1/14/videos/audio/006-Setting-up-the-front-end.mp4",
+                    "cover_link": "",
+                    "view_count": 1,
+                    "title": "test title",
+                    "description": "test description",
+                    "likes": 0,
+                    "dislikes": 0,
+                    "username": "reza_abdoli1",
+                    "user": []
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/video": {
+      "get": {
+        "summary": "All videos",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "channel_name": {
+                            "type": "string"
+                          },
+                          "cover_link": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "channel_name",
+                          "cover_link",
+                          "title"
+                        ]
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "first": {
+                          "type": "string"
+                        },
+                        "last": {
+                          "type": "string"
+                        },
+                        "prev": {
+                          "type": "null"
+                        },
+                        "next": {
+                          "type": "null"
+                        }
+                      },
+                      "required": [
+                        "first",
+                        "last",
+                        "prev",
+                        "next"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "page": {
+                                "type": "integer",
+                                "nullable": true
+                              },
+                              "active": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "url",
+                              "label",
+                              "page",
+                              "active"
+                            ]
+                          }
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "current_page",
+                        "from",
+                        "last_page",
+                        "links",
+                        "path",
+                        "per_page",
+                        "to",
+                        "total"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data",
+                    "links",
+                    "meta"
+                  ]
+                },
+                "example": {
+                  "status": "success",
+                  "data": [
+                    {
+                      "id": 3,
+                      "channel_name": "updated name",
+                      "cover_link": "http://localhost:80/storage/3/692f4ca8ce8f0.mp4",
+                      "title": "test title 2"
+                    },
+                    {
+                      "id": 2,
+                      "channel_name": "updated name",
+                      "cover_link": "http://localhost:80/storage/2/692f4b1ce20fe.mp4",
+                      "title": "test title"
+                    },
+                    {
+                      "id": 1,
+                      "channel_name": "updated name",
+                      "cover_link": "http://localhost:80/storage/1/692f4b1ce20fe.mp4",
+                      "title": "test title"
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/video?page=1",
+                    "last": "http://localhost/api/video?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/video?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/video",
+                    "per_page": 25,
+                    "to": 3,
+                    "total": 3
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/video/delete/{video_id}": {
+      "delete": {
+        "summary": "Delete Video",
+        "deprecated": false,
+        "description": "With this endpoint you can delete specific video. Just need token and video id.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "message": "ویدئو با موفقیت پاک شد"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/video/update-video/{video_id}": {
+      "post": {
+        "summary": "Update Video",
+        "deprecated": false,
+        "description": "Endpoint to edit information of video",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "example": "new title",
+                    "type": "string"
+                  },
+                  "description": {
+                    "example": "new description",
+                    "type": "string"
+                  },
+                  "cover": {
+                    "format": "binary",
+                    "type": "string",
+                    "example": ""
+                  },
+                  "public_show": {
+                    "type": "boolean",
+                    "description": "Showing status of video",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "title",
+                  "description"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/video/related": {
+      "get": {
+        "summary": "Related",
+        "deprecated": false,
+        "description": "Get related video of one video form this endpoint. This endpoint give you 10 related videos. ",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/comments/store/{video_id}": {
+      "post": {
+        "summary": "Store New Comment",
+        "deprecated": false,
+        "description": "Use this endpoint to store new comment for a video. Need token, video id and body information.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "Id of video",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string",
+                    "description": "comment text."
+                  }
+                },
+                "required": [
+                  "comment"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": {
+                    "id": 5,
+                    "comment": "Hey! This is my comment",
+                    "created_at": "2026-02-07 17:46"
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/comments/{video_id}": {
+      "get": {
+        "summary": "Video Comments",
+        "deprecated": false,
+        "description": "From this endpoint you can get comments of specific video.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 5,
+                      "comment": "Hey! This is my comment",
+                      "created_at": "2026-02-07T17:46:17.000000Z",
+                      "updated_at": "2026-02-07T17:46:17.000000Z",
+                      "user": {
+                        "id": 1
+                      }
+                    },
+                    {
+                      "id": 4,
+                      "comment": "Hey! This is my comment",
+                      "created_at": "2026-02-07T17:44:44.000000Z",
+                      "updated_at": "2026-02-07T17:44:44.000000Z",
+                      "user": {
+                        "id": 1
+                      }
+                    },
+                    {
+                      "id": 3,
+                      "comment": "Hey! This is my comment",
+                      "created_at": "2026-02-07T17:44:33.000000Z",
+                      "updated_at": "2026-02-07T17:44:33.000000Z",
+                      "user": {
+                        "id": 1
+                      }
+                    },
+                    {
+                      "id": 2,
+                      "comment": "Hey! This is my comment",
+                      "created_at": "2026-02-07T17:43:32.000000Z",
+                      "updated_at": "2026-02-07T17:43:32.000000Z",
+                      "user": {
+                        "id": 1
+                      }
+                    },
+                    {
+                      "id": 1,
+                      "comment": "Hey! This is my comment",
+                      "created_at": "2026-02-07T17:42:08.000000Z",
+                      "updated_at": "2026-02-07T17:42:08.000000Z",
+                      "user": {
+                        "id": 1
+                      }
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/comments/6?page=1",
+                    "last": "http://localhost/api/comments/6?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/comments/6?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/comments/6",
+                    "per_page": 30,
+                    "to": 5,
+                    "total": 5
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/comments/change-status": {
+      "put": {
+        "summary": "Comment Change Status",
+        "deprecated": false,
+        "description": "Now just can change staus of active comments (because we don't have pannel to manage video comments). ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "description": "status os comment. Can be \"active\" or \"inactive\"."
+                  },
+                  "comment_id": {
+                    "type": "integer",
+                    "description": "ID of comment"
+                  }
+                },
+                "required": [
+                  "status",
+                  "comment_id"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "message": "Status changed successfully"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/comments/delete-comment/{comment_id}": {
+      "delete": {
+        "summary": "Delete Comment",
+        "deprecated": false,
+        "description": "Can delete existing comment. (we don't have pannel for it)",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "comment_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "message": "Comment deleted successfully"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/reactions/{video_id}": {
+      "post": {
+        "summary": "Reaction",
+        "deprecated": false,
+        "description": "With this endpoint can set reactioin for video. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reaction": {
+                    "type": "string",
+                    "description": "reaction type, can be \"like\" or \"dislike\""
+                  }
+                },
+                "required": [
+                  "reaction"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/reactions/remove/{video_id}": {
+      "get": {
+        "summary": "Remove Reaction",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "ID of video",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/update-password": {
+      "put": {
+        "summary": "Change Password",
+        "deprecated": false,
+        "description": "Endpoint to change password. Just for Super Admin. ",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "integer",
+                    "description": "ID of user want to change password"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "New password"
+                  }
+                },
+                "required": [
+                  "user_id",
+                  "password"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "message": "رمز با موفقیت ویرایش شد"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/update": {
+      "put": {
+        "summary": "Update user",
+        "deprecated": false,
+        "description": "Endpoint to update user info. ",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "integer",
+                    "description": "ID of user want to update"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name of user (full name)"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "description": "phone number of user"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "username of user"
+                  }
+                },
+                "required": [
+                  "user_id",
+                  "name",
+                  "phone_number",
+                  "username"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 5,
+                    "phone_number": "09121111113",
+                    "username": "reza",
+                    "name": "Reza",
+                    "role": "USER",
+                    "created_at": "2026-03-09T10:48:15.000000Z",
+                    "updated_at": "2026-03-30T10:13:50.000000Z",
+                    "channel": {
+                      "id": 2,
+                      "name": "Test Channel 10"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/delete/{user_id}": {
+      "delete": {
+        "summary": "Delete User",
+        "deprecated": false,
+        "description": "Endpoint to delete user. Just for Super Admin",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "ID of user want to delete",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "message": "کاربر با موفقیت حذف شد"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/new-user": {
+      "post": {
+        "summary": "New User",
+        "deprecated": false,
+        "description": "With this endpoint you can create new user. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone_number": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "phone_number",
+                  "password",
+                  "name",
+                  "username"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 17,
+                    "phone_number": "09124444444",
+                    "username": "new_user",
+                    "name": "new user",
+                    "role": "USER",
+                    "created_at": "2026-03-30T11:06:05.000000Z",
+                    "updated_at": "2026-03-30T11:06:05.000000Z",
+                    "channel": {
+                      "id": null,
+                      "name": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/search/{phone_number}": {
+      "get": {
+        "summary": "User Search",
+        "deprecated": false,
+        "description": "Endpoint to search user by phone number. Just for Super Admin",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "phone_number",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "phone_number": "09121111111",
+                      "username": "super_admin",
+                      "name": null,
+                      "role": "SUPER_ADMIN",
+                      "created_at": "2025-12-21T09:31:38.000000Z",
+                      "updated_at": "2026-03-30T10:03:36.000000Z",
+                      "channel": {
+                        "id": null,
+                        "name": null
+                      }
+                    },
+                    {
+                      "id": 5,
+                      "phone_number": "09121111113",
+                      "username": "reza",
+                      "name": "Reza",
+                      "role": "USER",
+                      "created_at": "2026-03-09T10:48:15.000000Z",
+                      "updated_at": "2026-03-30T10:13:50.000000Z",
+                      "channel": {
+                        "id": 2,
+                        "name": "Test Channel 10"
+                      }
+                    },
+                    {
+                      "id": 8,
+                      "phone_number": "09121111114",
+                      "username": "reza_abdoli",
+                      "name": "reza abdoli",
+                      "role": "USER",
+                      "created_at": "2026-03-20T12:59:24.000000Z",
+                      "updated_at": "2026-03-20T12:59:24.000000Z",
+                      "channel": {
+                        "id": null,
+                        "name": null
+                      }
+                    },
+                    {
+                      "id": 9,
+                      "phone_number": "09121111115",
+                      "username": "reza_abdoli1",
+                      "name": "reza abdoli",
+                      "role": "USER",
+                      "created_at": "2026-03-20T13:00:12.000000Z",
+                      "updated_at": "2026-03-20T13:00:12.000000Z",
+                      "channel": {
+                        "id": 6,
+                        "name": "Test"
+                      }
+                    },
+                    {
+                      "id": 15,
+                      "phone_number": "09121111112",
+                      "username": "bot",
+                      "name": "bot",
+                      "role": "ADMIN",
+                      "created_at": "2026-03-29T16:28:13.000000Z",
+                      "updated_at": "2026-03-29T16:28:13.000000Z",
+                      "channel": {
+                        "id": 13,
+                        "name": "Test7"
+                      }
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/user/search/0912111?page=1",
+                    "last": "http://localhost/api/user/search/0912111?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/user/search/0912111?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/user/search/0912111",
+                    "per_page": 50,
+                    "to": 5,
+                    "total": 5
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/me": {
+      "get": {
+        "summary": "Me",
+        "deprecated": false,
+        "description": "Use this endpoint to get user of token. Just need token for this endpoint. ",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 5,
+                    "phone_number": "09121111113",
+                    "username": "reza",
+                    "name": "Reza",
+                    "role": "ADMIN",
+                    "created_at": "2026-03-09T10:48:15.000000Z",
+                    "updated_at": "2026-03-30T10:13:50.000000Z",
+                    "channel": {
+                      "id": 2,
+                      "name": "Test Channel 10"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update Me",
+        "deprecated": false,
+        "description": "With this endpoint user can update it's own",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "User new name"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/otp/send": {
+      "post": {
+        "summary": "Send",
+        "deprecated": false,
+        "description": "Use this endpoint to send otp. This endpoint is first step of user registration. Just need user phone number. If phone number is exists, user must login.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone_number": {
+                    "type": "string",
+                    "description": "User phone_number"
+                  }
+                },
+                "required": [
+                  "phone_number"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "message": "کد به شماره موبایل ارسال شد. اعتبار کد ۵ دقیقه است"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/otp/check": {
+      "post": {
+        "summary": "Check",
+        "deprecated": false,
+        "description": "With this endpoint you can check (verify) code that sent to user. This is a numeric code with 5 digits.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone_number": {
+                    "type": "string",
+                    "description": "phone number of user"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "sent code"
+                  }
+                },
+                "required": [
+                  "phone_number",
+                  "code"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "token": "58|ak9mvvrADz2ioiHMIZXZToql8JDjsxCB7qijBMvy4a33498e",
+                    "data": {
+                      "id": 18,
+                      "phone_number": "09126666666",
+                      "username": null,
+                      "name": null,
+                      "role": "USER",
+                      "created_at": "2026-04-11 14:57:35",
+                      "updated_at": "2026-04-11 14:57:35"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/user/complete-data": {
+      "put": {
+        "summary": "Complete User Data",
+        "deprecated": false,
+        "description": "Use this endpoint to complete user data after otp code verification. Need token for this endpoint",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "integer",
+                    "description": "ID of user"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name of user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "password of user. min: 8"
+                  }
+                },
+                "required": [
+                  "user_id",
+                  "name",
+                  "password"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "id": 18,
+                    "phone_number": "09126666666",
+                    "username": null,
+                    "name": "MohammadReza Abdoli",
+                    "role": "USER",
+                    "created_at": "2026-04-11T14:57:35.000000Z",
+                    "updated_at": "2026-04-11T18:28:05.000000Z",
+                    "channel": {
+                      "id": null,
+                      "name": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "summary": "Categories",
+        "deprecated": false,
+        "description": "Use this endpoint to get categories list",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "title": "مستند"
+                    },
+                    {
+                      "id": 2,
+                      "title": "فیلم کوتاه"
+                    },
+                    {
+                      "id": 3,
+                      "title": "انیمیشن"
+                    },
+                    {
+                      "id": 4,
+                      "title": "موشن گرافیک"
+                    },
+                    {
+                      "id": 5,
+                      "title": "تیزر و کلیپ"
+                    },
+                    {
+                      "id": 6,
+                      "title": "نماهنگ"
+                    },
+                    {
+                      "id": 7,
+                      "title": "مداحی"
+                    },
+                    {
+                      "id": 8,
+                      "title": "موسیقی"
+                    },
+                    {
+                      "id": 9,
+                      "title": "مصاحبه"
+                    },
+                    {
+                      "id": 10,
+                      "title": "برنامه"
+                    },
+                    {
+                      "id": 11,
+                      "title": "پادکست"
+                    },
+                    {
+                      "id": 12,
+                      "title": "راش"
+                    },
+                    {
+                      "id": 13,
+                      "title": "اربعین"
+                    },
+                    {
+                      "id": 14,
+                      "title": "کودک و نوجوان"
+                    },
+                    {
+                      "id": 15,
+                      "title": "هوش مصنوعی"
+                    },
+                    {
+                      "id": 16,
+                      "title": "Update test"
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/categories?page=1",
+                    "last": "http://localhost/api/categories?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/categories?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/categories",
+                    "per_page": 50,
+                    "to": 16,
+                    "total": 16
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "New Category",
+        "deprecated": false,
+        "description": "Use this endpoint to create new category",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "title of category"
+                  },
+                  "can_have_audio": {
+                    "type": "boolean",
+                    "description": "option for having audio"
+                  }
+                },
+                "required": [
+                  "title",
+                  "can_have_audio"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": {
+                    "id": 17,
+                    "title": "test category"
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/categories/{category_id}": {
+      "put": {
+        "summary": "Update Category",
+        "deprecated": false,
+        "description": "Use this endpoint to update existing category",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "description": "ID of target category",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "title of category"
+                  },
+                  "can_have_audio": {
+                    "type": "boolean",
+                    "description": "permission to have audio or not"
+                  }
+                },
+                "required": [
+                  "title",
+                  "can_have_audio"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": {
+                    "id": 17,
+                    "title": "update category"
+                  },
+                  "status": "success"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/play-list/index/{channel_id}": {
+      "get": {
+        "summary": "Playlists",
+        "deprecated": false,
+        "description": "Using this route to get list of playlists. You can send channel id in URL for get playlists of specific channel.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "test play list",
+                      "is_public": true
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/play-list/index?page=1",
+                    "last": "http://localhost/api/play-list/index?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/play-list/index?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/play-list/index",
+                    "per_page": 25,
+                    "to": 1,
+                    "total": 1
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/play-list/create": {
+      "post": {
+        "summary": "New Playlist",
+        "deprecated": false,
+        "description": "Using this endpoint to create new playlist.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of playlist"
+                  },
+                  "is_public": {
+                    "type": "boolean",
+                    "description": "permission for other users see"
+                  }
+                },
+                "required": [
+                  "name",
+                  "is_public"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "data": {
+                    "id": 2,
+                    "name": "Tets Playlist",
+                    "is_public": true
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/play-list/add/{playlist_id}/{video_id}": {
+      "post": {
+        "summary": "Add to playlist",
+        "deprecated": false,
+        "description": "Using this endpoint to add video to playlist. Need playlist id and video id on url.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "playlist_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": [
+                    {
+                      "id": 15,
+                      "channel_name": "Test",
+                      "cover_link": "",
+                      "title": "test title",
+                      "view_count": 0,
+                      "username": "reza_abdoli1"
+                    }
+                  ],
+                  "links": {
+                    "first": "http://localhost/api/play-list/add/2/15?page=1",
+                    "last": "http://localhost/api/play-list/add/2/15?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/play-list/add/2/15?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/play-list/add/2/15",
+                    "per_page": 25,
+                    "to": 1,
+                    "total": 1
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/play-list/remove/{playlist_id}/{video_id}": {
+      "post": {
+        "summary": "Remove from playlist",
+        "deprecated": false,
+        "description": "Using this endpoint to remove video from playlist.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "playlist_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "status": "success",
+                  "data": [],
+                  "links": {
+                    "first": "http://localhost/api/play-list/remove/2/15?page=1",
+                    "last": "http://localhost/api/play-list/remove/2/15?page=1",
+                    "prev": null,
+                    "next": null
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": null,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": null,
+                        "label": "&laquo; Previous",
+                        "page": null,
+                        "active": false
+                      },
+                      {
+                        "url": "http://localhost/api/play-list/remove/2/15?page=1",
+                        "label": "1",
+                        "page": 1,
+                        "active": true
+                      },
+                      {
+                        "url": null,
+                        "label": "Next &raquo;",
+                        "page": null,
+                        "active": false
+                      }
+                    ],
+                    "path": "http://localhost/api/play-list/remove/2/15",
+                    "per_page": 25,
+                    "to": null,
+                    "total": 0
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "localhost:80",
+      "description": "ArbaeenTV"
+    }
+  ],
+  "security": []
+}
