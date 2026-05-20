@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import Modal from "./Modal";
+import { Modal, Button, Spinner } from "../ui";
 import { getVideoDetail } from "../services/videoApi";
-import useUpdateVideo from "../hooks/useUpdateVideo";
+import useUpdateVideo from "../hooks/video/useUpdateVideo";
 
 function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
   const [title, setTitle] = useState("");
@@ -115,28 +115,27 @@ await updateVideoAsync({
       closeOnEscape={!isUpdating}
       footer={
         <div className="flex items-center justify-end gap-3">
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={handleClose}
             disabled={isUpdating}
-            className="h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-gray-700 text-sm font-medium transition-colors"
           >
             انصراف
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             form="edit-video-form"
-            disabled={isUpdating || isLoadingDetail}
-            className="h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
+            isLoading={isUpdating}
+            disabled={isLoadingDetail}
           >
-            {isUpdating ? "در حال ذخیره..." : "ذخیره تغییرات"}
-          </button>
+            ذخیره تغییرات
+          </Button>
         </div>
       }
     >
       {isLoadingDetail ? (
         <div className="text-center py-10">
-          <div className="inline-block w-7 h-7 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-3" />
+          <Spinner size="md" className="mb-3" />
           <p className="text-sm text-gray-500">در حال دریافت اطلاعات ویدیو...</p>
         </div>
       ) : (

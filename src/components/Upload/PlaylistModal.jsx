@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Modal from "../Modal";
+import { Modal, Button } from "../../ui";
 
 function PlaylistModal({ isOpen, onClose, onSubmit, isPending }) {
   const [name, setName] = useState("");
@@ -21,9 +21,14 @@ function PlaylistModal({ isOpen, onClose, onSubmit, isPending }) {
           <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
           عمومی
         </label> */}
-        <button onClick={handleSubmit} disabled={!name.trim() || isPending} className="w-full h-10 rounded-lg bg-blue-600 text-white disabled:bg-gray-300">
-          {isPending ? "در حال ایجاد..." : "ایجاد پلی‌لیست"}
-        </button>
+        <Button 
+          onClick={handleSubmit} 
+          disabled={!name.trim()} 
+          isLoading={isPending}
+          className="w-full"
+        >
+          ایجاد پلی‌لیست
+        </Button>
       </div>
     </Modal>
   );

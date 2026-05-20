@@ -1,6 +1,7 @@
 import { Image } from "iconsax-react";
 import { useEffect, useRef, useState } from "react";
 import FramePickerModal from "./FramePickerModal";
+import { Button } from "../../ui";
 
 export default function CoverPicker({
   value, // current cover File or null
@@ -139,23 +140,21 @@ export default function CoverPicker({
         <div>تصویر شاخص</div>
       </label>
       <div className="flex gap-3 mt-6">
-        {/* <button onClick={() => setShowDefaultModal(true)} className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50">
-          انتخاب کاورهای دیفالت
-          {isFormDisabled ? 'opacity-60 pointer-events-none' : ''}
-        </button> */}
-<button
-  type="button"
-  onClick={() => document.getElementById("thumb-input")?.click()}
-  className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50"
->
-  انتخاب تصویر کاور
-</button>
-        <button
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => document.getElementById("thumb-input")?.click()}
+          className="flex-1"
+        >
+          انتخاب تصویر کاور
+        </Button>
+        <Button
+          variant="secondary"
           onClick={() => setShowFrameModal(true)}
-          className={`flex-1 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm hover:bg-gray-50`}
+          className="flex-1"
         >
           انتخاب کاور از فریم ویدیو
-        </button>
+        </Button>
       </div>
 
       {/* <DefaultCoversModal

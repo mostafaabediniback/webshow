@@ -11,7 +11,7 @@ import useCategories from "../hooks/category/useCategories";
 import useCreateCategory from "../hooks/category/useCreateCategory";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
-import useVideoUpload from "../hooks/useVideoUpload";
+import useVideoUpload from "../hooks/video/useVideoUpload";
 import DashboardLayout from "../layouts/DashboardLayout";
 import useAuthStore from "../store/useAuthStore";
 

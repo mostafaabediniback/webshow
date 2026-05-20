@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react'
 import DashboardLayout from '../layouts/DashboardLayout'
-import useChannel from '../hooks/useChannel'
+import useChannel from '../hooks/channel/useChannel'
 import { Add, SearchNormal1, User, Call, Lock, Eye, EyeSlash } from 'iconsax-react'
 import { toast } from 'react-toastify'
-import ConfirmModal from '../components/ConfirmModal'
-import Modal from '../components/Modal'
+import { Modal, Button, ConfirmModal } from '../ui'
 import { useCreateUser, useDeleteUser, useUpdateUser, useUpdateUserPassword, useUsersList } from '../hooks/users'
 
 const INITIAL_FORM = {
@@ -269,14 +268,15 @@ function Users() {
             </label>
           </div>
 
-          <button
+          <Button
             onClick={handleCreate}
-            disabled={!isValidCreate || isCreatingUser}
-            className="mt-5 h-11 px-5 rounded-lg bg-black text-white hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm font-semibold inline-flex items-center gap-2"
+            disabled={!isValidCreate}
+            isLoading={isCreatingUser}
+            icon={<Add size={18} />}
+            className="mt-5"
           >
-            <Add size={18} color='#ffffff' />
-            {isCreatingUser ? 'در حال ثبت...' : 'ایجاد کاربر'}
-          </button>
+            ایجاد کاربر
+          </Button>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -290,14 +290,15 @@ function Users() {
               className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
 
             />
-            <button
+            <Button
+              variant="outline"
               onClick={handleSearch}
               disabled={!searchInput.trim()}
-              className="h-11 px-5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm font-semibold inline-flex items-center justify-center gap-2"
+              isLoading={isFetchingUsers}
+              icon={<SearchNormal1 size={18} />}
             >
-              <SearchNormal1 size={18} color='#6B7280' />
-              {isFetchingUsers ? 'در حال جستجو...' : 'جستجو'}
-            </button>
+              جستجو
+            </Button>
           </div>
 
           {isLoadingUsers && (
@@ -330,24 +331,30 @@ function Users() {
             <td className="py-4">{user.channel?.name || '-'}</td>
             <td className="py-4">
               <div className="flex gap-2 flex-wrap">
-                <button
+                <Button
+                  size="sm"
+                  variant="outline"
                   onClick={() => openEditModal(user)}
-                  className="h-9 px-3 rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 text-xs font-semibold"
+                  className="border-blue-200 text-blue-700 hover:bg-blue-50"
                 >
                   ویرایش
-                </button>
-                <button
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
                   onClick={() => openPasswordModal(user)}
-                  className="h-9 px-3 rounded-lg border border-yellow-200 text-yellow-700 hover:bg-yellow-50 text-xs font-semibold"
+                  className="border-yellow-200 text-yellow-700 hover:bg-yellow-50"
                 >
                   تغییر رمز
-                </button>
-                <button
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
                   onClick={() => setDeleteUserId(getUserId(user))}
-                  className="h-9 px-3 rounded-lg border border-red-200 text-red-700 hover:bg-red-50 text-xs font-semibold"
+                  className="border-red-200 text-red-700 hover:bg-red-50"
                 >
                   حذف
-                </button>
+                </Button>
               </div>
             </td>
           </tr>
@@ -417,20 +424,19 @@ function Users() {
         size="md"
         footer={(
           <div className="flex items-center justify-end gap-3">
-            <button
+            <Button
+              variant="secondary"
               onClick={() => setIsEditModalOpen(false)}
               disabled={isUpdatingUser}
-              className="h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-60"
             >
               انصراف
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleUpdateUser}
-              disabled={isUpdatingUser}
-              className="h-10 px-4 rounded-lg bg-black text-white hover:bg-gray-800 disabled:bg-gray-400"
+              isLoading={isUpdatingUser}
             >
-              {isUpdatingUser ? 'در حال بروزرسانی...' : 'ذخیره تغییرات'}
-            </button>
+              ذخیره تغییرات
+            </Button>
           </div>
         )}
       >
@@ -480,20 +486,19 @@ function Users() {
         size="sm"
         footer={(
           <div className="flex items-center justify-end gap-3">
-            <button
+            <Button
+              variant="secondary"
               onClick={() => setIsPasswordModalOpen(false)}
               disabled={isUpdatingUserPassword}
-              className="h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-60"
             >
               انصراف
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleUpdatePassword}
-              disabled={isUpdatingUserPassword}
-              className="h-10 px-4 rounded-lg bg-black text-white hover:bg-gray-800 disabled:bg-gray-400"
+              isLoading={isUpdatingUserPassword}
             >
-              {isUpdatingUserPassword ? 'در حال تغییر...' : 'ثبت رمز جدید'}
-            </button>
+              تغییر رمز
+            </Button>
           </div>
         )}
       >

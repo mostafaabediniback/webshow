@@ -1,6 +1,6 @@
 import { FolderAdd, VideoAdd, VideoPlay } from 'iconsax-react'
 import { Link } from 'react-router-dom'
-import useDashboard from '../hooks/useDashboard'
+import useDashboard from '../hooks/dashboard/useDashboard'
 import DashboardLayout from '../layouts/DashboardLayout'
 import useAuthStore from '../store/useAuthStore'
 

@@ -4,16 +4,17 @@ import CategoryChips from "../components/CategoryChips";
 import VideoGrid from "../components/VideoGrid";
 import VideoSkeleton from "../components/VideoSkeleton";
 import Layout from "../layouts/Layout";
-import { useLandingChannels } from "../hooks/useLandingChannels";
-import { useInfiniteLandingVideos } from "../hooks/useInfiniteLandingVideos";
+import { useLandingChannels } from "../hooks/channel/useLandingChannels";
+import { useInfiniteLandingVideos } from "../hooks/video/useInfiniteLandingVideos";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useInfiniteScroll } from "../hooks/ui/useInfiniteScroll";
+import { EmptyState, ErrorMessage, Button } from "../ui";
 
 const PAGE_SIZE = 25;
 
 function Home() {
 
   const [activeChannelId, setActiveChannelId] = useState(null);
-  const loadMoreRef = useRef(null);
 
   const {
     data: channelsData,
@@ -31,6 +32,12 @@ function Home() {
     refetch,
   } = useInfiniteLandingVideos(activeChannelId, PAGE_SIZE);
 
+  const loadMoreRef = useInfiniteScroll({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
+
   const channelsList = Array.isArray(channelsData?.items) ? channelsData.items : [];
   const videosList = Array.isArray(videosData?.items) ? videosData.items : [];
   const activeChannelName = channelsList.find((channel) => channel.id === activeChannelId)?.name;
@@ -43,36 +50,6 @@ function Home() {
   const handleRefresh = useCallback(() => {
     refetch();
   }, [refetch]);
-
-
-  useEffect(() => {
-    const sentinel = loadMoreRef.current;
-
-    if (!sentinel || !hasNextPage) {
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-
-        if (entry?.isIntersecting && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      {
-        root: null,
-        rootMargin: "300px 0px",
-        threshold: 0.1,
-      }
-    );
-
-    observer.observe(sentinel);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, videosList.length]);
 
 
 
@@ -118,33 +95,15 @@ function Home() {
               <VideoSkeleton count={PAGE_SIZE} />
             </div>
           ) : videosError ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4 rounded-2xl bg-slate-50 border border-slate-200">
-              <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                <span className="text-2xl">⚠</span>
-              </div>
-              <p className="text-red-600 font-medium mb-2">خطا در دریافت ویدیوها</p>
-              <button
-                onClick={handleRefresh}
-                className="text-indigo-600 hover:text-indigo-700 font-medium px-4 py-2 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-all"
-              >
-                تلاش مجدد
-              </button>
-            </div>
+            <ErrorMessage onRetry={handleRefresh} />
           ) : videosList.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 px-4 rounded-2xl bg-slate-50 border border-slate-200 border-dashed">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center mb-6 shadow-lg">
-                <PlayCircle size={40} color="#f97316" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                {activeChannelId ? "ویدیویی یافت نشد" : "شروع کنید!"}
-              </h3>
-              <p className="text-slate-600 text-center max-w-md">
-                {activeChannelId
-                  ? "در این کانال فعلاً ویدیویی موجود نیست."
-                  : "کانالی انتخاب کنید تا ویدیوهایش را ببینید."
-                }
-              </p>
-            </div>
+            <EmptyState
+              title={activeChannelId ? "ویدیویی یافت نشد" : "شروع کنید!"}
+              message={activeChannelId
+                ? "در این کانال فعلاً ویدیویی موجود نیست."
+                : "کانالی انتخاب کنید تا ویدیوهایش را ببینید."
+              }
+            />
           ) : (
             <section>
               <div className="pb-8">

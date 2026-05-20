@@ -3,8 +3,8 @@ import { Eye, Share } from "iconsax-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import useChannelVideos from "../hooks/useChannelVideos";
-import { useVideo } from "../hooks/useVideo";
+import useChannelVideos from "../hooks/channel/useChannelVideos";
+import { useVideo } from "../hooks/video/useVideo";
 import Layout from "../layouts/Layout";
 import { readAuthSession } from "../utils/auth";
 

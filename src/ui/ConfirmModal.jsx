@@ -1,4 +1,4 @@
-import Modal from './Modal'
+import { Modal, Button } from '../ui'
 import { Danger, Warning2 } from 'iconsax-react'
 
 /**
@@ -45,36 +45,21 @@ function ConfirmModal({
       closeOnEscape={!isLoading}
       footer={
         <div className="flex items-center justify-end gap-3">
-          <button
+          <Button
+            variant="secondary"
             onClick={onClose}
             disabled={isLoading}
-            className="h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-gray-700 text-sm font-medium transition-colors"
           >
             {cancelText}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={isDanger ? 'danger' : 'primary'}
             onClick={handleConfirm}
-            disabled={isLoading}
-            className={`h-10 px-4 rounded-lg text-white text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-              isDanger ? 'bg-red-600 hover:bg-red-700' : 'bg-yellow-600 hover:bg-yellow-700'
-            }`}
+            isLoading={isLoading}
+            className={!isDanger && !isLoading ? 'bg-yellow-600 hover:bg-yellow-700 border-none' : ''}
           >
-            {isLoading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                در حال پردازش...
-              </>
-            ) : (
-              <>
-                {/* {isDanger ? (
-                  <Danger size={18} color={dangerColor} />
-                ) : (
-                  <Warning2 size={18} color={warningColor} />
-                )} */}
-                {confirmText}
-              </>
-            )}
-          </button>
+            {confirmText}
+          </Button>
         </div>
       }
     >

@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { useLocation } from "react-router-dom";
@@ -12,8 +11,10 @@ import Layout from "../layouts/Layout";
 import VideoGrid from "../components/VideoGrid";
 import VideoSkeleton from "../components/VideoSkeleton";
 
-import useChannelDetail from "../hooks/useChannelDetail";
-import useInfiniteLandingVideos from "../hooks/useInfiniteLandingVideos";
+import useChannelDetail from "../hooks/channel/useChannelDetail";
+import { useInfiniteLandingVideos } from "../hooks/video/useInfiniteLandingVideos";
+import { useInfiniteScroll } from "../hooks/ui/useInfiniteScroll";
+import { EmptyState, ErrorMessage } from "../ui";
 
 const PAGE_SIZE = 25;
 
@@ -21,8 +22,6 @@ const ProfileChannel = () => {
   const location = useLocation();
 
   const [channelId, setChannelId] = useState(null);
-
-  const loadMoreRef = useRef(null);
 
   // CHANNEL DETAIL
   const {
@@ -41,6 +40,12 @@ const ProfileChannel = () => {
     fetchNextPage,
     refetch: refetchVideos,
   } = useInfiniteLandingVideos(channelId, PAGE_SIZE);
+
+  const loadMoreRef = useInfiniteScroll({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
 
   // CHANNEL
   const channel = channelData?.data;
@@ -65,35 +70,6 @@ const ProfileChannel = () => {
     }
   }, [channelId]);
 
-  // INFINITE SCROLL
-  useEffect(() => {
-    const sentinel = loadMoreRef.current;
-
-    if (!sentinel || !hasNextPage) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-
-        if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      {
-        root: null,
-        rootMargin: "300px 0px",
-        threshold: 0.1,
-      },
-    );
-
-    observer.observe(sentinel);
-
-    return () => {
-      if (sentinel) {
-        observer.unobserve(sentinel);
-      }
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   // RETRY
   const handleRefresh = useCallback(() => {
@@ -178,38 +154,16 @@ const ProfileChannel = () => {
 
           {/* VIDEOS */}
           {showInitialLoading ? (
-            <VideoSkeleton count={PAGE_SIZE} />
+            <div className="mt-6">
+              <VideoSkeleton count={PAGE_SIZE} />
+            </div>
           ) : videosError ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4 rounded-2xl bg-slate-50 border border-slate-200">
-              <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                <span className="text-2xl">⚠</span>
-              </div>
-
-              <p className="text-red-600 font-medium mb-2">
-                خطا در دریافت ویدیوها
-              </p>
-
-              <button
-                onClick={handleRefresh}
-                className="text-indigo-600 hover:text-indigo-700 font-medium px-4 py-2 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-all"
-              >
-                تلاش مجدد
-              </button>
-            </div>
+            <ErrorMessage onRetry={handleRefresh} />
           ) : videosList.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 px-4 rounded-2xl bg-slate-50 border border-slate-200 border-dashed">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center mb-6 shadow-lg">
-                <PlayCircle size={40} color="#f97316" />
-              </div>
-
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                ویدیویی یافت نشد
-              </h3>
-
-              <p className="text-slate-600 text-center max-w-md">
-                هنوز ویدیویی برای این کانال منتشر نشده است.
-              </p>
-            </div>
+            <EmptyState
+              title="ویدیویی یافت نشد"
+              message="در این کانال فعلاً ویدیویی موجود نیست."
+            />
           ) : (
             <section>
               <div className="pb-8">

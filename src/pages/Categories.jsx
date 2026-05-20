@@ -8,7 +8,7 @@ import {
   Edit2,
 } from "iconsax-react";
 import { toast } from "react-toastify";
-import Modal from "../components/Modal";
+import { Modal, Button } from "../ui";
 import {
   useCategories,
   useCreateCategory,
@@ -193,28 +193,15 @@ function Categories() {
             </div>
           </div>
 
-          <button
+          <Button
             onClick={handleCreate}
-            disabled={!isValidCreate || isCreatingCategory}
-            className="
-              mt-5 h-11 px-5 rounded-xl
-              bg-gradient-to-r from-blue-500 to-blue-700
-              hover:from-blue-600 hover:to-blue-800
-              text-white
-              disabled:from-gray-300 disabled:to-gray-300
-              disabled:cursor-not-allowed
-              text-sm font-semibold
-              inline-flex items-center gap-2
-              shadow-md hover:shadow-lg
-              transition-all duration-300
-            "
+            disabled={!isValidCreate}
+            isLoading={isCreatingCategory}
+            icon={<Add size={18} />}
+            className="mt-5"
           >
-            <Add size={18} color="#ffffff" />
-
-            {isCreatingCategory
-              ? "در حال ثبت..."
-              : "ایجاد دسته‌بندی"}
-          </button>
+            ایجاد دسته‌بندی
+          </Button>
         </div>
 
         {/* LIST */}
@@ -247,22 +234,14 @@ function Categories() {
               />
             </div>
 
-            <button
+            <Button
+              variant="secondary"
               onClick={handleSearch}
-              className="
-                h-11 px-5 rounded-xl
-                bg-blue-50
-                border border-blue-100
-                hover:bg-blue-100
-                text-blue-700
-                text-sm font-semibold
-                inline-flex items-center justify-center gap-2
-                transition-all duration-200
-              "
+              icon={<SearchNormal1 size={18} />}
+              className="bg-blue-50 border-blue-100 text-blue-700 hover:bg-blue-100"
             >
-              <SearchNormal1 size={18} color="#1D4ED8" />
               جستجو
-            </button>
+            </Button>
           </div>
 
           {isLoadingCategories && (
@@ -431,37 +410,20 @@ function Categories() {
         size="md"
         footer={
           <div className="flex items-center justify-end gap-3">
-            <button
+            <Button
+              variant="secondary"
               onClick={() => setIsEditModalOpen(false)}
               disabled={isUpdatingCategory}
-              className="
-                h-10 px-4 rounded-xl
-                border border-gray-300
-                hover:bg-gray-50
-                disabled:opacity-60
-                transition-all duration-200
-              "
             >
               انصراف
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={handleUpdateCategory}
-              disabled={isUpdatingCategory}
-              className="
-                h-10 px-5 rounded-xl
-                bg-gradient-to-r from-blue-500 to-blue-700
-                hover:from-blue-600 hover:to-blue-800
-                text-white
-                shadow-md
-                transition-all duration-300
-                disabled:from-gray-400 disabled:to-gray-400
-              "
+              isLoading={isUpdatingCategory}
             >
-              {isUpdatingCategory
-                ? "در حال بروزرسانی..."
-                : "ذخیره تغییرات"}
-            </button>
+              ذخیره تغییرات
+            </Button>
           </div>
         }
       >

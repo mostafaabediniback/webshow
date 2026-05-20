@@ -10,8 +10,9 @@ import useCategories from "../hooks/category/useCategories";
 import useCreateCategory from "../hooks/category/useCreateCategory";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
-import useChannel from "../hooks/useChannel";
-import useVideoUpload from "../hooks/useVideoUpload";
+import useChannel from "../hooks/channel/useChannel";
+import useVideoUpload from "../hooks/video/useVideoUpload";
+import { Button } from "../ui";
 import DashboardLayout from "../layouts/DashboardLayout";
 
 function Upload() {
@@ -610,56 +611,29 @@ function Upload() {
         </div>
 
         <div className="flex gap-2 justify-end ">
-          <button
+          <Button
+            variant="secondary"
             onClick={handleCancelAndRefresh}
-            className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50"
+            icon={<CloseCircle size={16} />}
+            className="hover:border-red-300 hover:text-red-700 hover:bg-red-50"
           >
-            <CloseCircle size={16} color="#fb2c36" />
             انصراف
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleUpload}
             disabled={
               !title.trim() ||
               !chanId ||
               (uploadType === "file" && !tempPath) ||
               (uploadType === "url" && !videoUrl) ||
-              isPending ||
               !thumbFile
             }
-            className="
-     h-12 px-6 rounded-lg
-    bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700
-    hover:from-blue-600 hover:via-blue-600 hover:to-blue-600
-    disabled:from-gray-300 disabled:via-gray-300 disabled:to-gray-300
-    disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed
-    text-white text-sm font-medium
-    transition-all duration-200
-    flex items-center justify-center gap-2
-    shadow-md hover:shadow-lg
-  "
+            isLoading={isPending}
+            icon={<TickCircle size={20} />}
+            className="h-12"
           >
-            {isPending ? (
-              <>در حال آپلود...</>
-            ) : (
-              <>
-                <TickCircle
-                  size={20}
-                  color={
-                    !title.trim() ||
-                    !chanId ||
-                    (uploadType === "file" && !tempPath) ||
-                    (uploadType === "url" && !videoUrl) ||
-                    isPending ||
-                    !thumbFile
-                      ? "#000000"
-                      : "#ffffff"
-                  }
-                />
-                انتشار ویدیو
-              </>
-            )}
-          </button>
+            انتشار ویدیو
+          </Button>
         </div>
       </div>
       <PlaylistModal

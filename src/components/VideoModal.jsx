@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getVideoDetail } from "../services/videoApi";
 import { toast } from "react-toastify";
-import Modal from "./Modal";
+import { Modal, Spinner } from "../ui";
 
 /**
  * کامپوننت Modal برای نمایش جزئیات ویدیو
@@ -37,7 +37,7 @@ function VideoModal({ videoId, isOpen, onClose }) {
     >
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
+          <Spinner size="md" className="mb-4" />
           <p className="text-gray-500">در حال بارگذاری...</p>
         </div>
       ) : videoData ? (

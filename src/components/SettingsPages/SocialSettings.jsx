@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import {
+  FaGlobe,
+  FaInstagram,
   FaTelegram,
   FaYoutube,
-  FaInstagram,
-  FaGlobe,
 } from "react-icons/fa";
 
-import useChannelDetail from "../../hooks/useChannelDetail";
-import useChannel from "../../hooks/useChannel";
 import { toast } from "react-toastify";
+import useChannelDetail from "../../hooks/channel/useChannelDetail";
+import useChannel from "../../hooks/channel/useChannel";
 
 const SOCIAL_CONFIG = [
   {

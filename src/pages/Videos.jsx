@@ -1,16 +1,16 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 import { useEffect, useState } from "react";
-import useChannel from "../hooks/useChannel";
-import useChannelVideos from "../hooks/useChannelVideos";
-import useDeleteVideo from "../hooks/useDeleteVideo";
+import useChannel from "../hooks/channel/useChannel";
+import useChannelVideos from "../hooks/channel/useChannelVideos";
+import useDeleteVideo from "../hooks/video/useDeleteVideo";
 import { Pagination } from "@mui/material";
 import { Play } from "iconsax-react";
 import VideoRow from "../components/VideoRow";
 import VideoModal from "../components/VideoModal";
-import ConfirmModal from "../components/ConfirmModal";
-import { usePaginationParams } from "../hooks/usePaginationParams";
+import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import EditVideoModal from "../components/EditVideoModal";
 import { useNavigate } from "react-router-dom";
+import { EmptyState, ErrorMessage, Spinner, ConfirmModal } from "../ui";
 
 function Videos() {
   const navigate = useNavigate();
@@ -76,34 +76,16 @@ function Videos() {
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           {isLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="h-20 bg-gray-100 rounded-lg animate-pulse"
-                />
-              ))}
+            <div className="flex flex-col items-center justify-center py-20">
+              <Spinner size="lg" />
+              <p className="mt-4 text-gray-500">در حال بارگذاری ویدیوها...</p>
             </div>
           ) : isError ? (
-            <div className="text-center py-12">
-              <p className="text-red-500 font-medium">
-                خطا در بارگذاری ویدیوها
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                لطفاً دوباره تلاش کنید
-              </p>
-            </div>
+            <ErrorMessage onRetry={refetch} />
           ) : (data?.items || []).length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <Play size={32} color="#F97316" className="text-gray-400" />
-              </div>
-              <p className="text-sm text-gray-500">
-                {chanId
-                  ? "ویدیویی در این کانال یافت نشد"
-                  : "هنوز ویدیویی آپلود نشده است"}
-              </p>
-            </div>
+            <EmptyState
+              title={chanId ? "ویدیویی در این کانال یافت نشد" : "هنوز ویدیویی آپلود نشده است"}
+            />
           ) : (
             <>
               <div className="flex gap-4 flex-wrap space-y-3">

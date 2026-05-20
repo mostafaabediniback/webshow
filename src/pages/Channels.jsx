@@ -2,8 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import { Edit2, FolderAdd, TickCircle, Trash, User } from "iconsax-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import ConfirmModal from "../components/ConfirmModal";
-import useChannel from "../hooks/useChannel";
+import useChannel from "../hooks/channel/useChannel";
+import { Button, ConfirmModal } from "../ui";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { getSearch } from "../services/videoApi";
 
@@ -90,6 +90,13 @@ function Channels() {
   const handleCancel = () => {
     setEditing(null);
     setName("");
+    setImageFile(null);
+  };
+
+  const handleEdit = (c) => {
+    setEditing(c);
+    setName(c.name);
+    setUsername(c.username || "");
     setImageFile(null);
   };
 
@@ -262,15 +269,15 @@ function Channels() {
 
               <div className="flex items-center gap-2">
                 {editing && (
-                  <button
+                  <Button
+                    variant="secondary"
                     onClick={handleCancel}
-                    className="h-11 px-4 rounded-lg border border-gray-300 hover:bg-gray-50"
                   >
                     انصراف
-                  </button>
+                  </Button>
                 )}
 
-                <button
+                <Button
                   onClick={handleSubmit}
                   disabled={
                     !name.trim() ||
@@ -278,20 +285,11 @@ function Channels() {
                     (!editing && !imageFile) ||
                     (editing && !imageFile && !editing?.image)
                   }
-                  className="w-full items-center justify-center h-11 px-6 rounded-lg bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white flex items-center gap-2"
+                  className="w-full"
+                  icon={editing ? <TickCircle size={18} /> : <FolderAdd size={18} />}
                 >
-                  {editing ? (
-                    <>
-                      <TickCircle size={18} color="currentColor" variant="Bold" />
-                      ذخیره تغییرات
-                    </>
-                  ) : (
-                    <>
-                      <FolderAdd size={18} color="currentColor" variant="Bold" />
-                      افزودن کانال
-                    </>
-                  )}
-                </button>
+                  {editing ? 'ذخیره تغییرات' : 'افزودن کانال'}
+                </Button>
               </div>
             </div>
           </div>
@@ -393,27 +391,25 @@ function Channels() {
                   />
 
                   {/* دکمه‌های اکشن */}
-                  <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-end">
-                    <button
-                      onClick={() => {
-                        setEditing(c);
-                        setName(c.name);
-                        setUsername(c.username || "");
-                        setImageFile(null);
-                      }}
-                      className="h-9 px-3 justify-center sm:px-4 rounded-lg border border-gray-300 hover:bg-white hover:border-blue-500 text-gray-700 hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEdit(c)}
+                      icon={<Edit2 size={16} />}
+                      className="flex-1 sm:flex-none"
                     >
-                      <Edit2 size={16} sm:size={20} color="currentColor" />
                       ویرایش
-                    </button>
-
-                    <button
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => setDeleteConfirmId(c.id)}
-                      className="h-9 px-3 justify-center  sm:px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none"
+                      icon={<Trash size={16} />}
+                      className="text-red-600 border-red-100 hover:bg-red-50 hover:text-red-700 flex-1 sm:flex-none"
                     >
-                      <Trash size={16} sm:size={20} color="#fff" />
                       حذف
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
