@@ -332,7 +332,7 @@ function UserVideos() {
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div className="flex justify-center mb-4">
             <div className="flex bg-gray-100 p-1 rounded-lg">
-              <button
+              {/* <button
                 onClick={() => setUploadType("file")}
                 className={`px-4 py-2 text-sm rounded-md transition-all ${
                   uploadType === "file"
@@ -341,7 +341,7 @@ function UserVideos() {
                 }`}
               >
                 آپلود فایل
-              </button>
+              </button> */}
 
               {/* <button
                 onClick={() => setUploadType("url")}

@@ -74,6 +74,7 @@ function SearchInput() {
         )}
         <button 
           type="submit" 
+        
           className="absolute left-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-200 active:bg-gray-300 transition-colors"
           aria-label="جستجو"
         >

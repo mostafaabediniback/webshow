@@ -518,7 +518,7 @@ function Upload() {
                 )}
               </div>
               <div>
-                <div className="flex justify-between items-center mb-2">
+                {/* <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-semibold text-gray-900">
                     پلی‌لیست (اختیاری)
                   </label>
@@ -530,8 +530,8 @@ function Upload() {
                   >
                     + ایجاد پلی‌لیست
                   </button>
-                </div>
-                <div className="rounded-lg border border-gray-200 bg-white">
+                </div> */}
+                {/* <div className="rounded-lg border border-gray-200 bg-white">
                   {!chanId ? (
                     <div className="p-3 text-sm text-gray-500">
                       ابتدا کانال را انتخاب کنید.
@@ -571,7 +571,6 @@ function Upload() {
                         ))}
                       </select>
 
-                      {/* icon */}
                       <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
                         <svg
                           className="w-4 h-4"
@@ -587,7 +586,7 @@ function Upload() {
                       </div>
                     </div>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

@@ -17,10 +17,10 @@ function PlaylistModal({ isOpen, onClose, onSubmit, isPending }) {
     <Modal isOpen={isOpen} onClose={onClose} title="ایجاد پلی‌لیست" size="sm">
       <div className="space-y-4">
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="نام پلی‌لیست" className="h-11 px-4 rounded-lg border border-gray-300 w-full"/>
-        <label className="flex items-center gap-2 text-sm">
+        {/* <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
           عمومی
-        </label>
+        </label> */}
         <button onClick={handleSubmit} disabled={!name.trim() || isPending} className="w-full h-10 rounded-lg bg-blue-600 text-white disabled:bg-gray-300">
           {isPending ? "در حال ایجاد..." : "ایجاد پلی‌لیست"}
         </button>
