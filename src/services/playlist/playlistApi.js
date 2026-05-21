@@ -1,5 +1,35 @@
 import axiosInstanceNew from "../../utils/axiosConfigNew";
 
+/**
+ * @typedef {Object} PlaylistSummary
+ * @property {number|string} id
+ * @property {string} [name]
+ * @property {boolean|number} [is_public]
+ * @property {number} [videos_count]
+ */
+
+/**
+ * @typedef {Object} PlaylistVideo
+ * @property {number|string} id
+ * @property {string} [title]
+ * @property {string} [channel_name]
+ * @property {string} [username]
+ * @property {string} [cover_link]
+ * @property {number} [view_count]
+ * @property {number|string} [duration]
+ * @property {number|string} [order]
+ * @property {{ order?: number|string }} [pivot]
+ */
+
+/**
+ * @typedef {Object} PlaylistDetailResponse
+ * @property {PlaylistSummary | null} playlist
+ * @property {PlaylistVideo[]} items
+ * @property {Object} meta
+ * @property {number} totalPages
+ * @property {number} totalItems
+ */
+
 const mapPlaylistDetailResponse = (payload) => {
   const root = payload?.data ?? payload ?? {};
   const playlist = root?.data?.play_list ?? root?.play_list ?? null;
@@ -28,20 +58,14 @@ const mapPlaylistDetailResponse = (payload) => {
 //   return Array.isArray(res?.data?.data) ? res.data.data : (Array.isArray(res?.data) ? res.data : []);
 // };
 export const getPlaylists = async (channelId) => {
-  try {
-    const url = channelId
-      ? `/play-list/index/${channelId}`
-      : `/play-list/index`; // 👈 حالت بدون ID
+  const url = channelId
+    ? `/play-list/index/${channelId}`
+    : `/play-list/index`;
 
-    const res = await axiosInstanceNew.get(url);
+  const res = await axiosInstanceNew.get(url);
+  const data = res?.data?.data ?? res?.data;
 
-    const data = res?.data?.data ?? res?.data;
-
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    console.error("getPlaylists error:", error);
-    return []; // 👈 UI نمی‌ترکه
-  }
+  return Array.isArray(data) ? data : [];
 };
 
 export const createPlaylist = async (payload) => {
@@ -64,5 +88,6 @@ export const getPlaylistDetail = async (playlistId, { page = 1, per_page = 25 } 
     params: { page, per_page },
   });
 
+  /** @type {PlaylistDetailResponse} */
   return mapPlaylistDetailResponse(res.data);
 };

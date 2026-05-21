@@ -1,11 +1,16 @@
 import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 import { Share } from "iconsax-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import VideoPlaylistPanel from "../components/VideoPlaylistPanel";
 import useChannelVideos from "../hooks/channel/useChannelVideos";
+import usePlaylistDetail from "../hooks/playlist/usePlaylistDetail";
+import usePlaylists from "../hooks/playlist/usePlaylists";
 import { useVideo } from "../hooks/video/useVideo";
 import Layout from "../layouts/Layout";
+import { getPlaylistDetail } from "../services/playlist/playlistApi";
 import { readAuthSession } from "../utils/auth";
 
 const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
@@ -41,33 +46,164 @@ const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
   </svg>
 );
 
+const normalizePossiblePlaylistIds = (video) => {
+  if (!video || typeof video !== "object") return [];
+
+  const directValues = [
+    video.playlist_id,
+    video.play_list_id,
+    video.playlistId,
+    video.playListId,
+    video.playlist?.id,
+    video.play_list?.id,
+    video.playList?.id,
+    ...(Array.isArray(video.playlists) ? video.playlists.map((item) => item?.id ?? item) : []),
+    ...(Array.isArray(video.play_lists) ? video.play_lists.map((item) => item?.id ?? item) : []),
+  ];
+
+  return [...new Set(directValues.filter((value) => value != null && value !== ""))];
+};
+
 function Video() {
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const { data, isLoading } = useVideo(id);
-  console.log(data?.data?.username)
-  console.log(data?.data)
-const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
-  channelId: data?.data?.channel_id,
-  pageNumber: 1,
-  pageSize: 25,
-  enabled: !!data?.data?.channel_id, // 👈 مهم
-})
+  const currentVideo = data?.data;
+  const currentChannelId = currentVideo?.channel_id || currentVideo?.channelId;
 
+  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
+    channelId: currentChannelId,
+    pageNumber: 1,
+    pageSize: 25,
+    enabled: !!currentChannelId,
+  });
+
+  const {
+    data: playlists = [],
+    isLoading: isPlaylistsLoading,
+    isError: isPlaylistsError,
+    refetch: refetchPlaylists,
+  } = usePlaylists(currentChannelId, { enabled: !!currentChannelId });
+
+  const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [videoSource, setVideoSource] = useState("");
-  const [started, setStarted] = useState(false);
+  const [hasResolvedInitialPlaylist, setHasResolvedInitialPlaylist] = useState(false);
+  const [isResolvingInitialPlaylist, setIsResolvingInitialPlaylist] = useState(false);
 
   const videoRef = useRef(null);
   const isMobile = window.innerWidth < 768;
 
+  const {
+    data: playlistDetail,
+    isLoading: isPlaylistDetailLoading,
+    isFetching: isPlaylistDetailFetching,
+    isError: isPlaylistDetailError,
+    refetch: refetchPlaylistDetail,
+  } = usePlaylistDetail(selectedPlaylistId, {
+    page: 1,
+    perPage: 100,
+    enabled: !!selectedPlaylistId,
+  });
+
   useEffect(() => {
-    const src = data?.data?.video_link || data?.data?.videoUrl || "";
+    const src = currentVideo?.video_link || currentVideo?.videoUrl || "";
     setVideoSource(src);
-  }, [data]);
+  }, [currentVideo]);
+
+  useEffect(() => {
+    setSelectedPlaylistId(null);
+    setHasResolvedInitialPlaylist(false);
+    setIsResolvingInitialPlaylist(false);
+  }, [id]);
+
+  useEffect(() => {
+    if (!playlists.length) {
+      setHasResolvedInitialPlaylist(true);
+      return;
+    }
+
+    if (hasResolvedInitialPlaylist || isPlaylistsLoading || !id) return;
+
+    let isMounted = true;
+
+    const resolveInitialPlaylist = async () => {
+      const possiblePlaylistIds = normalizePossiblePlaylistIds(currentVideo);
+      const matchingPlaylist = playlists.find((playlist) =>
+        possiblePlaylistIds.some((playlistId) => String(playlist.id) === String(playlistId)),
+      );
+
+      if (matchingPlaylist) {
+        if (isMounted) {
+          setSelectedPlaylistId(matchingPlaylist.id);
+          setHasResolvedInitialPlaylist(true);
+        }
+        return;
+      }
+
+      setIsResolvingInitialPlaylist(true);
+
+      try {
+        for (const playlist of playlists) {
+          const detail = await queryClient.fetchQuery({
+            queryKey: ["playlist-detail", playlist.id, 1, 100],
+            queryFn: () => getPlaylistDetail(playlist.id, { page: 1, per_page: 100 }),
+          });
+
+          const containsCurrentVideo = Array.isArray(detail?.items)
+            ? detail.items.some((item) => String(item?.id) === String(id))
+            : false;
+
+          if (containsCurrentVideo) {
+            if (isMounted) {
+              setSelectedPlaylistId(playlist.id);
+              setHasResolvedInitialPlaylist(true);
+            }
+            return;
+          }
+        }
+
+        if (isMounted) {
+          setSelectedPlaylistId(playlists[0]?.id ?? null);
+          setHasResolvedInitialPlaylist(true);
+        }
+      } catch {
+        if (isMounted) {
+          setSelectedPlaylistId(playlists[0]?.id ?? null);
+          setHasResolvedInitialPlaylist(true);
+        }
+      } finally {
+        if (isMounted) {
+          setIsResolvingInitialPlaylist(false);
+        }
+      }
+    };
+
+    resolveInitialPlaylist();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    currentVideo,
+    hasResolvedInitialPlaylist,
+    id,
+    isPlaylistsLoading,
+    playlists,
+    queryClient,
+  ]);
+
+  const relatedItems = useMemo(
+    () =>
+      (relatedVideos?.items || [])
+        .filter((video) => String(video.id) !== String(id))
+        .slice(0, 10),
+    [relatedVideos?.items, id],
+  );
 
   const extractFilenameFromContentDisposition = (cd) => {
     if (!cd) return null;
-    // try filename*=
+
     let m = cd.match(/filename\*=(?:UTF-8'')?(.+)/i);
     if (m && m[1]) {
       try {
@@ -77,8 +213,10 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
         return m[1].replace(/(^"|"$)/g, "");
       }
     }
+
     m = cd.match(/filename="?([^"]+)"?/);
     if (m && m[1]) return m[1];
+
     return null;
   };
 
@@ -90,19 +228,17 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
     if (isDownloading) return;
 
     setIsDownloading(true);
-    const safeName = (data?.data?.title || "video")
+    const safeName = (currentVideo?.title || "video")
       .replace(/[\/\\?%*:|"<>]/g, "-")
       .slice(0, 120);
 
     try {
-      // فقط از axios استفاده می‌کنیم (آدرس کامل است)
       const { token } = readAuthSession();
       const res = await axios.get(videoSource, {
         responseType: "blob",
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        // در صورت نیاز می‌توانید onDownloadProgress اضافه کنید
       });
 
       const blob = res.data;
@@ -112,6 +248,7 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
         (res.headers &&
           (res.headers["content-type"] || res.headers["Content-Type"])) ||
         "";
+
       if (mime.includes("webm")) ext = ".webm";
       else if (mime.includes("ogg")) ext = ".ogg";
       else if (mime.includes("mp4")) ext = ".mp4";
@@ -126,24 +263,22 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
       if (cdName) downloadName = cdName;
 
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = downloadName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = downloadName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       toast.success("دانلود شروع شد");
     } catch (err) {
       console.error("download error", err);
-      // احتمال خطای CORS یا بلاک شدن توسط سرور
-      // تلاش برای باز کردن لینک مستقیم به‌عنوان fallback
       try {
         window.open(videoSource, "_blank", "noopener");
         toast.info(
           "لینک ویدیو در تب جدید باز شد. در صورت نیاز می‌توانید روی آن راست‌کلیک و Save as کنید.",
         );
-      } catch (e) {
+      } catch {
         toast.error(
           "دانلود مستقیم ممکن نیست. لطفاً با پشتیبانی تماس بگیرید یا بعداً تلاش کنید.",
         );
@@ -152,6 +287,7 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
       setIsDownloading(false);
     }
   };
+
   const handlePlay = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -164,11 +300,7 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
       }
     }
   };
-  // useEffect(() => {
-  //   if (!isMobile && videoRef.current) {
-  //     videoRef.current.play().catch(() => { })
-  //   }
-  // }, [videoSource])
+
   useEffect(() => {
     if (!videoSource || !videoRef.current) return;
 
@@ -176,9 +308,7 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
       const playPromise = videoRef.current.play();
 
       if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // autoplay blocked → ignore
-        });
+        playPromise.catch(() => {});
       }
     }
   }, [videoSource, isMobile]);
@@ -186,16 +316,16 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
   if (isLoading) {
     return (
       <Layout>
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-4 sm:py-6">
+        <div className="mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6">
           <div className="animate-pulse">
-            <div className="aspect-video bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg sm:rounded-xl" />
-            <div className="mt-4 sm:mt-6 space-y-4">
-              <div className="h-6 sm:h-8 bg-gray-200 rounded w-3/4" />
+            <div className="aspect-video rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 sm:rounded-xl" />
+            <div className="mt-4 space-y-4 sm:mt-6">
+              <div className="h-6 w-3/4 rounded bg-gray-200 sm:h-8" />
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200" />
+                <div className="h-10 w-10 rounded-full bg-gray-200 sm:h-12 sm:w-12" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-3 sm:h-4 bg-gray-200 rounded w-1/4" />
-                  <div className="h-2 sm:h-3 bg-gray-200 rounded w-1/3" />
+                  <div className="h-3 w-1/4 rounded bg-gray-200 sm:h-4" />
+                  <div className="h-2 w-1/3 rounded bg-gray-200 sm:h-3" />
                 </div>
               </div>
             </div>
@@ -208,10 +338,10 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
   if (!data) {
     return (
       <Layout>
-        <div className="mx-auto max-w-7xl px-4 md:px-6 py-6">
-          <div className="text-center py-12">
-            <p className="text-red-600 text-lg font-medium">ویدیو یافت نشد</p>
-            <p className="text-gray-500 mt-2">لطفاً آدرس را بررسی کنید</p>
+        <div className="mx-auto max-w-7xl px-4 py-6 md:px-6">
+          <div className="py-12 text-center">
+            <p className="text-lg font-medium text-red-600">ویدیو یافت نشد</p>
+            <p className="mt-2 text-gray-500">لطفاً آدرس را بررسی کنید</p>
           </div>
         </div>
       </Layout>
@@ -220,10 +350,10 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
 
   return (
     <Layout>
-      <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-4 sm:py-6">
+      <div className="mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6">
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
           <div>
-            <div className="relative aspect-video w-full overflow-hidden rounded-lg sm:rounded-xl bg-black shadow-lg">
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black shadow-lg sm:rounded-xl">
               <video
                 ref={videoRef}
                 controls
@@ -231,57 +361,49 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
                 autoPlay
                 preload="auto"
                 src={videoSource}
-                className="w-full h-full"
+                className="h-full w-full"
                 onCanPlay={() => {
-                  const v = videoRef.current;
-                  if (!v) return;
+                  const video = videoRef.current;
+                  if (!video) return;
 
-                  const playPromise = v.play();
+                  handlePlay();
+
+                  const playPromise = video.play();
                   if (playPromise !== undefined) {
                     playPromise.catch(() => {});
                   }
                 }}
               />
             </div>
-            <h1 className="mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-tight px-1">
-              {data?.data?.title}
+
+            <h1 className="mt-4 px-1 text-lg font-extrabold leading-tight text-gray-900 sm:mt-6 sm:text-xl md:text-2xl lg:text-3xl">
+              {currentVideo?.title}
             </h1>
-            <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 pb-4 border-b border-gray-200">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
+
+            <div className="mt-3 flex flex-col gap-3 border-b border-gray-200 pb-4 sm:mt-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
                 <Link
-                  to={data?.data?.username ? `/${data?.data?.username}` : "/"}
-                  state={{ channelId: data?.data?.channel_id }}
-                  className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
+                  to={currentVideo?.username ? `/${currentVideo?.username}` : "/"}
+                  state={{ channelId: currentVideo?.channel_id }}
+                  className="flex min-w-0 flex-1 items-center gap-3 transition-opacity hover:opacity-80"
                 >
                   <img
-                    src={data?.data?.channel_image}
-                    alt={data?.data?.channelName || data?.data?.channel_name}
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 ring-2 ring-gray-200 flex-shrink-0"
+                    src={currentVideo?.channel_image}
+                    alt={currentVideo?.channelName || currentVideo?.channel_name}
+                    className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-200 ring-2 ring-gray-200 sm:h-12 sm:w-12"
                   />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">
-                      {data?.data?.channel_name}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-gray-900">
+                      {currentVideo?.channel_name}
                     </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      {(data?.data?.view_count || 0).toLocaleString("fa-IR")}{" "}
-                      بازدید
+                    <p className="mt-0.5 text-xs text-gray-500">
+                      {(currentVideo?.view_count || 0).toLocaleString("fa-IR")} بازدید
                     </p>
                   </div>
                 </Link>
               </div>
-              <div className="flex items-center gap-2 flex-wrap text-gray-600">
-                {/* <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
-                  <Eye size={16} color="#4a5565" />
-                  {(data?.data?.view_count || 0).toLocaleString('fa-IR')}
-                </span> */}
-                {/* <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
-                  <Like1 size={16} color="#4a5565" />
-                  {(data.data.likes || 0).toLocaleString('fa-IR')}
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm rounded-full bg-gray-100 px-3 py-1.5">
-                  <Dislike size={16} color="#4a5565" />
-                  {(data.data.dislikes || 0).toLocaleString('fa-IR')}
-                </span> */}
+
+              <div className="flex flex-wrap items-center gap-2 text-gray-600">
                 <button
                   type="button"
                   onClick={async () => {
@@ -290,26 +412,21 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
                     try {
                       if (navigator.share) {
                         await navigator.share({
-                          title: data?.data?.title,
-                          text: data?.data?.title,
+                          title: currentVideo?.title,
+                          text: currentVideo?.title,
                           url: shareUrl,
                         });
                       } else {
-                        // کپی واقعی مثل Ctrl + C
                         const textArea = document.createElement("textarea");
                         textArea.value = shareUrl;
-
                         textArea.style.position = "fixed";
                         textArea.style.left = "-999999px";
                         textArea.style.top = "-999999px";
 
                         document.body.appendChild(textArea);
-
                         textArea.focus();
                         textArea.select();
-
                         document.execCommand("copy");
-
                         document.body.removeChild(textArea);
 
                         toast.success("لینک ویدیو کپی شد", {
@@ -323,12 +440,11 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
                           },
                         });
                       }
-                    } catch (err) {
-                    }
+                    } catch {}
                   }}
-                  className="w-24 h-12 font-bold inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 hover:bg-gray-200 transition-colors"
+                  className="inline-flex h-12 w-24 items-center justify-center gap-1.5 rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 text-xs font-bold transition-colors hover:bg-gray-200 sm:text-sm"
                 >
-                  <div className="flex gap-2 justify-center items-center">
+                  <div className="flex items-center justify-center gap-2">
                     <Share size={24} color="#4a5565" />
                     <span className="text-[16px]">اشتراک</span>
                   </div>
@@ -338,86 +454,100 @@ const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
                   type="button"
                   onClick={handleDownload}
                   disabled={isDownloading || !videoSource}
-                  className="w-24 h-12 font-bold  inline-flex items-center justify-center gap-2 text-xs sm:text-sm rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 hover:bg-gray-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                  title={
-                    !videoSource ? "آدرس ویدیو موجود نیست" : "دانلود ویدیو"
-                  }
+                  className="inline-flex h-12 w-24 items-center justify-center gap-2 rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 text-xs font-bold transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
+                  title={!videoSource ? "آدرس ویدیو موجود نیست" : "دانلود ویدیو"}
                 >
                   {isDownloading ? (
                     <>
-                      <div className="w-4 h-4 border-2 font-bold border-gray-300 border-t-transparent rounded-full animate-spin" />
+                      <div className="h-4 w-4 rounded-full border-2 border-gray-300 border-t-transparent font-bold animate-spin" />
                       در حال دانلود...
                     </>
                   ) : (
-                    <div className="flex gap-2 justify-center items-center ">
+                    <div className="flex items-center justify-center gap-2">
                       <DownloadIcon size={24} color="#4a5565" />
-                      <span className="text-[16px]"> دانلود</span>
+                      <span className="text-[16px]">دانلود</span>
                     </div>
                   )}
                 </button>
               </div>
             </div>
-            <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
-              <p className="text-sm sm:text-base text-gray-700 leading-6 sm:leading-7 break-words ">
-                {data?.data?.description}
+
+            <div className="mt-4 rounded-lg bg-gray-50 p-3 sm:rounded-xl sm:p-4">
+              <p className="break-words text-sm leading-6 text-gray-700 sm:text-base sm:leading-7">
+                {currentVideo?.description}
               </p>
             </div>
           </div>
-          <aside className=" lg:block">
-            <div className="sticky top-24 space-y-3">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                ویدیوهای مرتبط
-              </h3>
-              {isRelatedLoading
-                ? Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="flex gap-3 p-2 rounded-lg">
-                      <div className="w-40 h-24 rounded-lg bg-gray-200 animate-pulse flex-shrink-0" />
-                      <div className="flex-1 space-y-2 py-1">
-                        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-                        <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse" />
-                      </div>
-                    </div>
-                  ))
-                : (relatedVideos?.items || [])
-                    .filter((v) => String(v.id) !== String(id))
-                    .slice(0, 10)
-                    .map((video) => (
-                      <Link
-                        to={`/v/${video.id}`}
-                        key={video.id}
-                        className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group"
-                      >
-                        <div className="w-40 h-24 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden relative">
-                          <img
-                            src={
-                              video.thumbnailUrl ||
-                              video.cover_link ||
-                              video.cover
-                            }
-                            alt={video.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              e.currentTarget.src =
-                                "https://picsum.photos/seed/default/160/90";
-                            }}
-                          />
+
+          <aside className="lg:block">
+            <div className="sticky top-24 space-y-4">
+              <VideoPlaylistPanel
+                playlists={playlists}
+                isPlaylistsLoading={isPlaylistsLoading || isResolvingInitialPlaylist}
+                isPlaylistsError={isPlaylistsError}
+                onRetryPlaylists={refetchPlaylists}
+                selectedPlaylistId={selectedPlaylistId}
+                onSelectPlaylist={setSelectedPlaylistId}
+                playlistDetail={playlistDetail}
+                isPlaylistDetailLoading={
+                  !!selectedPlaylistId &&
+                  (isPlaylistDetailLoading || (isPlaylistDetailFetching && !playlistDetail))
+                }
+                isPlaylistDetailError={isPlaylistDetailError}
+                onRetryPlaylistDetail={refetchPlaylistDetail}
+                currentVideoId={id}
+              />
+
+              <div>
+                <h3 className="mb-4 text-lg font-bold text-gray-900">ویدیوهای مرتبط</h3>
+
+                <div className="space-y-1">
+                  {isRelatedLoading
+                    ? Array.from({ length: 5 }).map((_, index) => (
+                        <div key={index} className="flex gap-3 rounded-lg p-2">
+                          <div className="h-24 w-40 flex-shrink-0 rounded-lg bg-gray-200 animate-pulse" />
+                          <div className="flex-1 space-y-2 py-1">
+                            <div className="h-4 w-3/4 rounded bg-gray-200 animate-pulse" />
+                            <div className="h-3 w-1/2 rounded bg-gray-200 animate-pulse" />
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-semibold line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors">
-                            {video.title}
-                          </h4>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {video.channelName || video.channel_name}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {(video.views || 0).toLocaleString("fa-IR")} بازدید
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
-              {!isRelatedLoading && !(relatedVideos?.items || []).length && (
-                <p className="text-gray-500 text-sm">ویدیوی مرتبطی یافت نشد</p>
-              )}
+                      ))
+                    : relatedItems.map((video) => (
+                        <Link
+                          to={`/v/${video.id}`}
+                          key={video.id}
+                          className="group flex cursor-pointer gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
+                        >
+                          <div className="relative h-24 w-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200">
+                            <img
+                              src={video.thumbnailUrl || video.cover_link || video.cover}
+                              alt={video.title}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              onError={(event) => {
+                                event.currentTarget.src =
+                                  "https://picsum.photos/seed/default/160/90";
+                              }}
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="line-clamp-2 text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                              {video.title}
+                            </h4>
+                            <p className="mt-1 text-xs text-gray-500">
+                              {video.channelName || video.channel_name}
+                            </p>
+                            <p className="mt-1 text-xs text-gray-400">
+                              {(video.views || 0).toLocaleString("fa-IR")} بازدید
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
+                </div>
+
+                {!isRelatedLoading && !relatedItems.length && (
+                  <p className="text-sm text-gray-500">ویدیوی مرتبطی یافت نشد</p>
+                )}
+              </div>
             </div>
           </aside>
         </div>
