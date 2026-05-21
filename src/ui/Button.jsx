@@ -22,7 +22,7 @@ const Button = ({
   as: Component = 'button',
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium transition-all rounded-[8px] focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium transition rounded-[8px] focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-40 disabled:bg-black disabled:cursor-not-allowed';
   
 const variants = {
   primary:

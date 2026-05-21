@@ -1,6 +1,8 @@
 import { Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import VideoTypeFilter from "../components/VideoTypeFilter";
+import { DEFAULT_VIDEO_TYPE, VIDEO_TYPE_OPTIONS } from "../constants/videoTypeOptions";
 import EditVideoModal from "../components/EditVideoModal";
 import VideoRow from "../components/VideoRow";
 import useChannel from "../hooks/channel/useChannel";
@@ -15,20 +17,21 @@ function Videos() {
 
   const { channels: chans, isLoadingChannels } = useChannel();
   const [chanId, setChanId] = useState("");
+  const [videoType, setVideoType] = useState(DEFAULT_VIDEO_TYPE);
   const { page, setPage } = usePaginationParams(1);
-  const { data, isLoading, isError } = useChannelVideos({
+  const { data, isLoading, isError, refetch } = useChannelVideos({
     channelId: chanId,
     pageNumber: page,
     pageSize: 25,
+    videoType,
   });
   const { deleteVideoAsync, isDeleting } = useDeleteVideo();
-  const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
 
   useEffect(() => {
     setPage(1);
-  }, [chanId, setPage]);
+  }, [chanId, videoType, setPage]);
 
   const handleDelete = (videoId) => {
     setDeleteConfirmId(videoId);
@@ -41,10 +44,6 @@ function Videos() {
     setDeleteConfirmId(null);
   };
 
-  const handleShow = (videoId) => {
-    setSelectedVideoId(videoId);
-  };
-
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -54,22 +53,31 @@ function Videos() {
         </div> */}
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <label className="block text-sm font-semibold text-gray-900 mb-2">
-            فیلتر بر اساس کانال
-          </label>
-          <select
-            value={chanId}
-            onChange={(e) => setChanId(e.target.value)}
-            className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            disabled={isLoadingChannels}
-          >
-            <option value="">همه ویدیوها</option>
-            {(chans || []).map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <div>
+              <label className="block text-sm font-semibold text-gray-900 mb-2">
+                فیلتر بر اساس کانال
+              </label>
+              <select
+                value={chanId}
+                onChange={(e) => setChanId(e.target.value)}
+                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                disabled={isLoadingChannels}
+              >
+                <option value="">همه ویدیوها</option>
+                {(chans || []).map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-gray-900">نوع ویدیو</p>
+              <VideoTypeFilter value={videoType} onChange={setVideoType} />
+            </div>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -83,6 +91,7 @@ function Videos() {
           ) : (data?.items || []).length === 0 ? (
             <EmptyState
               title={chanId ? "ویدیویی در این کانال یافت نشد" : "هنوز ویدیویی آپلود نشده است"}
+              message={`فیلتر فعلی: ${VIDEO_TYPE_OPTIONS.find((item) => item.value === videoType)?.label || "همه ویدیوها"}`}
             />
           ) : (
             <>

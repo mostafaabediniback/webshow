@@ -1,5 +1,27 @@
 import axiosInstanceNew from "../../utils/axiosConfigNew";
 
+const mapPlaylistDetailResponse = (payload) => {
+  const root = payload?.data ?? payload ?? {};
+  const playlist = root?.data?.play_list ?? root?.play_list ?? null;
+  const videos = Array.isArray(root?.data?.videos)
+    ? root.data.videos
+    : Array.isArray(root?.videos)
+      ? root.videos
+      : [];
+
+  const meta = root?.meta ?? {};
+  const totalPages = Number(meta?.last_page || 1) || 1;
+  const totalItems = Number(meta?.total || videos.length) || videos.length;
+
+  return {
+    playlist,
+    items: videos,
+    meta,
+    totalPages,
+    totalItems,
+  };
+};
+
 // export const getPlaylists = async (channelId) => {
 //   if (!channelId) return [];
 //   const res = await axiosInstanceNew.get(`/play-list/index/${channelId}`);
@@ -35,4 +57,12 @@ export const addVideoToPlaylist = async ({ playlistId, videoId }) => {
 export const removeVideoFromPlaylist = async ({ playlistId, videoId }) => {
   const res = await axiosInstanceNew.post(`/play-list/remove/${playlistId}/${videoId}`);
   return res.data;
+};
+
+export const getPlaylistDetail = async (playlistId, { page = 1, per_page = 25 } = {}) => {
+  const res = await axiosInstanceNew.get(`/play-list/show/${playlistId}`, {
+    params: { page, per_page },
+  });
+
+  return mapPlaylistDetailResponse(res.data);
 };

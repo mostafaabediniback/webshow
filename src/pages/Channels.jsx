@@ -396,7 +396,7 @@ function Channels() {
                       size="sm"
                       variant="outline"
                       onClick={() => handleEdit(c)}
-                      icon={<Edit2 size={16} />}
+                      icon={<Edit2 size={16} color="currentColor" />}
                       className="flex-1 sm:flex-none"
                     >
                       ویرایش
@@ -405,7 +405,7 @@ function Channels() {
                       size="sm"
                       variant="outline"
                       onClick={() => setDeleteConfirmId(c.id)}
-                      icon={<Trash size={16} />}
+                      icon={<Trash size={16} color="currentColor" />}
                       className="text-red-600 border-red-100 hover:bg-red-50 hover:text-red-700 flex-1 sm:flex-none"
                     >
                       حذف

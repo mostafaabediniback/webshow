@@ -107,7 +107,7 @@ function Categories() {
       <div className="space-y-6">
         {/* HEADER */}
         <div className="flex items-center justify-between">
-          <div>
+          {/* <div>
             <h1 className="text-2xl font-black text-gray-900">
               مدیریت دسته‌بندی‌ها
             </h1>
@@ -115,14 +115,14 @@ function Categories() {
             <p className="text-sm text-gray-500 mt-1">
               ایجاد، ویرایش و مدیریت دسته‌بندی‌های ویدیو
             </p>
-          </div>
-
+          </div> */}
+{/* 
           <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-[10px] bg-blue-50 text-blue-700 border border-blue-100">
             <Category size={20} color="currentColor" />
             <span className="font-semibold text-sm">
               {categories.length} دسته‌بندی
             </span>
-          </div>
+          </div> */}
         </div>
 
         {/* CREATE */}
@@ -287,22 +287,15 @@ function Categories() {
                       </td>
 
                       <td className="py-4 px-2 text-center">
-                        <button
+                        <Button
                           onClick={() => openEditModal(category)}
-                          className="
-                            h-9 px-4 rounded-[10px]
-                            bg-blue-50
-                            text-blue-700
-                            border border-blue-100
-                            hover:bg-blue-100
-                            text-xs font-semibold
-                            transition-all duration-200
-                            inline-flex items-center gap-2
-                          "
+                          size="sm"
+                          variant="outline"
+          
                         >
                           <Edit2 size={14} color="currentColor" />
                           ویرایش
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))

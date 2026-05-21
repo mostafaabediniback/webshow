@@ -16,6 +16,7 @@ import UploadedVideos from './pages/UploadedVideos'
 import SettingsPage from './pages/SettingsPage'
 import useAuthStore, { hydrateAuthStore } from './store/useAuthStore'
 import ProfileChannel from './pages/ProfileChannel'
+import PlaylistDetail from './pages/PlaylistDetail'
 
 const RequireAuth = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
@@ -77,6 +78,7 @@ function App() {
         <Route path="/:username?" element={<ProfileChannel />} />
         <Route path="/search/:q" element={<Search />} />
         <Route path="/v/:id" element={<Video />} />
+        <Route path="/playlists/:playlistId" element={<PlaylistDetail />} />
         <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
 
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
