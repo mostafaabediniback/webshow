@@ -8,16 +8,12 @@ import MultiSelect from "../components/Upload/MultiSelect";
 import PlaylistModal from "../components/Upload/PlaylistModal";
 import VideoDropzone from "../components/VideoDropzone";
 import useCategories from "../hooks/category/useCategories";
-import useCreateCategory from "../hooks/category/useCreateCategory";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
 import useVideoUpload from "../hooks/video/useVideoUpload";
 import DashboardLayout from "../layouts/DashboardLayout";
-import useAuthStore from "../store/useAuthStore";
 
 function UserVideos() {
-  const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin);
-
   const { uploadAsync, isPending } = useVideoUpload();
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -32,8 +28,8 @@ function UserVideos() {
   const [uploadType, setUploadType] = useState("file"); // 'file' | 'url'
   const navigate = useNavigate();
 
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedPlaylistIds, setSelectedPlaylistIds] = useState([]);
 
   const [isPlaylistModalOpen, setPlaylistModalOpen] = useState(false);
 
@@ -43,12 +39,12 @@ function UserVideos() {
     isError: isCategoriesError,
   } = useCategories();
   const {
-    data: playlists = [],
+    data: playlistsResponse,
     isLoading: isLoadingPlaylists,
     isError: isPlaylistsError,
   } = usePlaylists();
+  const playlists = playlistsResponse?.items || [];
 
-  const createCategoryMutation = useCreateCategory();
   const createPlaylistMutation = useCreatePlaylist();
 
   // helper: capture frame from URL
@@ -62,7 +58,7 @@ function UserVideos() {
       const cleanup = () => {
         try {
           video.src = "";
-        } catch (e) {}
+        } catch (e) { }
       };
       const onError = () => {
         cleanup();
@@ -212,7 +208,7 @@ function UserVideos() {
       if (thumbPreview) {
         try {
           URL.revokeObjectURL(thumbPreview);
-        } catch (e) {}
+        } catch (e) { }
         setThumbPreview(null);
       }
       return;
@@ -222,20 +218,18 @@ function UserVideos() {
       if (thumbPreview) {
         try {
           URL.revokeObjectURL(thumbPreview);
-        } catch (e) {}
+        } catch (e) { }
       }
       setThumbPreview(u);
     } else {
       if (thumbPreview) {
         try {
           URL.revokeObjectURL(thumbPreview);
-        } catch (e) {}
+        } catch (e) { }
         setThumbPreview(null);
       }
     }
   }, [thumbFile]);
-
-  const isUploadReady = videoStatus === "success" && Boolean(tempPath);
 
   const uploadStatusText = useMemo(() => {
     if (uploadType === "url") {
@@ -261,6 +255,8 @@ function UserVideos() {
     setThumbnails([]);
     setVideoUrl("");
     setPublicShow(1);
+    setSelectedCategories([]);
+    setSelectedPlaylistIds([]);
   };
   const handleCancelAndRefresh = () => {
     window.location.reload();
@@ -291,13 +287,13 @@ function UserVideos() {
         url: videoUrl,
         coverFile: thumbFile,
         public_show: publicShow,
-        categories: selectedCategories,
-        playlist_id: selectedPlaylistId || null,
+        categories: selectedCategory ? [Number(selectedCategory)] : [],
+        play_lists: selectedPlaylistIds.map(Number).filter(Number.isFinite),
       });
 
       navigate("/dashboard/user-videos");
       resetForm();
-    } catch {}
+    } catch { }
   };
 
   useEffect(() => {
@@ -305,12 +301,12 @@ function UserVideos() {
       if (thumbPreview) {
         try {
           URL.revokeObjectURL(thumbPreview);
-        } catch (e) {}
+        } catch (e) { }
       }
       thumbnails.forEach((t) => {
         try {
           URL.revokeObjectURL(t.url);
-        } catch (e) {}
+        } catch (e) { }
       });
     };
   }, []);
@@ -360,7 +356,7 @@ function UserVideos() {
                 setVideoUrl("");
               }}
               onUploaded={handleVideoUploaded}
-              onProgress={() => {}}
+              onProgress={() => { }}
             />
           ) : (
             <div>
@@ -480,12 +476,45 @@ function UserVideos() {
                     خطا در دریافت دسته‌بندی‌ها
                   </p>
                 ) : (
-                  <MultiSelect
-                    options={categories}
-                    value={selectedCategories}
-                    onChange={setSelectedCategories}
-                    placeholder="جستجوی دسته‌بندی..."
-                  />
+                  <div className="relative">
+                    <select
+                      value={selectedCategory || ""}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="
+          w-full h-11
+          appearance-none
+          bg-transparent
+          px-4 pr-10
+          text-sm text-gray-700
+          rounded-lg
+          border border-gray-200
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+        "
+                    >
+                      <option value="">انتخاب دسته‌بندی</option>
+
+                      {categories.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.title || c.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* icon */}
+                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                      <svg
+                        className="w-4 h-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
                 )}
               </div>
 
@@ -522,42 +551,14 @@ function UserVideos() {
                       هیچ پلی‌لیستی وجود ندارد.
                     </div>
                   ) : (
-                    <div className="relative">
-                      <select
-                        value={selectedPlaylistId}
-                        onChange={(e) => setSelectedPlaylistId(e.target.value)}
-                        className="
-            w-full h-11
-            appearance-none
-            bg-transparent
-            px-4 pr-10
-            text-sm text-gray-700
-            rounded-lg
-focus:outline-none focus:ring-2 focus:ring-blue-500          "
-                      >
-                        <option value="">انتخاب پلی‌لیست</option>
-                        {playlists.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.name}
-                          </option>
-                        ))}
-                      </select>
-
-                      {/* icon */}
-                      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                        <svg
-                          className="w-4 h-4"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
+                    <MultiSelect
+                      options={playlists}
+                      value={selectedPlaylistIds}
+                      onChange={setSelectedPlaylistIds}
+                      placeholder="جستجوی پلی‌لیست..."
+                      emptyMessage="پلی‌لیستی وجود ندارد"
+                      getOptionLabel={(item) => item?.name || `پلی‌لیست ${item?.id}`}
+                    />
                   )}
                 </div>
               </div>
@@ -625,14 +626,13 @@ focus:outline-none focus:ring-2 focus:ring-blue-500          "
             ) : (
               <>
                 <TickCircle
-                  color="currentColor"
                   size={20}
                   color={
                     !title.trim() ||
-                    (uploadType === "file" && !tempPath) ||
-                    (uploadType === "url" && !videoUrl) ||
-                    isPending ||
-                    !thumbFile
+                      (uploadType === "file" && !tempPath) ||
+                      (uploadType === "url" && !videoUrl) ||
+                      isPending ||
+                      !thumbFile
                       ? "#000000"
                       : "#ffffff"
                   }

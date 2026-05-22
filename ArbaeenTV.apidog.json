@@ -2654,6 +2654,17 @@
                       "description": "",
                       "example": "https://dl1.arbaeentv.com/media/binahayat/302/videos/videos/6a00b2cc7961c.mp4",
                       "type": "string"
+                    },
+                    {
+                      "id": "dH8icb1wbv",
+                      "name": "play_lists[]",
+                      "required": true,
+                      "description": "",
+                      "example": [
+                        "",
+                        ""
+                      ],
+                      "type": "array"
                     }
                   ],
                   "required": false,
@@ -3486,6 +3497,8 @@
                       "enable": true
                     }
                   ],
+                  "query": [],
+                  "cookie": [],
                   "header": [
                     {
                       "required": true,
@@ -3582,6 +3595,17 @@
                       "schema": {
                         "type": "boolean"
                       }
+                    },
+                    {
+                      "id": "8RYwbYyPqe",
+                      "name": "play_lists[]",
+                      "required": true,
+                      "description": "",
+                      "example": [
+                        "",
+                        ""
+                      ],
+                      "type": "array"
                     }
                   ],
                   "jsonSchema": {
@@ -6455,9 +6479,39 @@
   "webSocketCollection": [],
   "socketIOCollection": [],
   "mcpClientCollection": [],
-  "responseCollection": [],
-  "schemaCollection": [],
-  "securitySchemeCollection": [],
+  "responseCollection": [
+    {
+      "_databaseId": 1243980,
+      "updatedAt": "2025-12-08T11:13:42.000Z",
+      "name": "Root",
+      "type": "root",
+      "children": [],
+      "moduleId": 1000994,
+      "parentId": 0,
+      "id": 1243980,
+      "ordering": [],
+      "items": []
+    }
+  ],
+  "schemaCollection": [
+    {
+      "id": 2848613,
+      "name": "Root",
+      "visibility": "SHARED",
+      "moduleId": 1000994,
+      "items": [],
+      "ordering": []
+    }
+  ],
+  "securitySchemeCollection": [
+    {
+      "id": 911083,
+      "moduleId": 1000994,
+      "name": "Root",
+      "items": [],
+      "ordering": []
+    }
+  ],
   "oasComponentCollection": [],
   "requestCollection": [
     {
@@ -6469,6 +6523,15 @@
       "items": []
     }
   ],
+  "apiTestCaseCollection": [
+    {
+      "id": 0,
+      "name": "Root",
+      "children": [],
+      "items": []
+    }
+  ],
+  "testCaseReferences": [],
   "environments": [
     {
       "name": "ArbaeenTV",
@@ -6522,6 +6585,7 @@
     }
   ],
   "commonScripts": [],
+  "databaseConnections": [],
   "globalVariables": [
     {
       "id": "1148094",

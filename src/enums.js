@@ -4,6 +4,7 @@ export const QueryKeys = {
   video: "video",
   dashboard: "dashboard",
   user: 'user',
-    myProfile: 'myProfile',
-
+  myProfile: 'myProfile',
+  playlists: 'playlists',
+  playlist: 'playlist',
 };

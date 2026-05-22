@@ -16,11 +16,20 @@ function PlaylistModal({ isOpen, onClose, onSubmit, isPending }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="ایجاد پلی‌لیست" size="sm">
       <div className="space-y-4">
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="نام پلی‌لیست" className="h-11 px-4 rounded-lg border border-gray-300 w-full"/>
-        {/* <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
-          عمومی
-        </label> */}
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="نام پلی‌لیست"
+          className="h-11 px-4 rounded-lg border border-gray-300 w-full"
+        />
+        <label className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm">
+          <span>نمایش عمومی</span>
+          <input
+            type="checkbox"
+            checked={isPublic}
+            onChange={(e) => setIsPublic(e.target.checked)}
+          />
+        </label>
         <Button 
           onClick={handleSubmit} 
           disabled={!name.trim()} 

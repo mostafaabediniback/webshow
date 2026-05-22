@@ -17,6 +17,7 @@ import SettingsPage from './pages/SettingsPage'
 import useAuthStore, { hydrateAuthStore } from './store/useAuthStore'
 import ProfileChannel from './pages/ProfileChannel'
 import PlaylistDetail from './pages/PlaylistDetail'
+import DashboardPlaylists from './pages/DashboardPlaylists'
 
 const RequireAuth = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
@@ -84,6 +85,8 @@ function App() {
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/dashboard/channels" element={<RequireAuth><RequirePlatformAdmin><Channels /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/upload" element={<RequireAuth><RequirePlatformAdmin><Upload /></RequirePlatformAdmin></RequireAuth>} />
+        <Route path="/dashboard/playlists" element={<RequireAuth><DashboardPlaylists /></RequireAuth>} />
+        <Route path="/dashboard/playlists/:playlistId" element={<RequireAuth><PlaylistDetail /></RequireAuth>} />
         <Route path="/dashboard/videos" element={<RequireAuth><RequirePlatformAdmin><Videos /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/videos/:id" element={<RequireAuth><RequirePlatformAdmin><VideoEdit /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/users" element={<RequireAuth><RequirePlatformAdmin><Users /></RequirePlatformAdmin></RequireAuth>} />

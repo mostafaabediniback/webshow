@@ -22,7 +22,7 @@ const useVideoUpload = () => {
       coverFile,
       public_show,
       categories = [],
-      playlist_id,
+      play_lists = [],
     }) => {
       // 👇 اینجا شرط اصلی
       if (!temp_path && !url) {
@@ -45,7 +45,7 @@ const useVideoUpload = () => {
         cover: finalCover,
         public_show,
         categories,
-        playlist_id,
+        play_lists,
       });
     },
 

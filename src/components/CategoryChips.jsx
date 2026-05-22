@@ -18,7 +18,7 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
       >
         <div 
         onClick={() => navigate("/")}
-          className={`w-16 h-16 rounded-xl overflow-hidden border-2 shadow-sm flex items-center justify-center transition-all duration-200 ${activeChannelId === null
+          className={`w-16 h-16 rounded-[10px] overflow-hidden border-2 shadow-sm flex items-center justify-center transition-all duration-200 ${activeChannelId === null
               ? 'border-indigo-500 bg-indigo-50'
               : 'border-slate-200 bg-slate-100 hover:border-slate-300'
             }`}
@@ -45,7 +45,7 @@ function CategoryChips({ channels, activeChannelId, onSelect }) {
           >
             <div
             onClick={() => navigate("/")}
-              className={`w-16 h-16 rounded-xl overflow-hidden border-2 shadow-sm transition-all duration-200 ${isActive
+              className={`w-16 h-16 rounded-[10px] overflow-hidden border-2 shadow-sm transition-all duration-200 ${isActive
                   ? 'border-indigo-500 ring-2 ring-indigo-200'
                   : 'border-slate-200 hover:border-slate-300'
                 }`}

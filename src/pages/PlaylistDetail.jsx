@@ -1,46 +1,56 @@
 import { Pagination } from "@mui/material";
-import { ArrowLeft } from "iconsax-react";
+import { ArrowLeft, Trash } from "iconsax-react";
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import VideoGrid from "../components/VideoGrid";
 import usePlaylistDetail from "../hooks/playlist/usePlaylistDetail";
+import useRemoveVideoFromPlaylist from "../hooks/playlist/useRemoveVideoFromPlaylist";
 import { usePaginationParams } from "../hooks/ui/usePaginationParams";
-import Layout from "../layouts/Layout";
-import { Button, EmptyState, ErrorMessage, Spinner } from "../ui";
+import { Button, ConfirmModal, EmptyState, ErrorMessage, Spinner } from "../ui";
 import DashboardLayout from "../layouts/DashboardLayout";
+import { useState } from "react";
 
 const PAGE_SIZE = 25;
+const FALLBACK_THUMBNAIL = "https://picsum.photos/seed/playlist-video/320/180";
 
 function PlaylistDetail() {
   const { playlistId } = useParams();
   const { page, setPage } = usePaginationParams(1);
+  const [pendingRemoval, setPendingRemoval] = useState(null);
   const { data, isLoading, isError, refetch } = usePlaylistDetail(playlistId, {
     page,
     perPage: PAGE_SIZE,
   });
+  const { mutateAsync: removeVideo, isPending: isRemovingVideo } = useRemoveVideoFromPlaylist();
 
   const playlist = data?.playlist;
   const items = useMemo(() => (Array.isArray(data?.items) ? data.items : []), [data?.items]);
 
+  const handleRemoveVideo = async () => {
+    if (!pendingRemoval?.id) return;
+
+    await removeVideo({ playlistId, videoId: pendingRemoval.id });
+    setPendingRemoval(null);
+  };
+
   return (
     <DashboardLayout>
-      <div className="mx-auto max-w-7xl  sm:px-6">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <div>
+      <div className="mx-auto max-w-7xl ">
+        <div className=" flex flex-wrap items-center justify-between gap-3">
+          {/* <div>
             <h1 className="mt-1 text-2xl font-bold text-slate-900">
               {playlist?.name || `پلی‌لیست ${playlistId}`}
             </h1>
-          </div>
+          </div> */}
 
-          <Button
+          {/* <Button
             as={Link}
-            to="/dashboard/user-videos"
+            to="/dashboard/playlists"
             variant="outline"
             className="gap-2"
           >
             <ArrowLeft size={18} color="currentColor" />
-            بازگشت به ویدیوهای من
-          </Button>
+            بازگشت به پلی‌لیست‌ها
+          </Button> */}
         </div>
 
         {isLoading ? (
@@ -60,7 +70,7 @@ function PlaylistDetail() {
           />
         ) : (
           <div className="space-y-6">
-            <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-blue-50 p-6 shadow-sm">
+            {/* <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-blue-50 p-6 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -105,14 +115,14 @@ function PlaylistDetail() {
                   </p>
                 </div>
               </div>
-            </section>
+            </section> */}
 
-            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <section className="rounded-[10px] border border-slate-200 bg-white p-6 shadow-sm">
               <div className="mb-5 flex items-center justify-between gap-3">
                 <div>
                   <h2 className="text-lg font-semibold text-slate-900">ویدیوهای پلی‌لیست</h2>
                   <p className="mt-1 text-sm text-slate-500">
-                    خروجی `data.videos` از API جدید اینجا رندر می‌شود.
+                    از این بخش می‌توانید ویدیوهای داخل پلی‌لیست را مشاهده و حذف کنید.
                   </p>
                 </div>
               </div>
@@ -125,7 +135,60 @@ function PlaylistDetail() {
                 />
               ) : (
                 <>
-                  <VideoGrid items={items} />
+                  <div className="space-y-4">
+                    {items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex flex-col gap-4 rounded-[10px] border border-slate-200 bg-slate-50/70 p-4 md:flex-row md:items-center"
+                      >
+                        <Link
+                          to={`/v/${item.id}`}
+                          className="relative h-40 w-full overflow-hidden rounded-[10px] bg-slate-200 md:h-24 md:w-40"
+                        >
+                          <img
+                            src={item?.cover_link || item?.cover || FALLBACK_THUMBNAIL}
+                            alt={item?.title || `video-${item?.id}`}
+                            className="h-full w-full object-cover"
+                            onError={(event) => {
+                              event.currentTarget.src = FALLBACK_THUMBNAIL;
+                            }}
+                          />
+                        </Link>
+
+                        <div className="min-w-0 flex-1">
+                          <Link
+                            to={`/v/${item.id}`}
+                            className="line-clamp-2 text-base font-bold text-slate-900 hover:text-blue-700"
+                          >
+                            {item?.title || `ویدیو ${item?.id}`}
+                          </Link>
+                          <p className="mt-2 text-sm text-slate-500">
+                            {item?.channel_name || item?.username || "کانال نامشخص"}
+                          </p>
+                          {/* <p className="mt-1 text-sm text-slate-500">
+                            {Number(item?.view_count || 0).toLocaleString("fa-IR")} بازدید
+                          </p> */}
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button
+                            as={Link}
+                            to={`/v/${item.id}`}
+                            variant="outline"
+                          >
+                            مشاهده
+                          </Button>
+                          <Button
+                            variant="dangeroutline"
+                            onClick={() => setPendingRemoval(item)}
+                            icon={<Trash size={18} color="currentColor" />}
+                          >
+                            حذف
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
                   {data?.totalPages > 1 && (
                     <div className="mt-8 flex items-center justify-center border-t border-gray-100 pt-5">
@@ -144,6 +207,18 @@ function PlaylistDetail() {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={!!pendingRemoval}
+        onClose={() => setPendingRemoval(null)}
+        onConfirm={handleRemoveVideo}
+        title="حذف ویدیو از پلی‌لیست"
+        message="آیا از حذف این ویدیو از پلی‌لیست مطمئن هستید؟"
+        confirmText="حذف"
+        cancelText="انصراف"
+        variant="danger"
+        isLoading={isRemovingVideo}
+      />
     </DashboardLayout>
   );
 }

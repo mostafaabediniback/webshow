@@ -46,7 +46,7 @@ function Navbar() {
           <div className="w-full justify-between px-3 sm:px-4 md:px-6 py-2.5 md:py-3 flex items-center gap-2 sm:gap-3 md:gap-4">
             <button
               onClick={toggleSidebar}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900 touch-manipulation"
+              className="md:hidden p-2 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900 touch-manipulation"
               aria-label="منو"
             >
               <Menu size={20} color="currentColor" />
@@ -63,11 +63,11 @@ function Navbar() {
               />
             </Link>
             <div className="hidden md:block flex-1 max-w-2xl mx-8">
-              <SearchInput className="no-focus-visible md:hidden p-2 rounded-lg hover:bg-gray-100 text-slate-900 touch-manipulation" />
+              <SearchInput className="no-focus-visible md:hidden p-2 rounded-[10px] hover:bg-gray-100 text-slate-900 touch-manipulation" />
             </div>
             <button
               onClick={toggleSearch}
-              className="no-focus-visible md:hidden p-2 rounded-lg hover:bg-gray-100 text-slate-900 touch-manipulation"
+              className="no-focus-visible md:hidden p-2 rounded-[10px] hover:bg-gray-100 text-slate-900 touch-manipulation"
               aria-label="جستجو"
             >
               <SearchNormal1 size={20} color="currentColor" />
@@ -130,7 +130,7 @@ function Navbar() {
             </h2>
             <button
               onClick={closeSidebar}
-              className="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
+              className="p-2 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
               aria-label="بستن منو"
             >
               <CloseCircle size={24} color="currentColor" />
@@ -142,7 +142,7 @@ function Navbar() {
               <Link
                 to="/"
                 onClick={closeSidebar}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+                className="flex items-center gap-3 p-3 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
               >
                 <span>خانه</span>
               </Link>
@@ -150,7 +150,7 @@ function Navbar() {
                 <Link
                   to={defaultDashboardRoute}
                   onClick={closeSidebar}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+                  className="flex items-center gap-3 p-3 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
                 >
                   <span>مدیریت کانال‌ها</span>
                 </Link>
@@ -165,7 +165,7 @@ function Navbar() {
               <button
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="w-full h-12 rounded-lg bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-12 rounded-[10px] bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Logout size={20} color="#ffffff" />
                 {isLoggingOut ? "در حال خروج..." : "خروج از حساب کاربری"}
@@ -174,7 +174,7 @@ function Navbar() {
               <Link
                 to="/login"
                 onClick={closeSidebar}
-                className="w-full h-12 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
+                className="w-full h-12 rounded-[10px] bg-gradient-to-r from-orange-500 to-orange-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
               >
                 <User size={20} color="#ffffff" />
                 ورود به حساب کاربری

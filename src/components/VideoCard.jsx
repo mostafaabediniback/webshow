@@ -2,16 +2,20 @@ import { Eye, PlayCircle } from "iconsax-react";
 import { Link } from "react-router-dom";
 
 function VideoCard({ video }) {
+  console.log({ video });
+  // const normalizeUrl = (u) => {
+  //   if (typeof u !== "string") return "";
+  //   return u.replace(/[`'"]/g, "").trim();
+  // };
   const normalizeUrl = (u) => {
-    if (typeof u !== "string") return "";
-    return u.replace(/[`'"]/g, "").trim();
+    if (!u || typeof u !== "string") return "";
+    return u.trim().replace(/[`'"]/g, "");
   };
-
-  const thumbnailRaw = video.cover_link || video.thumbnailUrl || video.cover;
+  const thumbnailRaw = video?.cover_link || video?.thumbnailUrl || video?.cover;
   const thumbnail = normalizeUrl(thumbnailRaw);
-  const channelName = video.channel_name || video.channelName || "کانال ناشناس";
-  const channelImage = normalizeUrl(video.channel_image);
-  const views = video.view_count || video.views || 0;
+  const channelName = video?.channel_name || video?.channelName || "کانال ناشناس";
+  const channelImage = normalizeUrl(video?.channel_image);
+  const views = video?.view_count || video?.views || 0;
   const formattedViews =
     views >= 1000
       ? `${(views / 1000).toFixed(1)}هزار`
@@ -19,20 +23,21 @@ function VideoCard({ video }) {
 
   return (
     <Link
-      to={`/v/${video.id}`}
-      className="group/card block w-full h-full cursor-pointer touch-manipulation isolate rounded-2xl border border-slate-200/60 bg-gradient-to-br from-white to-slate-50/50 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200/50 transition-all duration-400 overflow-hidden hover:-translate-y-1 hover:scale-[1.02]"
+      to={`/v/${video?.id}`}
+      className="group/card block w-full h-full cursor-pointer touch-manipulation isolate rounded-[10px] border border-slate-200/60 bg-gradient-to-br from-white to-slate-50/50 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200/50 transition-all duration-400 overflow-hidden hover:-translate-y-1 hover:scale-[1.02]"
     >
       {/* Thumbnail */}
       <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
         {/* Thumbnail Image */}
         <img
           src={thumbnail}
-          alt={video.title}
+          alt={video?.title}
           className="w-full h-full object-cover transition-all duration-700 group-hover/card:scale-110 group-hover/card:brightness-110"
           loading="lazy"
           onError={(e) => {
-            e.target.src;
-            e.target.classList.add("animate-pulse");
+            e.target.src = "/fallback-thumbnail.jpg";
+            // e.target.src;
+            // e.target.classList.add("animate-pulse");
           }}
         />
 
@@ -63,15 +68,15 @@ function VideoCard({ video }) {
       <div className="flex flex-col justify-between  p-4 sm:p-5">
         {/* Title */}
         <h3 className="text-base flex-1  sm:text-lg font-bold leading-tight line-clamp-2 text-slate-900 group-hover/card:text-indigo-600 group-hover/card:font-black transition-all duration-300 mb-3 pr-1">
-          {video.title}
+          {video?.title}
         </h3>
 
         {/* Channel Info */}
         <div className="flex items-center gap-3">
           {/* Channel Avatar + Name clickable */}
           <Link
-            to={video.username ? `/${video.username}` : "/"}
-            state={{ channelId: video.channel_id }}
+            to={video?.username ? `/${video?.username}` : "/"}
+            state={{ channelId: video?.channel_id }}
             onClick={(e) => e.stopPropagation()}
             className="flex items-center gap-3 flex-1 min-w-0"
           >
@@ -92,9 +97,9 @@ function VideoCard({ video }) {
               <p className="text-sm font-semibold text-slate-900 line-clamp-1 group-hover/card:text-indigo-600 transition-colors">
                 {channelName}
               </p>
-              {video.description && (
+              {video?.description && (
                 <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-                  {video.description}
+                  {video?.description}
                 </p>
               )}
             </div>

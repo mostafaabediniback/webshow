@@ -22,14 +22,16 @@ const PLATFORM_ADMIN_NAV = [
   { to: "/dashboard/channels", label: "کانال‌ها", icon: FolderAdd },
   { to: "/dashboard/categories", label: "دسته‌بندی‌ها", icon: Category },
   { to: "/dashboard/upload", label: "بارگذاری ویدیو", icon: VideoAdd },
+  // { to: "/dashboard/playlists", label: "پلی‌لیست‌ها", icon: Personalcard },
   { to: "/dashboard/videos", label: "ویدیوهای من", icon: VideoPlay },
   { to: "/dashboard/users", label: "کاربران", icon: People },
 ];
 
 const CHANNEL_ADMIN_NAV = [
   { to: "/dashboard/user-upload", label: "بارگذاری ویدیو", icon: VideoAdd },
+  { to: "/dashboard/playlists", label: "پلی‌لیست‌ها", icon: VideoPlay },
   { to: "/dashboard/user-videos", label: "ویدیوهای من", icon: Personalcard },
-  // { to: "/dashboard/settings", label: "تنظیمات", icon: Setting2 },
+  { to: "/dashboard/settings", label: "تنظیمات", icon: Setting2 },
 ];
 
 function DashboardLayout({ children }) {
@@ -55,7 +57,7 @@ function DashboardLayout({ children }) {
         <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-4 sm:py-6">
           <div className="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] gap-4 sm:gap-6">
             <aside className="bg-white rounded-2xl border border-gray-200 shadow-sm p-3 h-fit ">
-              {!isSuperAdmin && (
+              {/* {!isSuperAdmin && (
                 <div>
                   <div className="my-2 flex justify-center items-center relative">
                     <div className="w-40 aspect-square">
@@ -64,10 +66,10 @@ function DashboardLayout({ children }) {
                         alt=""
                         className="w-full h-full rounded-[10px] border border-slate-200 object-cover"
                       />
-                    </div>
+                    </div> */}
 
                     {/* settings icon */}
-                    <button
+                    {/* <button
                       onClick={() => setIsSettingsOpen(true)}
                       className="absolute -top-3 left-4 bg-white border border-gray-200 p-2 rounded-lg shadow-sm hover:bg-gray-50"
                     >
@@ -79,10 +81,10 @@ function DashboardLayout({ children }) {
                     <div className="w-40 bg-blue-50 p-2 flex justify-center items-center rounded-[10px]">
                       <div className="text-[14px]">{name}</div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* settings modal */}
-                  <Modal
+                  {/* <Modal
                     isOpen={isSettingsOpen}
                     onClose={() => setIsSettingsOpen(false)}
                     title="تنظیمات"
@@ -91,7 +93,7 @@ function DashboardLayout({ children }) {
                     <SettingsPage />
                   </Modal>
                 </div>
-              )}
+              )} */}
 
               <nav className="flex flex-col gap-1">
                 {navItems.map((item) => {

@@ -331,7 +331,6 @@ function VideoDropzone({
                     <p className="text-xs text-gray-700 mt-2 bg-white border border-gray-200 rounded-full px-3 py-1 inline-flex items-center gap-1 mx-auto max-w-[220px]">
                       <TickCircle
                         size={14}
-                        color="currentColor"
                         color="#D97706"
                       />
                       <span className="truncate">{uploadedFileName}</span>
@@ -341,7 +340,6 @@ function VideoDropzone({
                   <p className="text-xs text-gray-700 bg-white border border-gray-200 rounded-full px-3 py-1 inline-flex items-center gap-1 mx-auto max-w-[220px]">
                     <TickCircle
                       size={14}
-                      color="currentColor"
                       color="#D97706"
                     />
                     <span className="truncate">{uploadedFileName}</span>

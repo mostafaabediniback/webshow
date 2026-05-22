@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import usePlaylists from "../hooks/playlist/usePlaylists";
 import { Modal, Button, Spinner } from "../ui";
-import { getVideoDetail } from "../services/videoApi";
+import { getVideoDetail, getVideoPlaylistIds } from "../services/videoApi";
 import useUpdateVideo from "../hooks/video/useUpdateVideo";
+import MultiSelect from "./Upload/MultiSelect";
 
 function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
   const [title, setTitle] = useState("");
@@ -11,8 +13,17 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
   const [coverPreview, setCoverPreview] = useState("");
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [publicShow, setPublicShow] = useState(true);
+  const [channelId, setChannelId] = useState("");
+  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
 
   const { updateVideoAsync, isUpdating } = useUpdateVideo();
+  const {
+    data: playlistsResponse,
+    isLoading: isLoadingPlaylists,
+    isError: isPlaylistsError,
+    refetch: refetchPlaylists,
+  } = usePlaylists(channelId, { enabled: Boolean(isOpen && channelId) });
+  const playlists = playlistsResponse?.items || [];
 
   const initialCover = useMemo(() => {
     return (
@@ -36,6 +47,8 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
         ? Boolean(initialVideo.public_show)
         : true
     );
+    setChannelId(String(initialVideo?.channel_id || ""));
+    setSelectedPlaylists(getVideoPlaylistIds(initialVideo).map(String));
 
     const fetchDetail = async () => {
       try {
@@ -58,6 +71,8 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
             ? Boolean(detail.public_show)
             : true
         );
+        setChannelId(String(detail?.channel_id || initialVideo?.channel_id || ""));
+        setSelectedPlaylists(getVideoPlaylistIds(detail).map(String));
       } catch (error) {
         console.error(error);
       } finally {
@@ -87,13 +102,14 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
     }
 
     try {
-await updateVideoAsync({
-  videoId,
-  title: title.trim(),
-  description: description || "",
-  coverFile,
-  public_show: publicShow ? 1 : 0, // ✅ مهم
-});
+      await updateVideoAsync({
+        videoId,
+        title: title.trim(),
+        description: description || "",
+        coverFile,
+        public_show: publicShow ? 1 : 0,
+        play_lists: selectedPlaylists.map(Number).filter(Number.isFinite),
+      });
       onClose();
     } catch {
       // errors handled in hook
@@ -147,7 +163,7 @@ await updateVideoAsync({
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="h-11 px-4 rounded-[10px] border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="عنوان جدید ویدیو"
               disabled={isUpdating}
             />
@@ -158,27 +174,66 @@ await updateVideoAsync({
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="min-h-32 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-y"
+              className="min-h-32 px-4 py-3 rounded-[10px] border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-y"
               placeholder="توضیحات جدید ویدیو"
               disabled={isUpdating}
             />
           </div>
-          <div className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3">
-  <div>
-    <p className="text-sm font-semibold text-gray-900">نمایش عمومی</p>
-    <p className="text-xs text-gray-500">
-      در صورت غیرفعال بودن، ویدیو خصوصی خواهد بود
-    </p>
-  </div>
+          <div>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <label className="block text-sm font-semibold text-gray-900">
+                پلی‌لیست‌ها
+              </label>
+              {isPlaylistsError && (
+                <button
+                  type="button"
+                  onClick={() => refetchPlaylists()}
+                  className="text-xs text-blue-600"
+                >
+                  تلاش مجدد
+                </button>
+              )}
+            </div>
 
-  <input
-    type="checkbox"
-    checked={publicShow}
-    onChange={(e) => setPublicShow(e.target.checked)}
-    disabled={isUpdating}
-    className="w-5 h-5 accent-blue-600 cursor-pointer"
-  />
-</div>
+            {!channelId ? (
+              <div className="rounded-[10px] border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                شناسه کانال ویدیو برای بارگذاری پلی‌لیست‌ها در دسترس نیست.
+              </div>
+            ) : isLoadingPlaylists ? (
+              <div className="rounded-[10px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                در حال بارگذاری پلی‌لیست‌ها...
+              </div>
+            ) : isPlaylistsError ? (
+              <div className="rounded-[10px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                دریافت پلی‌لیست‌ها با خطا مواجه شد.
+              </div>
+            ) : (
+              <MultiSelect
+                options={playlists}
+                value={selectedPlaylists}
+                onChange={setSelectedPlaylists}
+                placeholder="جستجوی پلی‌لیست..."
+                emptyMessage="پلی‌لیستی پیدا نشد"
+                getOptionLabel={(item) => item?.name || `پلی‌لیست ${item?.id}`}
+              />
+            )}
+          </div>
+          <div className="flex items-center justify-between border border-gray-200 rounded-[10px] px-4 py-3">
+            <div>
+              <p className="text-sm font-semibold text-gray-900">نمایش عمومی</p>
+              <p className="text-xs text-gray-500">
+                در صورت غیرفعال بودن، ویدیو خصوصی خواهد بود
+              </p>
+            </div>
+
+            <input
+              type="checkbox"
+              checked={publicShow}
+              onChange={(e) => setPublicShow(e.target.checked)}
+              disabled={isUpdating}
+              className="w-5 h-5 accent-blue-600 cursor-pointer"
+            />
+          </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -189,13 +244,13 @@ await updateVideoAsync({
               accept="image/*"
               onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
               disabled={isUpdating}
-              className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+              className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-3 file:rounded-[10px] file:border-0 file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
             />
             {coverPreview && (
               <img
                 src={coverPreview}
                 alt="cover preview"
-                className="mt-3 w-44 h-24 rounded-lg object-cover border border-gray-200"
+                className="mt-3 w-44 h-24 rounded-[10px] object-cover border border-gray-200"
               />
             )}
           </div>

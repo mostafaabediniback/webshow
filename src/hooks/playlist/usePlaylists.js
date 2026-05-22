@@ -1,15 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPlaylists } from "../../services/playlist/playlistApi";
+import { getPlaylists, playlistQueryKeys } from "../../services/playlist/playlistApi";
 
 const usePlaylists = (channelId, options = {}) => {
+  const { page = 1, perPage = 25, enabled = true, ...queryOptions } = options;
+
   return useQuery({
-    queryKey: ["playlists", channelId ?? "all"],
-    queryFn: () => getPlaylists(channelId),
-
-    // 👇 پیش‌فرض همیشه true هست، مگر اینکه از بیرون override بشه
-    enabled: options.enabled ?? true,
-
-    ...options, // 👈 اجازه override کامل (staleTime, cacheTime, etc.)
+    queryKey: [...playlistQueryKeys.list(channelId), page, perPage],
+    queryFn: () => getPlaylists(channelId, { page, per_page: perPage }),
+    enabled,
+    ...queryOptions,
   });
 };
 

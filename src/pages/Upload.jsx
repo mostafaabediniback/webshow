@@ -7,7 +7,6 @@ import MultiSelect from "../components/Upload/MultiSelect";
 import PlaylistModal from "../components/Upload/PlaylistModal";
 import VideoDropzone from "../components/VideoDropzone";
 import useCategories from "../hooks/category/useCategories";
-import useCreateCategory from "../hooks/category/useCreateCategory";
 import useChannel from "../hooks/channel/useChannel";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
@@ -31,8 +30,8 @@ function Upload() {
   const [videoUrl, setVideoUrl] = useState("");
   const [publicShow, setPublicShow] = useState(1);
   const [uploadType, setUploadType] = useState("file"); // 'file' | 'url'
-  const [selectedCategories, setSelectedCategories] = useState("");
-  const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedPlaylistIds, setSelectedPlaylistIds] = useState([]);
   const [isPlaylistModalOpen, setPlaylistModalOpen] = useState(false);
   const {
     data: categories = [],
@@ -40,11 +39,11 @@ function Upload() {
     isError: isCategoriesError,
   } = useCategories();
   const {
-    data: playlists = [],
+    data: playlistsResponse,
     isLoading: isLoadingPlaylists,
     isError: isPlaylistsError,
   } = usePlaylists(chanId);
-  const createCategoryMutation = useCreateCategory();
+  const playlists = playlistsResponse?.items || [];
   const createPlaylistMutation = useCreatePlaylist();
 
   const navigate = useNavigate();
@@ -261,8 +260,8 @@ function Upload() {
         url: videoUrl,
         coverFile: thumbFile,
         public_show: publicShow,
-        categories: selectedCategories ? [selectedCategories] : [],
-        playlist_id: selectedPlaylistId || null,
+        categories: selectedCategories.map(Number).filter(Number.isFinite),
+        play_lists: selectedPlaylistIds.map(Number).filter(Number.isFinite),
       });
 
       navigate("/dashboard/videos");
@@ -284,7 +283,7 @@ function Upload() {
     setVideoUrl("");
     setPublicShow(1);
     setSelectedCategories([]);
-    setSelectedPlaylistId("");
+    setSelectedPlaylistIds([]);
   };
 
   useEffect(() => {
@@ -311,8 +310,6 @@ function Upload() {
   }, [uploadType]);
 
   const canEditMetadata = Boolean(videoFile || tempPath);
-  const isUploadReady = videoStatus === "success" && Boolean(tempPath);
-
   const uploadStatusText = useMemo(() => {
     if (uploadType === "url") {
       return videoUrl
@@ -506,80 +503,48 @@ function Upload() {
                     value={selectedCategories}
                     onChange={setSelectedCategories}
                     placeholder="جستجوی دسته‌بندی..."
+                    getOptionLabel={(item) => item?.title || item?.name || `دسته ${item?.id}`}
                   />
                 )}
               </div>
-              <div>
-                {/* <div className="flex justify-between items-center mb-2">
+              {/* <div>
+                <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-semibold text-gray-900">
-                    پلی‌لیست (اختیاری)
+                    پلی‌لیست‌ها
                   </label>
                   <button
                     type="button"
                     onClick={() => setPlaylistModalOpen(true)}
                     className="text-xs text-blue-600 hover:underline"
-                    disabled={!chanId}
                   >
                     + ایجاد پلی‌لیست
                   </button>
-                </div> */}
-                {/* <div className="rounded-lg border border-gray-200 bg-white">
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-white p-3">
                   {!chanId ? (
-                    <div className="p-3 text-sm text-gray-500">
+                    <div className="text-sm text-gray-500">
                       ابتدا کانال را انتخاب کنید.
                     </div>
                   ) : isLoadingPlaylists ? (
-                    <div className="p-3 text-sm text-gray-500">
+                    <div className="text-sm text-gray-500">
                       در حال بارگذاری پلی‌لیست‌ها...
                     </div>
                   ) : isPlaylistsError ? (
-                    <div className="p-3 text-sm text-red-600">
+                    <div className="text-sm text-red-600">
                       خطا در دریافت پلی‌لیست‌ها
                     </div>
-                  ) : playlists.length === 0 ? (
-                    <div className="p-3 text-sm text-gray-500">
-                      پلی‌لیستی وجود ندارد.
-                    </div>
                   ) : (
-                    <div className="relative">
-                      <select
-                        value={selectedPlaylistId}
-                        onChange={(e) => setSelectedPlaylistId(e.target.value)}
-                        className="
-          w-full h-11
-          appearance-none
-          bg-transparent
-          px-4 pr-10
-          text-sm text-gray-700
-          rounded-lg
-          focus:outline-none focus:ring-2 focus:ring-blue-500
-        "
-                      >
-                        <option value="">انتخاب پلی‌لیست</option>
-                        {playlists.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.name}
-                          </option>
-                        ))}
-                      </select>
-
-                      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                        <svg
-                          className="w-4 h-4"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
+                    <MultiSelect
+                      options={playlists}
+                      value={selectedPlaylistIds}
+                      onChange={setSelectedPlaylistIds}
+                      placeholder="جستجوی پلی‌لیست..."
+                      emptyMessage="پلی‌لیستی پیدا نشد"
+                      getOptionLabel={(item) => item?.name || `پلی‌لیست ${item?.id}`}
+                    />
                   )}
-                </div> */}
-              </div>
+                </div>
+              </div> */}
             </div>
           </div>
 

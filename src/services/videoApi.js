@@ -37,6 +37,39 @@ const buildVideoListParams = ({ page = 1, per_page = 25, videoType = "all" } = {
   return params;
 };
 
+const appendArrayField = (formData, fieldName, values = []) => {
+  if (!Array.isArray(values)) return;
+
+  values
+    .filter((value) => value !== "" && value !== null && typeof value !== "undefined")
+    .forEach((value) => {
+      formData.append(fieldName, value);
+    });
+};
+
+export const getVideoPlaylistIds = (video = {}) => {
+  const rawSources = [
+    video?.play_lists,
+    video?.playlists,
+    video?.playlist_ids,
+    video?.play_list_ids,
+    video?.data?.play_lists,
+    video?.data?.playlists,
+  ];
+
+  for (const source of rawSources) {
+    if (!Array.isArray(source)) continue;
+
+    return source
+      .map((item) => (typeof item === "object" ? item?.id ?? item?.playlist_id : item))
+      .filter((item) => item !== null && typeof item !== "undefined" && item !== "")
+      .map((item) => Number(item))
+      .filter((item) => Number.isFinite(item));
+  }
+
+  return [];
+};
+
 export const uploadVideo = async (file) => {
   const fd = new FormData();
   fd.append("file", file);
@@ -51,7 +84,7 @@ export const uploadVideo = async (file) => {
 // ذخیره ویدیو
 export const storeVideo = async (
   channelId,
-  { path, url, title, description, cover, public_show, categories = [], playlist_id }
+  { path, url, title, description, cover, public_show, categories = [], play_lists = [] }
 ) => {
   const fd = new FormData();
 
@@ -66,10 +99,8 @@ export const storeVideo = async (
   fd.append("public_show", public_show ? 1 : 0);
 
   if (cover) fd.append("cover", cover);
-  if (Array.isArray(categories)) {
-    categories.forEach((id) => fd.append("categories[]", id));
-  }
-  if (playlist_id) fd.append("playlist_id", playlist_id);
+  appendArrayField(fd, "categories[]", categories);
+  appendArrayField(fd, "play_lists[]", play_lists);
 
   const finalUrl = channelId
     ? `/video/store-video/${channelId}`
@@ -156,11 +187,15 @@ export const deleteVideo = async (id) => {
   return res.data;
 };
 
-export const updateVideo = async (videoId, { title, description, coverFile, public_show }) => {
+export const updateVideo = async (
+  videoId,
+  { title, description, coverFile, public_show, play_lists = [] },
+) => {
   const fd = new FormData();
   fd.append("title", title || "");
   fd.append("description", description || "");
   fd.append("public_show", public_show ?? 1);
+  appendArrayField(fd, "play_lists[]", play_lists);
 
 
   if (coverFile) {

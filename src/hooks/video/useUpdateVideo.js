@@ -6,14 +6,16 @@ function useUpdateVideo() {
   const queryClient = useQueryClient();
 
   const updateVideoMutation = useMutation({
-    mutationFn: ({ videoId, title, description, coverFile, public_show }) =>
-      updateVideo(videoId, { title, description, coverFile, public_show }),
+    mutationFn: ({ videoId, title, description, coverFile, public_show, play_lists = [] }) =>
+      updateVideo(videoId, { title, description, coverFile, public_show, play_lists }),
     onSuccess: () => {
       toast.success("ویدیو با موفقیت بروزرسانی شد");
       queryClient.invalidateQueries({ queryKey: ["channelVideos"] });
+      queryClient.invalidateQueries({ queryKey: ["video"] });
+      queryClient.invalidateQueries({ queryKey: ["playlists"] });
     },
     onError: (error) => {
-      toast.error("خطا در بروزرسانی ویدیو");
+      toast.error(error?.response?.data?.message || "خطا در بروزرسانی ویدیو");
       console.error(error);
     },
   });

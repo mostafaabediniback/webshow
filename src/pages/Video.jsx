@@ -10,7 +10,8 @@ import usePlaylistDetail from "../hooks/playlist/usePlaylistDetail";
 import usePlaylists from "../hooks/playlist/usePlaylists";
 import { useVideo } from "../hooks/video/useVideo";
 import Layout from "../layouts/Layout";
-import { getPlaylistDetail } from "../services/playlist/playlistApi";
+import { getPlaylistDetail, playlistQueryKeys } from "../services/playlist/playlistApi";
+import { getVideoPlaylistIds } from "../services/videoApi";
 import { readAuthSession } from "../utils/auth";
 
 const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
@@ -46,24 +47,6 @@ const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
   </svg>
 );
 
-const normalizePossiblePlaylistIds = (video) => {
-  if (!video || typeof video !== "object") return [];
-
-  const directValues = [
-    video.playlist_id,
-    video.play_list_id,
-    video.playlistId,
-    video.playListId,
-    video.playlist?.id,
-    video.play_list?.id,
-    video.playList?.id,
-    ...(Array.isArray(video.playlists) ? video.playlists.map((item) => item?.id ?? item) : []),
-    ...(Array.isArray(video.play_lists) ? video.play_lists.map((item) => item?.id ?? item) : []),
-  ];
-
-  return [...new Set(directValues.filter((value) => value != null && value !== ""))];
-};
-
 function Video() {
   const { id } = useParams();
   const queryClient = useQueryClient();
@@ -79,11 +62,12 @@ function Video() {
   });
 
   const {
-    data: playlists = [],
+    data: playlistsResponse,
     isLoading: isPlaylistsLoading,
     isError: isPlaylistsError,
     refetch: refetchPlaylists,
   } = usePlaylists(currentChannelId, { enabled: !!currentChannelId });
+  const playlists = playlistsResponse?.items || [];
 
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -128,7 +112,7 @@ function Video() {
     let isMounted = true;
 
     const resolveInitialPlaylist = async () => {
-      const possiblePlaylistIds = normalizePossiblePlaylistIds(currentVideo);
+      const possiblePlaylistIds = getVideoPlaylistIds(currentVideo);
       const matchingPlaylist = playlists.find((playlist) =>
         possiblePlaylistIds.some((playlistId) => String(playlist.id) === String(playlistId)),
       );
@@ -146,7 +130,7 @@ function Video() {
       try {
         for (const playlist of playlists) {
           const detail = await queryClient.fetchQuery({
-            queryKey: ["playlist-detail", playlist.id, 1, 100],
+            queryKey: playlistQueryKeys.detail(playlist.id, 1, 100),
             queryFn: () => getPlaylistDetail(playlist.id, { page: 1, per_page: 100 }),
           });
 
@@ -192,6 +176,13 @@ function Video() {
     playlists,
     queryClient,
   ]);
+
+  useEffect(() => {
+  window.scrollTo({
+    top: 0,
+    behavior: "instant",
+  });
+}, [id]);
 
   const relatedItems = useMemo(
     () =>
@@ -308,7 +299,7 @@ function Video() {
       const playPromise = videoRef.current.play();
 
       if (playPromise !== undefined) {
-        playPromise.catch(() => {});
+        playPromise.catch(() => { });
       }
     }
   }, [videoSource, isMobile]);
@@ -370,7 +361,7 @@ function Video() {
 
                   const playPromise = video.play();
                   if (playPromise !== undefined) {
-                    playPromise.catch(() => {});
+                    playPromise.catch(() => { });
                   }
                 }}
               />
@@ -396,9 +387,9 @@ function Video() {
                     <p className="truncate text-sm font-semibold text-gray-900">
                       {currentVideo?.channel_name}
                     </p>
-                    <p className="mt-0.5 text-xs text-gray-500">
+                    {/* <p className="mt-0.5 text-xs text-gray-500">
                       {(currentVideo?.view_count || 0).toLocaleString("fa-IR")} بازدید
-                    </p>
+                    </p> */}
                   </div>
                 </Link>
               </div>
@@ -440,7 +431,7 @@ function Video() {
                           },
                         });
                       }
-                    } catch {}
+                    } catch { }
                   }}
                   className="inline-flex h-12 w-24 items-center justify-center gap-1.5 rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 text-xs font-bold transition-colors hover:bg-gray-200 sm:text-sm"
                 >
@@ -481,67 +472,70 @@ function Video() {
 
           <aside className="lg:block">
             <div className="sticky top-24 space-y-4">
-              <VideoPlaylistPanel
-                playlists={playlists}
-                isPlaylistsLoading={isPlaylistsLoading || isResolvingInitialPlaylist}
-                isPlaylistsError={isPlaylistsError}
-                onRetryPlaylists={refetchPlaylists}
-                selectedPlaylistId={selectedPlaylistId}
-                onSelectPlaylist={setSelectedPlaylistId}
-                playlistDetail={playlistDetail}
-                isPlaylistDetailLoading={
-                  !!selectedPlaylistId &&
-                  (isPlaylistDetailLoading || (isPlaylistDetailFetching && !playlistDetail))
-                }
-                isPlaylistDetailError={isPlaylistDetailError}
-                onRetryPlaylistDetail={refetchPlaylistDetail}
-                currentVideoId={id}
-              />
+              {playlists.length > 0 && (
+                <VideoPlaylistPanel
+                  playlists={playlists}
+                  isPlaylistsLoading={isPlaylistsLoading || isResolvingInitialPlaylist}
+                  isPlaylistsError={isPlaylistsError}
+                  onRetryPlaylists={refetchPlaylists}
+                  selectedPlaylistId={selectedPlaylistId}
+                  onSelectPlaylist={setSelectedPlaylistId}
+                  playlistDetail={playlistDetail}
+                  isPlaylistDetailLoading={
+                    !!selectedPlaylistId &&
+                    (isPlaylistDetailLoading || (isPlaylistDetailFetching && !playlistDetail))
+                  }
+                  isPlaylistDetailError={isPlaylistDetailError}
+                  onRetryPlaylistDetail={refetchPlaylistDetail}
+                  currentVideoId={id}
+                />
 
+              )}
               <div>
+
                 <h3 className="mb-4 text-lg font-bold text-gray-900">ویدیوهای مرتبط</h3>
 
                 <div className="space-y-1">
                   {isRelatedLoading
                     ? Array.from({ length: 5 }).map((_, index) => (
-                        <div key={index} className="flex gap-3 rounded-lg p-2">
-                          <div className="h-24 w-40 flex-shrink-0 rounded-lg bg-gray-200 animate-pulse" />
-                          <div className="flex-1 space-y-2 py-1">
-                            <div className="h-4 w-3/4 rounded bg-gray-200 animate-pulse" />
-                            <div className="h-3 w-1/2 rounded bg-gray-200 animate-pulse" />
-                          </div>
+                      <div key={index} className="flex gap-3 rounded-lg p-2">
+                        <div className="h-24 w-40 flex-shrink-0 rounded-lg bg-gray-200 animate-pulse" />
+                        <div className="flex-1 space-y-2 py-1">
+                          <div className="h-4 w-3/4 rounded bg-gray-200 animate-pulse" />
+                          <div className="h-3 w-1/2 rounded bg-gray-200 animate-pulse" />
                         </div>
-                      ))
+                      </div>
+                    ))
                     : relatedItems.map((video) => (
-                        <Link
-                          to={`/v/${video.id}`}
-                          key={video.id}
-                          className="group flex cursor-pointer gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
-                        >
-                          <div className="relative h-24 w-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200">
-                            <img
-                              src={video.thumbnailUrl || video.cover_link || video.cover}
-                              alt={video.title}
-                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                              onError={(event) => {
-                                event.currentTarget.src =
-                                  "https://picsum.photos/seed/default/160/90";
-                              }}
-                            />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h4 className="line-clamp-2 text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
-                              {video.title}
-                            </h4>
-                            <p className="mt-1 text-xs text-gray-500">
-                              {video.channelName || video.channel_name}
-                            </p>
-                            <p className="mt-1 text-xs text-gray-400">
-                              {(video.views || 0).toLocaleString("fa-IR")} بازدید
-                            </p>
-                          </div>
-                        </Link>
-                      ))}
+                      <Link
+                        to={`/v/${video.id}`}
+                        key={video.id}
+                        className="group flex cursor-pointer gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
+                      >
+                        <div className="relative h-24 w-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200">
+                          <img
+                            src={video.thumbnailUrl || video.cover_link || video.cover}
+                            alt={video.title}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            onError={(event) => {
+                              event.currentTarget.src =
+                                "https://picsum.photos/seed/default/160/90";
+                            }}
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="line-clamp-2 text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                            {video.title}
+                          </h4>
+                          <p className="mt-1 text-xs text-gray-500">
+                            {video.channelName || video.channel_name}
+                          </p>
+                          {/* <p className="mt-1 text-xs text-gray-400">
+                            {(video.views || 0).toLocaleString("fa-IR")} بازدید
+                          </p> */}
+                        </div>
+                      </Link>
+                    ))}
                 </div>
 
                 {!isRelatedLoading && !relatedItems.length && (
