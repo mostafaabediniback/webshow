@@ -29,7 +29,7 @@ const PLATFORM_ADMIN_NAV = [
 
 const CHANNEL_ADMIN_NAV = [
   { to: "/dashboard/user-upload", label: "بارگذاری ویدیو", icon: VideoAdd },
-  { to: "/dashboard/playlists", label: "پلی‌لیست‌ها", icon: VideoPlay },
+  // { to: "/dashboard/playlists", label: "پلی‌لیست‌ها", icon: VideoPlay },
   { to: "/dashboard/user-videos", label: "ویدیوهای من", icon: Personalcard },
   { to: "/dashboard/settings", label: "تنظیمات", icon: Setting2 },
 ];

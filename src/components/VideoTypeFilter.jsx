@@ -1,30 +1,45 @@
-import { DEFAULT_VIDEO_TYPE, VIDEO_TYPE_OPTIONS } from "../constants/videoTypeOptions";
+import {
+  DEFAULT_VIDEO_TYPE,
+  VIDEO_TYPE_OPTIONS,
+} from "../constants/videoTypeOptions";
 
 function VideoTypeFilter({
   value = DEFAULT_VIDEO_TYPE,
+  viewMode,
   onChange,
-  className = "",
+  onPlaylistClick,
 }) {
-  return (
-    <div className={`flex flex-wrap gap-2 ${className}`}>
-      {VIDEO_TYPE_OPTIONS.map((option) => {
-        const isActive = option.value === value;
+  const activeClass =
+    "rounded-[10px] border px-4 py-2 text-sm font-medium transition-all border-blue-600 bg-blue-600 text-white shadow-sm";
 
-        return (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => onChange?.(option.value)}
-            className={` rounded-[10px] border px-4 py-2 text-sm font-medium transition-all ${
-              isActive
-                ? "border-blue-600 bg-blue-600 text-white shadow-sm"
-                : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-700"
-            }`}
-          >
-            {option.label}
-          </button>
-        );
-      })}
+  const normalClass =
+    "rounded-[10px] border px-4 py-2 text-sm font-medium transition-all border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-700";
+
+  return (
+    <div className="flex flex-wrap gap-2">
+{VIDEO_TYPE_OPTIONS.map((option) => {
+  const isActive =
+    viewMode === "videos" && option.value === value;
+
+  return (
+    <button
+      key={option.value}
+      type="button"
+      onClick={() => onChange(option.value)}
+      className={isActive ? activeClass : normalClass}
+    >
+      {option.label}
+    </button>
+  );
+})}
+
+      <button
+        type="button"
+        onClick={onPlaylistClick}
+  className={viewMode === "playlists" ? activeClass : normalClass}
+      >
+        پلی‌لیست‌ها
+      </button>
     </div>
   );
 }

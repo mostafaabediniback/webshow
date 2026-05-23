@@ -6,7 +6,7 @@ import SocialSettings from '../components/SettingsPages/SocialSettings'
 
 const TABS = [
   { key: 'channel', label: 'تنظیمات کانال' },
-  { key: 'profile', label: 'تنظیمات پروفایل' },
+  // { key: 'profile', label: 'تنظیمات پروفایل' },
   { key: 'social', label: 'تنظیمات شبکه‌های اجتماعی' },
 ]
 

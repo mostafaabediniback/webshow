@@ -1,23 +1,22 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
-import Home from './pages/Home'
-import Video from './pages/Video'
-import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import Channels from './pages/Channels'
-import Upload from './pages/Upload'
-import Videos from './pages/Videos'
-import VideoEdit from './pages/VideoEdit'
-import Search from './pages/Search'
-import Users from './pages/Users'
 import Categories from './pages/Categories'
-import UserVideos from './pages/UserVideos'
-import UploadedVideos from './pages/UploadedVideos'
-import SettingsPage from './pages/SettingsPage'
-import useAuthStore, { hydrateAuthStore } from './store/useAuthStore'
-import ProfileChannel from './pages/ProfileChannel'
+import Channels from './pages/Channels'
+import Dashboard from './pages/Dashboard'
+import Home from './pages/Home'
+import Login from './pages/Login'
 import PlaylistDetail from './pages/PlaylistDetail'
-import DashboardPlaylists from './pages/DashboardPlaylists'
+import ProfileChannel from './pages/ProfileChannel'
+import Search from './pages/Search'
+import SettingsPage from './pages/SettingsPage'
+import Upload from './pages/Upload'
+import UploadedVideos from './pages/UploadedVideos'
+import Users from './pages/Users'
+import UserVideos from './pages/UserVideos'
+import Video from './pages/Video'
+import VideoEdit from './pages/VideoEdit'
+import Videos from './pages/Videos'
+import useAuthStore, { hydrateAuthStore } from './store/useAuthStore'
 
 const RequireAuth = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
@@ -85,7 +84,7 @@ function App() {
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/dashboard/channels" element={<RequireAuth><RequirePlatformAdmin><Channels /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/upload" element={<RequireAuth><RequirePlatformAdmin><Upload /></RequirePlatformAdmin></RequireAuth>} />
-        <Route path="/dashboard/playlists" element={<RequireAuth><DashboardPlaylists /></RequireAuth>} />
+        {/* <Route path="/dashboard/playlists" element={<RequireAuth><DashboardPlaylists /></RequireAuth>} /> */}
         <Route path="/dashboard/playlists/:playlistId" element={<RequireAuth><PlaylistDetail /></RequireAuth>} />
         <Route path="/dashboard/videos" element={<RequireAuth><RequirePlatformAdmin><Videos /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/videos/:id" element={<RequireAuth><RequirePlatformAdmin><VideoEdit /></RequirePlatformAdmin></RequireAuth>} />

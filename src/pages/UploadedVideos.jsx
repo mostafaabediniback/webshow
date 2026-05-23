@@ -4,13 +4,18 @@ import { useNavigate } from "react-router-dom";
 import EditVideoModal from "../components/EditVideoModal";
 import VideoRow from "../components/VideoRow";
 import VideoTypeFilter from "../components/VideoTypeFilter";
-import { DEFAULT_VIDEO_TYPE, VIDEO_TYPE_OPTIONS } from "../constants/videoTypeOptions";
+import {
+  DEFAULT_VIDEO_TYPE,
+  VIDEO_TYPE_OPTIONS,
+} from "../constants/videoTypeOptions";
 import useChannelDetail from "../hooks/channel/useChannelDetail";
 import useChannelVideos from "../hooks/channel/useChannelVideos";
+import usePlaylists from "../hooks/playlist/usePlaylists";
 import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import useDeleteVideo from "../hooks/video/useDeleteVideo";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { ConfirmModal, EmptyState, ErrorMessage, Spinner } from "../ui";
+import PlaylistCard from "./PlaylistCard";
 
 const PAGE_SIZE = 25;
 
@@ -22,6 +27,7 @@ export default function UploadedVideos() {
 
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
+  const [viewMode, setViewMode] = useState("videos");
 
   const {
     data: videos,
@@ -38,6 +44,16 @@ export default function UploadedVideos() {
   const { data } = useChannelDetail();
   const channel = data?.data;
 
+  const {
+    data: playlistsResponse,
+    isLoading: isLoadingPlaylists,
+    isError: playlistsError,
+    refetch: refetchPlaylists,
+  } = usePlaylists(channel?.id, {
+    enabled: viewMode === "playlists",
+  });
+
+  const playlists = playlistsResponse?.items || [];
 
   useEffect(() => {
     setPage(1);
@@ -132,7 +148,15 @@ export default function UploadedVideos() {
 
           <div className="mb-4">
             <div className="flex flex-col gap-3  lg:flex-row lg:items-center lg:justify-between">
-              <VideoTypeFilter value={videoType} onChange={setVideoType} />
+              <VideoTypeFilter
+                value={videoType}
+                viewMode={viewMode}
+                onChange={(value) => {
+                  setViewMode("videos");
+                  setVideoType(value);
+                }}
+                onPlaylistClick={() => setViewMode("playlists")}
+              />
             </div>
           </div>
           <div className="border-b m-2"></div>
@@ -152,17 +176,40 @@ export default function UploadedVideos() {
           ) : (
             <>
               <div className="space-y-3 flex flex-wrap gap-4">
-                {videosList.map((v) => (
-                  <VideoRow
-                    key={v.id}
-                    item={v}
-                    onDelete={(id) => setDeleteConfirmId(id)}
-                    // onShow={(id) => setSelectedVideoId(id)}
-                    onShow={(id) => navigate(`/v/${id}`)}
-                    onEdit={setEditingVideo}
-                    isDeleting={isDeleting}
-                  />
-                ))}
+                {viewMode === "videos" ? (
+                  <>
+                    <div className="space-y-3 flex flex-wrap gap-4">
+                      {videosList.map((v) => (
+                        <VideoRow
+                          key={v.id}
+                          item={v}
+                          onDelete={(id) => setDeleteConfirmId(id)}
+                          onShow={(id) => navigate(`/v/${id}`)}
+                          onEdit={setEditingVideo}
+                          isDeleting={isDeleting}
+                        />
+                      ))}
+                    </div>
+
+                    {videos?.totalPages > 1 && (
+                      <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
+                        <Pagination
+                          count={videos.totalPages}
+                          page={page}
+                          onChange={(_, value) => setPage(value)}
+                          shape="rounded"
+                          color="primary"
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {playlists.map((playlist) => (
+                      <PlaylistCard key={playlist.id} playlist={playlist} />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {videos?.totalPages > 1 && (

@@ -1,15 +1,14 @@
-// ChannelSettings.jsx
-
 import { useState } from "react";
 import { toast } from "react-toastify";
-import ImageUploader from "../ImageUploader";
+
 import useChannel from "../../hooks/channel/useChannel";
 import useChannelDetail from "../../hooks/channel/useChannelDetail";
 
-function ChannelSettings({ channelId }) {
-  const [channelImage, setChannelImage] = useState(null);
-  const [profileImage, setProfileImage] = useState(null);
+import { Camera } from "iconsax-react";
+import ImageCropModal from "./ImageCropModal";
+import ProfileSettings from "./ProfileSettings";
 
+function ChannelSettings({ channelId }) {
   const { data, refetch } = useChannelDetail();
 
   const {
@@ -19,225 +18,164 @@ function ChannelSettings({ channelId }) {
     isChangingProfileImage,
   } = useChannel(1, 10, {}, { enabled: false });
 
+  const [coverFile, setCoverFile] = useState(null);
+  const [profileFile, setProfileFile] = useState(null);
+
+  const [cropImage, setCropImage] = useState(null);
+  const [cropType, setCropType] = useState(null);
+
+  const [isDirty, setIsDirty] = useState(false);
+
   const isLoading =
     isChangingChannelImage || isChangingProfileImage;
 
-  const handleSubmit = () => {
+  const openCropper = (file, type) => {
+    if (!file) {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+
+      input.onchange = (e) => {
+        const selectedFile = e.target.files[0];
+        if (!selectedFile) return;
+        openCropper(selectedFile, type);
+      };
+
+      input.click();
+      return;
+    }
+
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
+      toast.error("فقط JPG و PNG مجاز است");
+      return;
+    }
+
+    if (type === "cover") {
+      if (file.size > 4 * 1024 * 1024) {
+        toast.error("حداکثر حجم ۴ مگابایت");
+        return;
+      }
+    }
+
+    setCropImage(URL.createObjectURL(file));
+    setCropType(type);
+  };
+
+  const handleSubmitAll = async () => {
     try {
-      if (channelImage) {
-        changeProfileChannelImage(channelImage, channelId, {
-          onSuccess: () => {
-            toast.success("کاور کانال بروزرسانی شد");
-            setChannelImage(null);
-            refetch();
-          },
+      if (coverFile) {
+        await changeProfileChannelImage(coverFile, channelId, {
+          onSuccess: () => toast.success("کاور بروزرسانی شد"),
         });
       }
 
-      if (profileImage) {
-        changeChannelImage(profileImage, channelId, {
-          onSuccess: () => {
-            toast.success("تصویر پروفایل بروزرسانی شد");
-            setProfileImage(null);
-            refetch();
-          },
+      if (profileFile) {
+        await changeChannelImage(profileFile, channelId, {
+          onSuccess: () => toast.success("پروفایل بروزرسانی شد"),
         });
       }
+
+      setIsDirty(false);
+      setCoverFile(null);
+      setProfileFile(null);
+
+      refetch();
+      toast.success("تغییرات ذخیره شد");
     } catch (e) {
-      toast.error("خطا در ذخیره اطلاعات");
+      toast.error("خطا در ذخیره تغییرات");
     }
   };
 
   return (
     <div className="space-y-8">
 
-      {/* COVER */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      {/* PREVIEW */}
+      <div className="bg-white rounded-[10px]">
+        <div className="mt-6 relative">
 
-        {/* LEFT */}
-        <div
-          className="
-            rounded-[10px]
-            border border-gray-100
-            bg-white
-            p-6
-            shadow-sm
-            space-y-5
-          "
-        >
-          <div>
-            <h2 className="text-lg font-black text-gray-800">
-              تصویر کاور کانال
-            </h2>
+          {/* COVER */}
+          <div className="h-[180px] rounded-[10px] overflow-hidden relative group">
+            <img
+              src={
+                coverFile
+                  ? URL.createObjectURL(coverFile)
+                  : data?.data?.background_image
+              }
+              className="w-full h-full object-cover"
+            />
 
-            <p className="text-sm text-gray-500 mt-1">
-              تصویری که در بالای کانال نمایش داده می‌شود.
-            </p>
+            <div
+              onClick={() => openCropper(null, "cover")}
+              className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition cursor-pointer"
+            >
+              <Camera size={34} color="#fff" />
+            </div>
           </div>
 
-          <ImageUploader
-            label="آپلود تصویر کاور"
-            imageFile={channelImage}
-            setImageFile={setChannelImage}
-          />
-
-          <div className="space-y-2 text-sm text-gray-500 leading-6">
-            <p>• حداکثر حجم: ۴ مگابایت</p>
-            <p>• نسبت تصویر: ۹:۱</p>
-            <p>• فرمت‌های مجاز: JPG - PNG</p>
-          </div>
-        </div>
-
-        {/* RIGHT */}
-        <div
-          className="
-            rounded-[10px]
-            border border-gray-100
-            bg-gray-50
-            p-6
-            shadow-sm
-            flex flex-col
-          "
-        >
-          <div className="mb-4">
-            <h3 className="font-bold text-gray-700">
-              پیش‌نمایش
-            </h3>
-          </div>
-
-          {data?.data?.background_image ? (
-            <div className="relative overflow-hidden rounded-[10px] group h-full">
+          {/* PROFILE */}
+          <div className="absolute bottom-[-25px] right-8 group">
+            <div className="relative w-24 h-24 rounded-[10px] overflow-hidden border-4 border-white shadow-lg">
               <img
-                src={data.data.background_image}
-                className="
-                  w-full h-full object-cover
-                  transition duration-500
-                  group-hover:scale-105
-                "
+                src={
+                  profileFile
+                    ? URL.createObjectURL(profileFile)
+                    : data?.data?.image
+                }
+                className="w-full h-full object-cover"
               />
 
-              <div className="absolute inset-0 bg-black/10" />
+              <div
+                onClick={() => openCropper(null, "profile")}
+                className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition cursor-pointer"
+              >
+                <Camera size={28} color="#fff" />
+              </div>
             </div>
-          ) : (
-            <div
-              className="
-                flex-1
-                border-2 border-dashed
-                rounded-[10px]
-                flex items-center justify-center
-                text-gray-400
-              "
-            >
-              بدون تصویر
-            </div>
-          )}
+          </div>
+
         </div>
       </div>
 
-      {/* PROFILE */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      {/* PROFILE SETTINGS */}
+      <ProfileSettings setIsDirty={setIsDirty} />
 
-        {/* LEFT */}
-        <div
-          className="
-            rounded-[10px]
-            border border-gray-100
-            bg-white
-            p-6
-            shadow-sm
-            space-y-5
-          "
-        >
-          <div>
-            <h2 className="text-lg font-black text-gray-800">
-              تصویر پروفایل
-            </h2>
-
-            <p className="text-sm text-gray-500 mt-1">
-              تصویر اصلی نمایش داده شده در کانال.
-            </p>
-          </div>
-
-          <ImageUploader
-            label="آپلود تصویر پروفایل"
-            imageFile={profileImage}
-            setImageFile={setProfileImage}
-          />
-
-          <div className="space-y-2 text-sm text-gray-500 leading-6">
-            <p>• نسبت تصویر: ۱:۱</p>
-            <p>• حداقل سایز: 300×300</p>
-          </div>
-        </div>
-
-        {/* RIGHT */}
-        <div
-          className="
-            rounded-[10px]
-            border border-gray-100
-            bg-gray-50
-            p-6
-            shadow-sm
-            flex items-center justify-center
-          "
-        >
-          {data?.data?.image ? (
-            <div className="relative group">
-              <img
-                src={data.data.image}
-                className="
-                  w-40 h-40
-                  rounded-[10px]
-                  object-cover
-                  border-4 border-white
-                  shadow-xl
-                  transition duration-300
-                  group-hover:scale-105
-                "
-              />
-
-              <div className="absolute inset-0 rounded-[10px] bg-black/0 group-hover:bg-black/10 transition" />
-            </div>
-          ) : (
-            <div
-              className="
-                w-40 h-40
-                rounded-[10px]
-                border-2 border-dashed
-                flex items-center justify-center
-                text-gray-400
-              "
-            >
-              بدون تصویر
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* BUTTON */}
+      {/* SAVE BUTTON */}
       <div className="flex justify-end">
         <button
-          onClick={handleSubmit}
-          disabled={isLoading}
+          onClick={handleSubmitAll}
+          disabled={!isDirty || isLoading}
           className="
-            h-12
-            px-8
-            rounded-[10px]
-            bg-orange-500
-            hover:bg-orange-600
-            disabled:bg-orange-300
-            text-white
-            font-medium
-            transition-all
-            active:scale-[0.98]
-            shadow-lg shadow-orange-500/20
+            h-12 px-8 rounded-[10px]
+            bg-orange-500 text-white
+            disabled:opacity-40
           "
         >
-          {isLoading
-            ? "در حال ذخیره..."
-            : "ذخیره تغییرات"}
+          {isLoading ? "در حال ذخیره..." : "ذخیره همه تغییرات"}
         </button>
       </div>
+
+      {/* CROPPER */}
+      <ImageCropModal
+        isOpen={!!cropImage}
+        image={cropImage}
+        aspect={cropType === "cover" ? 9 / 1 : 1}
+        title={cropType === "cover" ? "برش کاور" : "برش تصویر پروفایل"}
+        onClose={() => {
+          setCropImage(null);
+          setCropType(null);
+        }}
+        onSave={(file) => {
+          if (cropType === "cover") {
+            setCoverFile(file);
+          } else {
+            setProfileFile(file);
+          }
+
+          setIsDirty(true);
+          setCropImage(null);
+          setCropType(null);
+        }}
+      />
     </div>
   );
 }
