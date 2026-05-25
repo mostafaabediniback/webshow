@@ -12,6 +12,7 @@ import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
 import useVideoUpload from "../hooks/video/useVideoUpload";
 import DashboardLayout from "../layouts/DashboardLayout";
+import { ArrowDown2 } from "iconsax-react";
 
 function UserVideos() {
   const { uploadAsync, isPending } = useVideoUpload();
@@ -502,17 +503,10 @@ function UserVideos() {
 
                     {/* icon */}
                     <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                      <svg
-                        className="w-4 h-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+        <ArrowDown2
+          size={14}
+          color="currentColor"
+        />
                     </div>
                   </div>
                 )}
@@ -536,7 +530,7 @@ function UserVideos() {
                 </div>
 
                 {/* Body */}
-                <div className="rounded-lg border border-gray-200 bg-white ">
+                <div className="">
                   {/* Loading */}
                   {isLoadingPlaylists ? (
                     <div className="p-3 text-sm text-gray-500">

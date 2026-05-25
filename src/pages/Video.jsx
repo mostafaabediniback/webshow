@@ -10,7 +10,10 @@ import usePlaylistDetail from "../hooks/playlist/usePlaylistDetail";
 import usePlaylists from "../hooks/playlist/usePlaylists";
 import { useVideo } from "../hooks/video/useVideo";
 import Layout from "../layouts/Layout";
-import { getPlaylistDetail, playlistQueryKeys } from "../services/playlist/playlistApi";
+import {
+  getPlaylistDetail,
+  playlistQueryKeys,
+} from "../services/playlist/playlistApi";
 import { getVideoPlaylistIds } from "../services/videoApi";
 import { readAuthSession } from "../utils/auth";
 
@@ -54,12 +57,14 @@ function Video() {
   const currentVideo = data?.data;
   const currentChannelId = currentVideo?.channel_id || currentVideo?.channelId;
 
-  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos({
-    channelId: currentChannelId,
-    pageNumber: 1,
-    pageSize: 25,
-    enabled: !!currentChannelId,
-  });
+  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos(
+    {
+      channelId: currentChannelId,
+      pageNumber: 1,
+      pageSize: 25,
+      enabled: !!currentChannelId,
+    },
+  );
 
   const {
     data: playlistsResponse,
@@ -67,13 +72,17 @@ function Video() {
     isError: isPlaylistsError,
     refetch: refetchPlaylists,
   } = usePlaylists(currentChannelId, { enabled: !!currentChannelId });
+
+  // console.log(playlistsResponse);
   const playlists = playlistsResponse?.items || [];
 
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [videoSource, setVideoSource] = useState("");
-  const [hasResolvedInitialPlaylist, setHasResolvedInitialPlaylist] = useState(false);
-  const [isResolvingInitialPlaylist, setIsResolvingInitialPlaylist] = useState(false);
+  const [hasResolvedInitialPlaylist, setHasResolvedInitialPlaylist] =
+    useState(false);
+  const [isResolvingInitialPlaylist, setIsResolvingInitialPlaylist] =
+    useState(false);
 
   const videoRef = useRef(null);
   const isMobile = window.innerWidth < 768;
@@ -114,7 +123,9 @@ function Video() {
     const resolveInitialPlaylist = async () => {
       const possiblePlaylistIds = getVideoPlaylistIds(currentVideo);
       const matchingPlaylist = playlists.find((playlist) =>
-        possiblePlaylistIds.some((playlistId) => String(playlist.id) === String(playlistId)),
+        possiblePlaylistIds.some(
+          (playlistId) => String(playlist.id) === String(playlistId),
+        ),
       );
 
       if (matchingPlaylist) {
@@ -131,7 +142,8 @@ function Video() {
         for (const playlist of playlists) {
           const detail = await queryClient.fetchQuery({
             queryKey: playlistQueryKeys.detail(playlist.id, 1, 100),
-            queryFn: () => getPlaylistDetail(playlist.id, { page: 1, per_page: 100 }),
+            queryFn: () =>
+              getPlaylistDetail(playlist.id, { page: 1, per_page: 100 }),
           });
 
           const containsCurrentVideo = Array.isArray(detail?.items)
@@ -178,11 +190,11 @@ function Video() {
   ]);
 
   useEffect(() => {
-  window.scrollTo({
-    top: 0,
-    behavior: "instant",
-  });
-}, [id]);
+    window.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+  }, [id]);
 
   const relatedItems = useMemo(
     () =>
@@ -299,7 +311,7 @@ function Video() {
       const playPromise = videoRef.current.play();
 
       if (playPromise !== undefined) {
-        playPromise.catch(() => { });
+        playPromise.catch(() => {});
       }
     }
   }, [videoSource, isMobile]);
@@ -361,7 +373,7 @@ function Video() {
 
                   const playPromise = video.play();
                   if (playPromise !== undefined) {
-                    playPromise.catch(() => { });
+                    playPromise.catch(() => {});
                   }
                 }}
               />
@@ -374,13 +386,17 @@ function Video() {
             <div className="mt-3 flex flex-col gap-3 border-b border-gray-200 pb-4 sm:mt-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <Link
-                  to={currentVideo?.username ? `/${currentVideo?.username}` : "/"}
+                  to={
+                    currentVideo?.username ? `/${currentVideo?.username}` : "/"
+                  }
                   state={{ channelId: currentVideo?.channel_id }}
                   className="flex min-w-0 flex-1 items-center gap-3 transition-opacity hover:opacity-80"
                 >
                   <img
                     src={currentVideo?.channel_image}
-                    alt={currentVideo?.channelName || currentVideo?.channel_name}
+                    alt={
+                      currentVideo?.channelName || currentVideo?.channel_name
+                    }
                     className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-200 ring-2 ring-gray-200 sm:h-12 sm:w-12"
                   />
                   <div className="min-w-0 flex-1">
@@ -431,7 +447,7 @@ function Video() {
                           },
                         });
                       }
-                    } catch { }
+                    } catch {}
                   }}
                   className="inline-flex h-12 w-24 items-center justify-center gap-1.5 rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 text-xs font-bold transition-colors hover:bg-gray-200 sm:text-sm"
                 >
@@ -446,7 +462,9 @@ function Video() {
                   onClick={handleDownload}
                   disabled={isDownloading || !videoSource}
                   className="inline-flex h-12 w-24 items-center justify-center gap-2 rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 text-xs font-bold transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
-                  title={!videoSource ? "آدرس ویدیو موجود نیست" : "دانلود ویدیو"}
+                  title={
+                    !videoSource ? "آدرس ویدیو موجود نیست" : "دانلود ویدیو"
+                  }
                 >
                   {isDownloading ? (
                     <>
@@ -475,7 +493,9 @@ function Video() {
               {playlists.length > 0 && (
                 <VideoPlaylistPanel
                   playlists={playlists}
-                  isPlaylistsLoading={isPlaylistsLoading || isResolvingInitialPlaylist}
+                  isPlaylistsLoading={
+                    isPlaylistsLoading || isResolvingInitialPlaylist
+                  }
                   isPlaylistsError={isPlaylistsError}
                   onRetryPlaylists={refetchPlaylists}
                   selectedPlaylistId={selectedPlaylistId}
@@ -483,63 +503,70 @@ function Video() {
                   playlistDetail={playlistDetail}
                   isPlaylistDetailLoading={
                     !!selectedPlaylistId &&
-                    (isPlaylistDetailLoading || (isPlaylistDetailFetching && !playlistDetail))
+                    (isPlaylistDetailLoading ||
+                      (isPlaylistDetailFetching && !playlistDetail))
                   }
                   isPlaylistDetailError={isPlaylistDetailError}
                   onRetryPlaylistDetail={refetchPlaylistDetail}
                   currentVideoId={id}
                 />
-
               )}
               <div>
-
-                <h3 className="mb-4 text-lg font-bold text-gray-900">ویدیوهای مرتبط</h3>
+                <h3 className="mb-4 text-lg font-bold text-gray-900">
+                  ویدیوهای مرتبط
+                </h3>
 
                 <div className="space-y-1">
                   {isRelatedLoading
                     ? Array.from({ length: 5 }).map((_, index) => (
-                      <div key={index} className="flex gap-3 rounded-lg p-2">
-                        <div className="h-24 w-40 flex-shrink-0 rounded-lg bg-gray-200 animate-pulse" />
-                        <div className="flex-1 space-y-2 py-1">
-                          <div className="h-4 w-3/4 rounded bg-gray-200 animate-pulse" />
-                          <div className="h-3 w-1/2 rounded bg-gray-200 animate-pulse" />
+                        <div key={index} className="flex gap-3 rounded-lg p-2">
+                          <div className="h-24 w-40 flex-shrink-0 rounded-lg bg-gray-200 animate-pulse" />
+                          <div className="flex-1 space-y-2 py-1">
+                            <div className="h-4 w-3/4 rounded bg-gray-200 animate-pulse" />
+                            <div className="h-3 w-1/2 rounded bg-gray-200 animate-pulse" />
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      ))
                     : relatedItems.map((video) => (
-                      <Link
-                        to={`/v/${video.id}`}
-                        key={video.id}
-                        className="group flex cursor-pointer gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
-                      >
-                        <div className="relative h-24 w-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200">
-                          <img
-                            src={video.thumbnailUrl || video.cover_link || video.cover}
-                            alt={video.title}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                            onError={(event) => {
-                              event.currentTarget.src =
-                                "https://picsum.photos/seed/default/160/90";
-                            }}
-                          />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h4 className="line-clamp-2 text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
-                            {video.title}
-                          </h4>
-                          <p className="mt-1 text-xs text-gray-500">
-                            {video.channelName || video.channel_name}
-                          </p>
-                          {/* <p className="mt-1 text-xs text-gray-400">
+                        <Link
+                          to={`/v/${video.id}`}
+                          key={video.id}
+                          className="group flex cursor-pointer gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
+                        >
+                          <div className="relative h-24 w-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200">
+                            <img
+                              src={
+                                video.thumbnailUrl ||
+                                video.cover_link ||
+                                video.cover
+                              }
+                              alt={video.title}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              onError={(event) => {
+                                event.currentTarget.src =
+                                  "https://picsum.photos/seed/default/160/90";
+                              }}
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="line-clamp-2 text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                              {video.title}
+                            </h4>
+                            <p className="mt-1 text-xs text-gray-500">
+                              {video.channelName || video.channel_name}
+                            </p>
+                            {/* <p className="mt-1 text-xs text-gray-400">
                             {(video.views || 0).toLocaleString("fa-IR")} بازدید
                           </p> */}
-                        </div>
-                      </Link>
-                    ))}
+                          </div>
+                        </Link>
+                      ))}
                 </div>
 
                 {!isRelatedLoading && !relatedItems.length && (
-                  <p className="text-sm text-gray-500">ویدیوی مرتبطی یافت نشد</p>
+                  <p className="text-sm text-gray-500">
+                    ویدیوی مرتبطی یافت نشد
+                  </p>
                 )}
               </div>
             </div>

@@ -2,7 +2,6 @@
 import {
   MoreHoriz
 } from "@mui/icons-material";
-import { ArrowLeft2, ArrowRight2 } from "iconsax-react";
 import { useState } from "react";
 
 const PaginationComponent = ({
