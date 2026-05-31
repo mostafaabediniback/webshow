@@ -1,14 +1,14 @@
-import { ArrowLeft2 } from 'iconsax-react'
-import { Link, useParams } from 'react-router-dom'
-import VideoGrid from '../components/VideoGrid'
-import VideoSkeleton from '../components/VideoSkeleton'
-import useSearch from '../hooks/video/useSearch'
-import Layout from '../layouts/Layout'
-import { Button, EmptyState, ErrorMessage } from '../ui'
+import { Link, useParams } from "react-router-dom";
+import VideoGrid from "../components/VideoGrid";
+import VideoSkeleton from "../components/VideoSkeleton";
+import useSearch from "../hooks/video/useSearch";
+import Layout from "../layouts/Layout";
+import { Button, EmptyState, ErrorMessage } from "../ui";
+import { ArrowRight2 } from "iconsax-react";
 
 function Search() {
-  const { q } = useParams()
-  const { data: videos, isLoading, isError, refetch } = useSearch(q)
+  const { q } = useParams();
+  const { data: videos, isLoading, isError, refetch } = useSearch(q);
 
   return (
     <Layout>
@@ -18,8 +18,7 @@ function Search() {
             as={Link}
             to="/"
             variant="ghost"
-            icon={<ArrowLeft2 size={18}             color="currentColor"
- />}
+            icon={<ArrowRight2 size={18} color="currentColor" />}
             size="sm"
           >
             بازگشت به خانه
@@ -36,14 +35,14 @@ function Search() {
         ) : videos && videos.length > 0 ? (
           <VideoGrid items={videos} />
         ) : (
-          <EmptyState 
-            title="موردی یافت نشد" 
-            message={`نتیجه‌ای برای جستجوی "${q}" پیدا نکردیم.`} 
+          <EmptyState
+            title="موردی یافت نشد"
+            message={`نتیجه‌ای برای جستجوی "${q}" پیدا نکردیم.`}
           />
         )}
       </div>
     </Layout>
-  )
+  );
 }
 
-export default Search
+export default Search;
