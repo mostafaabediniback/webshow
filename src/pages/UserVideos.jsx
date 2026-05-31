@@ -59,7 +59,7 @@ function UserVideos() {
       const cleanup = () => {
         try {
           video.src = "";
-        } catch (e) { }
+        } catch (e) {}
       };
       const onError = () => {
         cleanup();
@@ -209,7 +209,7 @@ function UserVideos() {
       if (thumbPreview) {
         try {
           URL.revokeObjectURL(thumbPreview);
-        } catch (e) { }
+        } catch (e) {}
         setThumbPreview(null);
       }
       return;
@@ -219,14 +219,14 @@ function UserVideos() {
       if (thumbPreview) {
         try {
           URL.revokeObjectURL(thumbPreview);
-        } catch (e) { }
+        } catch (e) {}
       }
       setThumbPreview(u);
     } else {
       if (thumbPreview) {
         try {
           URL.revokeObjectURL(thumbPreview);
-        } catch (e) { }
+        } catch (e) {}
         setThumbPreview(null);
       }
     }
@@ -294,7 +294,7 @@ function UserVideos() {
 
       navigate("/dashboard/user-videos");
       resetForm();
-    } catch { }
+    } catch {}
   };
 
   useEffect(() => {
@@ -302,12 +302,12 @@ function UserVideos() {
       if (thumbPreview) {
         try {
           URL.revokeObjectURL(thumbPreview);
-        } catch (e) { }
+        } catch (e) {}
       }
       thumbnails.forEach((t) => {
         try {
           URL.revokeObjectURL(t.url);
-        } catch (e) { }
+        } catch (e) {}
       });
     };
   }, []);
@@ -357,7 +357,7 @@ function UserVideos() {
                 setVideoUrl("");
               }}
               onUploaded={handleVideoUploaded}
-              onProgress={() => { }}
+              onProgress={() => {}}
             />
           ) : (
             <div>
@@ -503,10 +503,7 @@ function UserVideos() {
 
                     {/* icon */}
                     <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-        <ArrowDown2
-          size={14}
-          color="currentColor"
-        />
+                      <ArrowDown2 size={14} color="currentColor" />
                     </div>
                   </div>
                 )}
@@ -551,7 +548,9 @@ function UserVideos() {
                       onChange={setSelectedPlaylistIds}
                       placeholder="جستجوی پلی‌لیست..."
                       emptyMessage="پلی‌لیستی وجود ندارد"
-                      getOptionLabel={(item) => item?.name || `پلی‌لیست ${item?.id}`}
+                      getOptionLabel={(item) =>
+                        item?.name || `پلی‌لیست ${item?.id}`
+                      }
                     />
                   )}
                 </div>
@@ -623,10 +622,10 @@ function UserVideos() {
                   size={20}
                   color={
                     !title.trim() ||
-                      (uploadType === "file" && !tempPath) ||
-                      (uploadType === "url" && !videoUrl) ||
-                      isPending ||
-                      !thumbFile
+                    (uploadType === "file" && !tempPath) ||
+                    (uploadType === "url" && !videoUrl) ||
+                    isPending ||
+                    !thumbFile
                       ? "#000000"
                       : "#ffffff"
                   }
