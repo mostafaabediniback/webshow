@@ -24,7 +24,7 @@ export default function PlaylistCard({ playlist }) {
   const thumbnail = playlist?.thumbnail || hydratedThumbnail || FALLBACK_THUMBNAIL;
 
   return (
-    <article className="overflow-hidden rounded-[10px] border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+    <article className="flex flex-col justify-between w-full sm:w-[315px] rounded-[10px] border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all overflow-hidden mb-2">
       <div className="relative h-40 w-full overflow-hidden bg-slate-200">
         <img
           src={thumbnail}

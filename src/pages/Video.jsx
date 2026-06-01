@@ -75,6 +75,7 @@ function Video() {
 
   // console.log(playlistsResponse);
   const playlists = playlistsResponse?.items || [];
+  console.log(playlists);
 
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);

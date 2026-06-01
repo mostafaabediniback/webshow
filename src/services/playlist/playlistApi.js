@@ -35,9 +35,9 @@ const normalizePlaylist = (playlist = {}) => ({
   videos_count:
     Number(
       playlist?.videos_count ??
-        playlist?.videosCount ??
-        playlist?.videos_total ??
-        playlist?.videos?.length,
+      playlist?.videosCount ??
+      playlist?.videos_total ??
+      playlist?.videos?.length,
     ) || 0,
   thumbnail:
     playlist?.thumbnail ||

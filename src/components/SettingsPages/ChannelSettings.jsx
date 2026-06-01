@@ -94,7 +94,7 @@ function ChannelSettings({ channelId }) {
         <div className="mt-6 relative">
 
           {/* COVER */}
-          <div className="h-[180px] rounded-[10px] overflow-hidden relative group">
+          <div className="aspect-[7/1] rounded-[10px] overflow-hidden relative group">
             <img
               src={
                 coverFile
@@ -113,7 +113,7 @@ function ChannelSettings({ channelId }) {
           </div>
 
           {/* PROFILE */}
-          <div className="absolute bottom-[-25px] right-8 group">
+          <div className="absolute bottom-[-40px] right-8 group">
             <div className="relative w-24 h-24 rounded-[10px] overflow-hidden border-4 border-white shadow-lg">
               <img
                 src={
@@ -158,7 +158,7 @@ function ChannelSettings({ channelId }) {
       <ImageCropModal
         isOpen={!!cropImage}
         image={cropImage}
-        aspect={cropType === "cover" ? 9 / 1 : 1}
+        aspect={cropType === "cover" ? 7 / 1 : 1}
         title={cropType === "cover" ? "برش کاور" : "برش تصویر پروفایل"}
         onClose={() => {
           setCropImage(null);

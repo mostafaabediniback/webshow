@@ -40,7 +40,7 @@ function Login() {
   return (
     <Layout>
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-6 sm:py-12 px-3 sm:px-4 bg-gray-50">
-        <div className="max-w-md w-full mx-auto bg-white rounded-2xl border border-gray-200 shadow-lg p-6 sm:p-8 md:p-10">
+        <div className="max-w-md w-full mx-auto bg-white rounded-[10px] border border-gray-200 shadow-lg p-6 sm:p-8 md:p-10">
           <div className="text-center mb-8">
             <div className="flex justify-center items-center">
 
@@ -66,7 +66,7 @@ function Login() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     شماره موبایل
                   </label>
-                  <div className="relative flex items-center gap-3 rounded-xl border border-gray-300 bg-gray-50 hover:bg-white hover:border-gray-400 transition-all px-4 py-2">
+                  <div className="relative flex items-center gap-3 rounded-[10px] border border-gray-300 bg-gray-50 hover:bg-white hover:border-gray-400 transition-all px-4 py-2">
                     <Sms size={20} color="#64748b" />
                     <Field
                       type="tel"
@@ -87,7 +87,7 @@ function Login() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     رمز عبور
                   </label>
-                  <div className="relative flex items-center gap-3 rounded-xl border border-gray-300 bg-gray-50 hover:bg-white hover:border-gray-400 transition-all px-4 py-2">
+                  <div className="relative flex items-center gap-3 rounded-[10px] border border-gray-300 bg-gray-50 hover:bg-white hover:border-gray-400 transition-all px-4 py-2">
                     <Lock size={20} color="#64748b" />
                     <Field
                       type={showPassword ? "text" : "password"}
@@ -117,7 +117,7 @@ function Login() {
 
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 active:scale-95 text-white font-medium text-sm shadow-md transition-all" disabled={isSubmitting || isLoading}
+                  className="w-full py-3 rounded-[10px] bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 active:scale-95 text-white font-medium text-sm shadow-md transition-all" disabled={isSubmitting || isLoading}
                 >
                   {isLoading ? "در حال ورود..." : "ورود"}
                 </button>

@@ -99,14 +99,14 @@ const ProfileChannel = () => {
           ) : (
             <div className="overflow-hidden mb-8">
               {/* COVER */}
-              <div className="relative h-40 sm:h-52 w-full overflow-hidden rounded-2xl border border-gray-200">
+              <div className="relative w-full aspect-[7/1] overflow-hidden rounded-2xl border border-gray-200">
                 <img
                   src={channel?.background_image}
                   alt="cover"
                   className="w-full h-full object-cover"
                 />
 
-                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute inset-0 " />
               </div>
 
               {/* CONTENT */}

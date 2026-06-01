@@ -59,7 +59,7 @@ function SearchInput() {
             }
           }}
           placeholder="جستجو در ویدیوها"
-          className="w-full h-11 rounded-[10px] no-focus-visible border border-gray-300 bg-gray-50 hover:bg-white hover:border-gray-400 px-4 pr-12 transition-all duration-200 focus:outline-none focus:ring-2   focus:bg-white text-sm placeholder:text-gray-400"
+          className="w-full h-11 rounded-[10px] no-focus-visible border border-gray-300 bg-gray-50 hover:bg-white hover:border-gray-400 px-4  transition-all duration-200 focus:outline-none focus:ring-2   focus:bg-white text-sm placeholder:text-gray-400"
         />
         {q && (
           <button

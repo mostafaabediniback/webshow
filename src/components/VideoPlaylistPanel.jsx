@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { EmptyState, ErrorMessage, Skeleton } from "../ui";
 import { useState } from "react";
+import { useEffect } from "react";
+import { Firstline } from "iconsax-react";
 
 const FALLBACK_THUMBNAIL = "https://picsum.photos/seed/default/320/180";
 
@@ -10,10 +12,10 @@ const normalizeText = (value) =>
 const getPlaylistVideoThumbnail = (item) =>
   normalizeText(
     item?.thumbnailUrl ||
-      item?.cover_link ||
-      item?.cover ||
-      item?.thumbnail ||
-      item?.image,
+    item?.cover_link ||
+    item?.cover ||
+    item?.thumbnail ||
+    item?.image,
   ) || FALLBACK_THUMBNAIL;
 
 const getPlaylistVideoChannelName = (item) =>
@@ -95,10 +97,19 @@ function VideoPlaylistPanel({
   onRetryPlaylistDetail,
   currentVideoId,
 }) {
-  const [openedPlaylist, setOpenedPlaylist] = useState(
-    selectedPlaylistId || null,
-  );
-  console.log(playlists);
+  // const [openedPlaylist, setOpenedPlaylist] = useState(
+  //   selectedPlaylistId || null,
+  // );
+  const [openedPlaylist, setOpenedPlaylist] = useState(null);
+
+  useEffect(() => {
+    if (!openedPlaylist && playlists.length > 0) {
+      const firstPlaylistId = selectedPlaylistId || playlists[0].id;
+
+      setOpenedPlaylist(firstPlaylistId);
+      onSelectPlaylist?.(firstPlaylistId);
+    }
+  }, [playlists, selectedPlaylistId]);
   if (isPlaylistsLoading) {
     return (
       <section className="rounded-[10px] border border-slate-200 bg-gradient-to-b from-white via-slate-50 to-slate-100/80 p-4 shadow-sm">
@@ -150,15 +161,16 @@ function VideoPlaylistPanel({
 
   return (
     <section className="overflow-hidden ">
-      <div className="  border-slate-200/80 px-4 pb-4 pt-4">
-        <h3 className="mb-4 text-lg font-bold text-gray-900">پلی‌لیست</h3>
-        
+      <div className="  border-slate-200/80  pb-4 ">
+        {/* <h3 className="mb-4 text-lg font-bold text-gray-900">پلی‌لیست</h3> */}
+
         <div className="space-y-3">
           {playlists.map((playlistOption) => {
             const isOpen = String(openedPlaylist) === String(playlistOption.id);
 
             const isSelected =
               String(selectedPlaylistId) === String(playlistOption.id);
+              console.log(playlistOption);
 
             return (
               <div
@@ -179,13 +191,23 @@ function VideoPlaylistPanel({
                   className="flex w-full items-center justify-between px-4 py-4 text-right transition-colors hover:bg-slate-50"
                 >
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <div className="flex justify-center items-center gap-2">
+                      <Firstline
+                        size="24"
+                        color="currentColor"
+                      />
+                      <h3 className="text-lg font-bold text-slate-900">
+                        پلی‌لیست
+                      </h3>
+                    </div>
+
+                    <h3 className="text-sm font-medium text-slate-900 m-4">
                       {playlistOption.name || `پلی‌لیست ${playlistOption.id}`}
                     </h3>
 
-                    {playlistOption.items_count ? (
+                    {playlistOption.videos_count ? (
                       <p className="mt-1 text-xs text-slate-500">
-                        {Number(playlistOption.items_count).toLocaleString(
+                        {Number(playlistOption.videos_count).toLocaleString(
                           "fa-IR",
                         )}{" "}
                         ویدیو
@@ -199,9 +221,8 @@ function VideoPlaylistPanel({
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    className={`h-5 w-5 text-slate-500 transition-transform duration-300 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
+                    className={`h-5 w-5 text-slate-500 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                      }`}
                   >
                     <path
                       strokeLinecap="round"
@@ -239,18 +260,16 @@ function VideoPlaylistPanel({
                             <Link
                               key={`${playlistOption.id}-${videoId}-${index}`}
                               to={`/v/${videoId}`}
-                              className={`group flex items-center gap-3 rounded-[10px] border p-2.5 transition-all ${
-                                isActive
-                                  ? "border-blue-200 bg-blue-50 shadow-sm"
-                                  : "border-transparent bg-white hover:border-slate-200 hover:bg-slate-50"
-                              }`}
+                              className={`group flex items-center gap-3 rounded-[10px] border p-2.5 transition-all ${isActive
+                                ? "border-blue-200 bg-blue-50 shadow-sm"
+                                : "border-transparent bg-white hover:border-slate-200 hover:bg-slate-50"
+                                }`}
                             >
                               <div
-                                className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px] text-xs font-extrabold ${
-                                  isActive
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-slate-100 text-slate-600 group-hover:bg-slate-200"
-                                }`}
+                                className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px] text-xs font-extrabold ${isActive
+                                  ? "bg-blue-600 text-white"
+                                  : "bg-slate-100 text-slate-600 group-hover:bg-slate-200"
+                                  }`}
                               >
                                 {Number(order).toLocaleString("fa-IR")}
                               </div>
@@ -276,11 +295,10 @@ function VideoPlaylistPanel({
 
                               <div className="min-w-0 flex-1">
                                 <h4
-                                  className={`line-clamp-2 text-sm font-bold leading-6 ${
-                                    isActive
-                                      ? "text-blue-900"
-                                      : "text-slate-900"
-                                  }`}
+                                  className={`line-clamp-2 text-sm font-bold leading-6 ${isActive
+                                    ? "text-blue-900"
+                                    : "text-slate-900"
+                                    }`}
                                 >
                                   {item?.title || `ویدیو ${videoId}`}
                                 </h4>

@@ -16,6 +16,9 @@ import useDeleteVideo from "../hooks/video/useDeleteVideo";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { ConfirmModal, EmptyState, ErrorMessage, Spinner } from "../ui";
 import PlaylistCard from "./PlaylistCard";
+import bgImag from "../assets/img/bgImag.jpg";
+import { Category } from "iconsax-react";
+import { serverUrl } from "../utils/axiosConfigNew";
 
 const PAGE_SIZE = 25;
 
@@ -28,6 +31,7 @@ export default function UploadedVideos() {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
   const [viewMode, setViewMode] = useState("videos");
+  const [showSocials, setShowSocials] = useState(false);
 
   const {
     data: videos,
@@ -71,18 +75,18 @@ export default function UploadedVideos() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="bg-white rounded-xl  p-6 shadow-sm">
-          <div className=" overflow-hidden mb-4">
+        <div className="">
+          <div className=" overflow-hidden ">
             {/* COVER */}
-            <div className="relative h-40 sm:h-52 w-full overflow-hidden rounded-2xl ">
+            <div className="relative aspect-[7/1] w-full overflow-hidden rounded-2xl ">
               <img
-                src={channel?.background_image}
+                src={channel?.background_image || bgImag}
                 alt="cover"
                 className="w-full h-full object-cover"
               />
 
               {/* overlay */}
-              <div className="absolute inset-0 bg-black/20" />
+              <div className="absolute inset-0 " />
             </div>
 
             {/* CONTENT */}
@@ -94,24 +98,27 @@ export default function UploadedVideos() {
                     src={channel?.image}
                     alt="avatar"
                     className="
-          w-24 h-24 sm:w-28 sm:h-28
-          rounded-2xl
-          object-cover
-          shadow-lg
-          border-1 border-gray-500
-          bg-white
-        "
+  w-24 h-24 sm:w-24 sm:h-24
+  rounded-[10px]
+  object-cover
+  bg-white
+  border-4 border-gray-100
+  shadow-lg shadow-black/20
+"
                   />
                 </div>
 
                 <div className="flex gap-2 justify-between items-center flex-wrap">
                   {/* INFO */}
-                  <div className="space-y-2">
+                  <div className="mx-4">
                     <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words">
                       {channel?.name}
                     </h2>
-
                     <p className="text-sm text-gray-500 break-all">
+                      {channel?.description || channel?.username}
+                    </p>
+
+                    {/* <p className="text-sm text-gray-500 break-all">
                       {channel?.username}
                     </p>
 
@@ -119,34 +126,78 @@ export default function UploadedVideos() {
                       <p className="text-sm text-gray-600 line-clamp-2">
                         {channel.description}
                       </p>
-                    )}
+                    )} */}
                   </div>
 
                   {/* SOCIALS */}
-                  <div className="flex flex-wrap gap-2 ">
-                    {channel?.socials &&
-                      Object.entries(channel.socials).map(([key, value]) => (
-                        <span
-                          key={key}
-                          className="
-              text-xs
-              px-2 py-1
-              bg-gray-100
-              rounded-md
-              text-gray-600
-              whitespace-nowrap
-            "
-                        >
-                          {key}
-                        </span>
-                      ))}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowSocials((prev) => !prev)}
+                      className="
+      flex items-center justify-center
+      w-10 h-10 rounded-full
+      bg-orange-50 hover:bg-orange-100
+      transition-all duration-300
+    "
+                    >
+                      <Category
+                        size="32"
+                        color="#FF8A65"
+                        variant="Bold"
+                      />
+                    </button>
+
+                    <div
+                      className={`
+      flex items-center gap-2 overflow-hidden
+      transition-all duration-500 ease-in-out
+      ${showSocials ? "max-w-[500px] opacity-100" : "max-w-0 opacity-0"}
+    `}
+                    >
+                      {channel?.socials &&
+                        Object.entries(channel.socials)
+                          .filter(([, social]) => social?.link)
+                          .map(([key, social]) => {
+                            const iconUrl = social.icon?.startsWith("https")
+                              ? social.icon
+                              : `${serverUrl}${social.icon}`;
+                            console.log(iconUrl);
+
+                            return (
+                              <a
+                                key={key}
+                                href={social.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={key}
+                                className="
+                w-10 h-10
+                flex items-center justify-center
+                rounded-full
+                bg-gray-100
+                hover:bg-orange-50
+                hover:scale-110
+                transition-all duration-300
+                shrink-0
+              "
+                              >
+                                <img
+                                  src={iconUrl}
+                                  alt={key}
+                                  className="w-5 h-5 object-contain"
+                                />
+                              </a>
+                            );
+                          })}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4 flex justify-center">
             <div className="flex flex-col gap-3  lg:flex-row lg:items-center lg:justify-between">
               <VideoTypeFilter
                 value={videoType}
@@ -159,7 +210,7 @@ export default function UploadedVideos() {
               />
             </div>
           </div>
-          <div className="border-b m-2"></div>
+          {/* <div className="border-b m-2"></div> */}
 
           {isLoadingVideos || isFetching ? (
             <div className="flex flex-col items-center justify-center py-20">
@@ -175,10 +226,10 @@ export default function UploadedVideos() {
             />
           ) : (
             <>
-              <div className="space-y-3 flex flex-wrap gap-4">
+              <div className="flex flex-wrap ">
                 {viewMode === "videos" ? (
                   <>
-                    <div className="space-y-3 flex flex-wrap gap-4">
+                    <div className="w-full justify-between flex flex-wrap gap-2">
                       {videosList.map((v) => (
                         <VideoRow
                           key={v.id}

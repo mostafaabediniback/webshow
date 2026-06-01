@@ -49,12 +49,20 @@ function SocialSettings() {
   const [socials, setSocials] = useState({});
   const [description, setDescription] = useState("");
 
-  useEffect(() => {
-    if (data?.data) {
-      setSocials(data.data.socials || {});
-      setDescription(data.data.description || "");
-    }
-  }, [data]);
+useEffect(() => {
+  if (data?.data) {
+    const formattedSocials = {};
+
+    Object.entries(data.data.socials || {}).forEach(
+      ([key, value]) => {
+        formattedSocials[key] = value?.link || "";
+      }
+    );
+
+    setSocials(formattedSocials);
+    setDescription(data.data.description || "");
+  }
+}, [data]);
 
   const handleChange = (key, value) => {
     setSocials((prev) => ({

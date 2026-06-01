@@ -16,7 +16,7 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
   const isPublic = item.public_show === 1 || item.public_show === true;
 
   return (
-    <div className="flex flex-col justify-between w-72 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all overflow-hidden">
+    <div className="flex flex-col justify-between w-full sm:w-[315px] rounded-[10px] border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all overflow-hidden mb-2">
       {/* تصویر */}
       <div className="relative w-full h-44 bg-gray-200">
         <img
@@ -49,12 +49,12 @@ function VideoCard({ item, onDelete, onShow, onEdit, isDeleting, isEditing }) {
           {title}
         </p>
 
-        {channelName && (
+        {/* {channelName && (
           <p className="text-xs text-gray-600 truncate flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
             {channelName}
           </p>
-        )}
+        )} */}
 
         <p className="text-xs text-gray-500 flex items-center gap-1">
           <Eye size={14} color="#4a5565" />

@@ -94,7 +94,6 @@ className={[
             <SearchNormal1
               color="currentColor"
               size={18}
-              color="#64748b"
               className="absolute right-5 top-1/2 -translate-y-1/2"
             />
 
