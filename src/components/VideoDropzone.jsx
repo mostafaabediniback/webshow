@@ -238,14 +238,14 @@ function VideoDropzone({
               <span className="text-sm font-medium text-gray-700">
                 پیشرفت آپلود :
               </span>
-              <span className="text-sm font-semibold text-orange-600">
+              <span className="text-sm font-semibold text-blue-600">
                 {Math.round(progress)}%
               </span>
             </div>
 
             <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden mb-3">
               <div
-                className="bg-gradient-to-r to-blue-500 via-sky-500 from-orange-500 h-2.5 rounded-full transition-all duration-300"
+                className="bg-gradient-to-r to-blue-500 via-sky-500 from-blue-500 h-2.5 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>

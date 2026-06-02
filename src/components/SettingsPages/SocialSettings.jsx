@@ -1,12 +1,7 @@
 // SocialSettings.jsx
 
 import { useEffect, useState } from "react";
-import {
-  FaGlobe,
-  FaInstagram,
-  FaTelegram,
-  FaYoutube,
-} from "react-icons/fa";
+import { FaGlobe, FaInstagram, FaTelegram, FaYoutube } from "react-icons/fa";
 
 import { toast } from "react-toastify";
 import useChannelDetail from "../../hooks/channel/useChannelDetail";
@@ -19,30 +14,39 @@ const SOCIAL_CONFIG = [
     icon: FaTelegram,
   },
   {
+    name: "insta",
+    label: "Instagram",
+    icon: FaInstagram,
+  },
+  {
     name: "youtube",
     label: "YouTube",
     icon: FaYoutube,
   },
   {
-    name: "instagram",
-    label: "Instagram",
-    icon: FaInstagram,
-  },
-  {
-    name: "eitaa",
-    label: "Eitaa",
+    name: "eita",
+    label: "ایتا",
     icon: FaGlobe,
   },
   {
     name: "bale",
-    label: "Bale",
+    label: "بله",
+    icon: FaGlobe,
+  },
+  {
+    name: "email",
+    label: "ایمیل",
     icon: FaGlobe,
   },
 ];
 
 function SocialSettings() {
-  const { updateChannelInfo, isUpdatingChannelInfo } =
-    useChannel(1, 10, {}, { enabled: false });
+  const { updateChannelInfo, isUpdatingChannelInfo } = useChannel(
+    1,
+    10,
+    {},
+    { enabled: false },
+  );
 
   const { data, refetch } = useChannelDetail();
 
@@ -50,57 +54,55 @@ function SocialSettings() {
   const [description, setDescription] = useState("");
 
 useEffect(() => {
-  if (data?.data) {
-    const formattedSocials = {};
+  if (!data?.data) return;
 
-    Object.entries(data.data.socials || {}).forEach(
-      ([key, value]) => {
-        formattedSocials[key] = value?.link || "";
-      }
-    );
+  const socialsData = {};
 
-    setSocials(formattedSocials);
-    setDescription(data.data.description || "");
-  }
+  Object.entries(data.data.socials || {}).forEach(([key, value]) => {
+    socialsData[key] = {
+      link: value?.link || "",
+      icon: value?.icon || null,
+    };
+  });
+
+  setSocials(socialsData);
+  setDescription(data.data.description || "");
 }, [data]);
 
-  const handleChange = (key, value) => {
-    setSocials((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
+const handleChange = (key, value) => {
+  setSocials((prev) => ({
+    ...prev,
+    [key]: {
+      ...prev[key],
+      link: value,
+    },
+  }));
+};
+const handleSubmit = () => {
+  const payloadSocials = {};
 
-  const handleSubmit = () => {
-    updateChannelInfo(
-      {
-        description,
-        socials,
+  Object.entries(socials).forEach(([key, value]) => {
+    if (value?.link?.trim()) {
+      payloadSocials[key] = value.link.trim();
+    }
+  });
+
+  updateChannelInfo(
+    {
+      description,
+      socials: payloadSocials,
+    },
+    {
+      onSuccess: () => {
+        toast.success("اطلاعات ذخیره شد");
+        refetch();
       },
-      {
-        onSuccess: () => {
-          toast.success("اطلاعات ذخیره شد");
-          refetch();
-        },
-      }
-    );
-  };
+    }
+  );
+};
 
   return (
-    <div className="space-y-6">
-
-      {/* HEADER */}
-      <div>
-        <h2 className="text-2xl font-black text-gray-800">
-          شبکه‌های اجتماعی
-        </h2>
-
-        <p className="text-sm text-gray-500 mt-1">
-          لینک شبکه‌های اجتماعی و توضیحات کانال خود را
-          مدیریت کنید.
-        </p>
-      </div>
-
+    <div className="space-y-6 ">
       {/* DESCRIPTION */}
       <div
         className="
@@ -109,12 +111,10 @@ useEffect(() => {
           bg-white
           p-5
           shadow-sm
-          space-y-3
+          flex flex-col gap-4
         "
       >
-        <label className="font-semibold text-gray-700">
-          توضیحات کانال
-        </label>
+        <label className="font-semibold text-gray-700 ">توضیحات کانال</label>
 
         <textarea
           value={description}
@@ -137,12 +137,12 @@ useEffect(() => {
         />
 
         <div className="text-xs text-gray-400 text-left">
-          {description.length}/500
+          {description.length}/40
         </div>
       </div>
 
       {/* SOCIALS */}
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded-[10px] shadow-sm">
         {SOCIAL_CONFIG.map((item) => {
           const Icon = item.icon;
 
@@ -150,7 +150,7 @@ useEffect(() => {
             <div
               key={item.name}
               className="
-                flex items-center gap-4
+                flex  items-center gap-4
                 rounded-[10px]
                 border border-gray-200
                 bg-gray-50
@@ -160,26 +160,27 @@ useEffect(() => {
                 hover:border-orange-300
               "
             >
-              <div
-                className="
-                  w-12 h-12
-                  rounded-[10px]
-                  bg-white
-                  border border-gray-200
-                  flex items-center justify-center
-                  shadow-sm
-                "
-              >
-                <Icon className="text-gray-600 text-lg" />
+              <div className="w-12 h-12 rounded-[10px] bg-white border border-gray-200 flex items-center justify-center shadow-sm">
+                {socials?.[item.name]?.icon ? (
+                  <img
+                    src={socials[item.name].icon}
+                    alt={item.label}
+                    className="w-6 h-6 object-contain"
+                  />
+                ) : (
+                  <Icon className="text-gray-600 text-lg" />
+                )}
               </div>
 
               <input
                 type="text"
-                value={socials?.[item.name] || ""}
-                onChange={(e) =>
-                  handleChange(item.name, e.target.value)
+                value={socials?.[item.name]?.link || ""}
+                onChange={(e) => handleChange(item.name, e.target.value)}
+                placeholder={
+                  socials?.[item.name]?.link
+                    ? socials[item.name].link
+                    : `لینک ${item.label}`
                 }
-                placeholder={`لینک ${item.label}`}
                 className="
                   flex-1
                   bg-transparent
@@ -211,75 +212,8 @@ useEffect(() => {
             shadow-lg shadow-orange-500/20
           "
         >
-          {isUpdatingChannelInfo
-            ? "در حال ذخیره..."
-            : "ذخیره تغییرات"}
+          {isUpdatingChannelInfo ? "در حال ذخیره..." : "ذخیره تغییرات"}
         </button>
-      </div>
-
-      {/* PREVIEW */}
-      <div
-        className="
-          rounded-[10px]
-          border border-gray-100
-          bg-white
-          p-5
-          shadow-sm
-          space-y-4
-        "
-      >
-        <h3 className="font-bold text-gray-700">
-          پیش‌نمایش لینک‌ها
-        </h3>
-
-        <div className="grid sm:grid-cols-2 gap-3">
-          {SOCIAL_CONFIG.map((item) => {
-            const value = socials?.[item.name];
-
-            if (!value) return null;
-
-            const Icon = item.icon;
-
-            return (
-              <a
-                key={item.name}
-                href={value}
-                target="_blank"
-                rel="noreferrer"
-                className="
-                  flex items-center gap-4
-                  rounded-[10px]
-                  border border-gray-200
-                  p-4
-                  hover:border-orange-300
-                  hover:bg-orange-50
-                  transition-all
-                "
-              >
-                <div
-                  className="
-                    w-11 h-11
-                    rounded-xl
-                    bg-gray-100
-                    flex items-center justify-center
-                  "
-                >
-                  <Icon className="text-gray-700" />
-                </div>
-
-                <div className="overflow-hidden">
-                  <p className="text-sm font-medium">
-                    {item.label}
-                  </p>
-
-                  <p className="text-xs text-gray-500 truncate">
-                    {value}
-                  </p>
-                </div>
-              </a>
-            );
-          })}
-        </div>
       </div>
     </div>
   );

@@ -22,13 +22,13 @@ const useLogin = () => {
     onSuccess: (res) => {
       clearAuthStore()
       const message = res?.message || 'با موفقیت از حساب کاربری خارج شدید'
-      toast.success(message, { position: 'top-right', theme: 'colored' })
+      toast.success(message, { position: 'bottom-right', theme: 'colored' })
       navigate('/login', { replace: true })
     },
     onError: () => {
       clearAuthStore()
       toast.error('حساب کاربری شما خارج شد، اما هنگام ثبت خروج در سرور خطایی رخ داد.', {
-        position: 'top-right',
+        position: 'bottom-right',
         theme: 'colored',
       })
       navigate('/login', { replace: true })
@@ -45,7 +45,7 @@ const useLogin = () => {
 
       if (!token) {
         resetLocalState()
-        toast.error('خطا در دریافت اطلاعات کاربر', { position: 'top-right', theme: 'colored' })
+        toast.error('خطا در دریافت اطلاعات کاربر', { position: 'bottom-right', theme: 'colored' })
         return
       }
 
@@ -62,7 +62,7 @@ const useLogin = () => {
         setPhoneNumber(user.phone_number)
       }
 
-      toast.success('ورود با موفقیت انجام شد', { position: 'top-right', theme: 'colored' })
+      toast.success('ورود با موفقیت انجام شد', { position: 'bottom-right', theme: 'colored' })
       navigate(getDefaultDashboardRoute(roleName), { replace: true })
     },
     onError: (error) => {
@@ -73,7 +73,7 @@ const useLogin = () => {
         ? errorMessages
         : [errorMessages || 'ورود ناموفق بود. لطفاً دوباره تلاش کنید.'];
 
-      toast.error(formattedErrors, { position: 'top-right', theme: 'colored' })
+      toast.error(formattedErrors, { position: 'bottom-right', theme: 'colored' })
     },
   })
 

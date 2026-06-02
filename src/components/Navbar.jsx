@@ -15,6 +15,10 @@ function Navbar() {
     (state) => state.defaultDashboardRoute,
   );
 
+  const role = sessionStorage.getItem("role");
+  const isSuperAdmin = role === "super_admin";
+  const isAdmin = role === "admin";
+
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
@@ -75,21 +79,34 @@ function Navbar() {
             <div className="hidden md:flex items-center gap-3 ">
               {isAuthenticated ? (
                 <>
+                  {isAuthenticated && (isSuperAdmin || isAdmin) && (
+                    <Link
+                      to={
+                        isSuperAdmin
+                          ? "/dashboard/upload"
+                          : "/dashboard/user-upload"
+                      }
+                      className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                    >
+                      بارگذاری ویدیو
+                    </Link>
+                  )}
+
                   <Link
                     to={defaultDashboardRoute}
                     className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
                   >
                     مدیریت کانال‌ها
                   </Link>
-                  <button
+
+                  {/* <button
                     onClick={handleLogout}
                     disabled={isLoggingOut}
                     className="h-10 px-4 rounded-[10px] border border-red-300 bg-white hover:bg-red-50 active:bg-red-100 text-sm font-medium flex items-center gap-2 text-red-600 transition-colors shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="خروج از حساب کاربری"
                   >
                     <Logout size={18} color="currentColor" />
                     {isLoggingOut ? "در حال خروج..." : "خروج"}
-                  </button>
+                  </button> */}
                 </>
               ) : (
                 <Link

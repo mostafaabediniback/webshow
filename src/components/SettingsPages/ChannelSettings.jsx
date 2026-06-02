@@ -18,16 +18,11 @@ function ChannelSettings({ channelId }) {
     isChangingProfileImage,
   } = useChannel(1, 10, {}, { enabled: false });
 
-  const [coverFile, setCoverFile] = useState(null);
-  const [profileFile, setProfileFile] = useState(null);
-
   const [cropImage, setCropImage] = useState(null);
   const [cropType, setCropType] = useState(null);
-
   const [isDirty, setIsDirty] = useState(false);
 
-  const isLoading =
-    isChangingChannelImage || isChangingProfileImage;
+  const isLoading = isChangingChannelImage || isChangingProfileImage;
 
   const openCropper = (file, type) => {
     if (!file) {
@@ -61,46 +56,15 @@ function ChannelSettings({ channelId }) {
     setCropType(type);
   };
 
-  const handleSubmitAll = async () => {
-    try {
-      if (coverFile) {
-        await changeProfileChannelImage(coverFile, channelId, {
-          onSuccess: () => toast.success("کاور بروزرسانی شد"),
-        });
-      }
-
-      if (profileFile) {
-        await changeChannelImage(profileFile, channelId, {
-          onSuccess: () => toast.success("پروفایل بروزرسانی شد"),
-        });
-      }
-
-      setIsDirty(false);
-      setCoverFile(null);
-      setProfileFile(null);
-
-      refetch();
-      toast.success("تغییرات ذخیره شد");
-    } catch (e) {
-      toast.error("خطا در ذخیره تغییرات");
-    }
-  };
-
   return (
     <div className="space-y-8">
-
       {/* PREVIEW */}
-      <div className="bg-white rounded-[10px]">
-        <div className="mt-6 relative">
-
+      <div className="mb-16 rounded-[10px]">
+        <div className="mt-6 relative ">
           {/* COVER */}
           <div className="aspect-[7/1] rounded-[10px] overflow-hidden relative group">
             <img
-              src={
-                coverFile
-                  ? URL.createObjectURL(coverFile)
-                  : data?.data?.background_image
-              }
+              src={data?.data?.background_image}
               className="w-full h-full object-cover"
             />
 
@@ -116,11 +80,7 @@ function ChannelSettings({ channelId }) {
           <div className="absolute bottom-[-40px] right-8 group">
             <div className="relative w-24 h-24 rounded-[10px] overflow-hidden border-4 border-white shadow-lg">
               <img
-                src={
-                  profileFile
-                    ? URL.createObjectURL(profileFile)
-                    : data?.data?.image
-                }
+                src={data?.data?.image}
                 className="w-full h-full object-cover"
               />
 
@@ -132,27 +92,11 @@ function ChannelSettings({ channelId }) {
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
       {/* PROFILE SETTINGS */}
       <ProfileSettings setIsDirty={setIsDirty} />
-
-      {/* SAVE BUTTON */}
-      <div className="flex justify-end">
-        <button
-          onClick={handleSubmitAll}
-          disabled={!isDirty || isLoading}
-          className="
-            h-12 px-8 rounded-[10px]
-            bg-orange-500 text-white
-            disabled:opacity-40
-          "
-        >
-          {isLoading ? "در حال ذخیره..." : "ذخیره همه تغییرات"}
-        </button>
-      </div>
 
       {/* CROPPER */}
       <ImageCropModal
@@ -166,12 +110,29 @@ function ChannelSettings({ channelId }) {
         }}
         onSave={(file) => {
           if (cropType === "cover") {
-            setCoverFile(file);
-          } else {
-            setProfileFile(file);
+            changeProfileChannelImage(file, channelId, {
+              onSuccess: () => {
+                toast.success("کاور بروزرسانی شد");
+                refetch();
+              },
+              onError: () => {
+                toast.error("خطا در بروزرسانی کاور");
+              },
+            });
           }
 
-          setIsDirty(true);
+          if (cropType === "profile") {
+            changeChannelImage(file, channelId, {
+              onSuccess: () => {
+                toast.success("پروفایل بروزرسانی شد");
+                refetch();
+              },
+              onError: () => {
+                toast.error("خطا در بروزرسانی پروفایل");
+              },
+            });
+          }
+
           setCropImage(null);
           setCropType(null);
         }}

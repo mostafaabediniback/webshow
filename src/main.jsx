@@ -16,7 +16,7 @@ createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <App />
         <GlobalLoading />
-        <ToastContainer position="top-right" theme="colored" rtl />
+        <ToastContainer position="bottom-right" theme="colored" rtl />
       </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>,

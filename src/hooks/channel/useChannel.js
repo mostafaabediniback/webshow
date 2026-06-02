@@ -38,7 +38,7 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
     onSuccess: async () => {
       await invalidateChannelQueries()
       toast.success('کانال با موفقیت ثبت شد', {
-        position: 'top-right',
+        position: 'bottom-right',
         theme: 'colored',
       })
     },

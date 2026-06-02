@@ -11,7 +11,7 @@ import useChannel from "../hooks/channel/useChannel";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
 import useVideoUpload from "../hooks/video/useVideoUpload";
-import DashboardLayout from "../layouts/DashboardLayout";
+import Layout from "../layouts/Layout";
 import { Button } from "../ui";
 
 function Upload() {
@@ -325,146 +325,147 @@ function Upload() {
 
   const isFormDisabled = videoStatus !== "success";
   return (
-    <DashboardLayout>
-      <div className="space-y-2">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <div className="flex justify-center mb-4">
-            <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
-              <button
-                onClick={() => setUploadType("file")}
-                className={`px-4 py-2 text-sm rounded-md transition-all ${
-                  uploadType === "file"
-                    ? "bg-white shadow text-gray-900"
-                    : "text-gray-500"
-                }`}
-              >
-                آپلود فایل
-              </button>
+    <Layout>
+      <div className="flex justify-center items-center">
+        <div className="space-y-2 w-full h-full sm:max-w-7xl pb-20 pt-10 px-5 ">
+          <div className="bg-white  rounded-xl border border-gray-200 p-6 shadow-sm">
+            <div className="flex justify-center mb-4">
+              <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
+                <button
+                  onClick={() => setUploadType("file")}
+                  className={`px-4 py-2 text-sm rounded-md transition-all ${
+                    uploadType === "file"
+                      ? "bg-white shadow text-gray-900"
+                      : "text-gray-500"
+                  }`}
+                >
+                  آپلود فایل
+                </button>
 
-              <button
-                onClick={() => setUploadType("url")}
-                className={`px-4 py-2 text-sm rounded-md transition-all ${
-                  uploadType === "url"
-                    ? "bg-white shadow text-gray-900"
-                    : "text-gray-500"
-                }`}
-              >
-                لینک ویدیو
-              </button>
+                <button
+                  onClick={() => setUploadType("url")}
+                  className={`px-4 py-2 text-sm rounded-md transition-all ${
+                    uploadType === "url"
+                      ? "bg-white shadow text-gray-900"
+                      : "text-gray-500"
+                  }`}
+                >
+                  لینک ویدیو
+                </button>
+              </div>
             </div>
-          </div>
 
-          {uploadType === "file" ? (
-            <VideoDropzone
-              onFileSelected={(file) => {
-                handleVideoSelected(file);
-                setVideoUrl("");
-              }}
-              onUploaded={handleVideoUploaded}
-              onProgress={(percent) => {
-                setUploadProgress(percent);
-                if (percent > 0 && percent < 100) {
-                  setVideoStatus("uploading");
-                }
-              }}
-            />
-          ) : (
-            <div className="mt-4">
-              <input
-                value={videoUrl}
-                onChange={(e) => {
-                  setVideoUrl(e.target.value);
-                  setTempPath(null);
-                  setVideoFile(null);
-                  setVideoStatus("idle");
+            {uploadType === "file" ? (
+              <VideoDropzone
+                onFileSelected={(file) => {
+                  handleVideoSelected(file);
+                  setVideoUrl("");
                 }}
-                placeholder="https://example.com/video.mp4"
-                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onUploaded={handleVideoUploaded}
+                onProgress={(percent) => {
+                  setUploadProgress(percent);
+                  if (percent > 0 && percent < 100) {
+                    setVideoStatus("uploading");
+                  }
+                }}
               />
-            </div>
-          )}
-
-          <div className="mt-4 space-y-2">
-            {isFormDisabled && (
-              <p className="text-sm">
-                لطفا پیش از بارگذاری ویدیو{" "}
-                <span className="text-blue-500">قوانین اربعین تی وی</span> را
-                مطالعه کنید{" "}
-              </p>
+            ) : (
+              <div className="mt-4">
+                <input
+                  value={videoUrl}
+                  onChange={(e) => {
+                    setVideoUrl(e.target.value);
+                    setTempPath(null);
+                    setVideoFile(null);
+                    setVideoStatus("idle");
+                  }}
+                  placeholder="https://example.com/video.mp4"
+                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
             )}
-            <div
-              className={`rounded-lg border px-3 py-2 text-sm ${videoStatus === "success" ? "border-green-200 bg-green-50 text-green-700" : canEditMetadata ? "border-blue-200 bg-blue-50 text-blue-700" : "border-slate-200 bg-slate-50 text-slate-600"}`}
-            >
-              {uploadStatusText}
-              {videoStatus === "uploading" && uploadProgress > 0
-                ? ` (${Math.round(uploadProgress)}%)`
-                : ""}
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full flex flex-col gap-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
-              عنوان ویدیو <span className="text-red-500">*</span>
-            </label>
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="عنوان ویدیو را وارد کنید"
-              className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
-              توضیحات
-            </label>
-            <textarea
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-              className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
-              انتخاب کانال <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={chanId}
-              onChange={(e) => setChanId(e.target.value)}
-              disabled={isLoadingChannels}
-              className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-            >
-              <option value="">انتخاب کانال</option>
-              {(chans || []).map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          {/* PUBLIC SWITCH */}
-          <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 mt-2">
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-gray-800">
-                نمایش عمومی ویدیو
-              </span>
-              <span className="text-xs text-gray-500">
-                در صورت فعال بودن، ویدیو برای همه کاربران قابل مشاهده است
-              </span>
-            </div>
 
-            <label className="relative inline-flex cursor-pointer items-center">
-              <input
-                type="checkbox"
-                checked={publicShow === 1}
-                onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
-                className="sr-only peer"
-              />
-
+            <div className="mt-4 space-y-2">
+              {isFormDisabled && (
+                <p className="text-sm">
+                  لطفا پیش از بارگذاری ویدیو{" "}
+                  <span className="text-blue-500">قوانین اربعین تی وی</span> را
+                  مطالعه کنید{" "}
+                </p>
+              )}
               <div
-                className="
-      h-6 w-11 rounded-[10px] bg-gray-300 
+                className={`rounded-lg border px-3 py-2 text-sm ${videoStatus === "success" ? "border-green-200 bg-green-50 text-green-700" : canEditMetadata ? "border-blue-200 bg-blue-50 text-blue-700" : "border-slate-200 bg-slate-50 text-slate-600"}`}
+              >
+                {uploadStatusText}
+                {videoStatus === "uploading" && uploadProgress > 0
+                  ? ` (${Math.round(uploadProgress)}%)`
+                  : ""}
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full flex flex-col gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-900 mb-2">
+                عنوان ویدیو <span className="text-red-500">*</span>
+              </label>
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="عنوان ویدیو را وارد کنید"
+                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-900 mb-2">
+                توضیحات
+              </label>
+              <textarea
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+                className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-900 mb-2">
+                انتخاب کانال <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={chanId}
+                onChange={(e) => setChanId(e.target.value)}
+                disabled={isLoadingChannels}
+                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
+              >
+                <option value="">انتخاب کانال</option>
+                {(chans || []).map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* PUBLIC SWITCH */}
+            <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 mt-2">
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-800">
+                  نمایش عمومی ویدیو
+                </span>
+                <span className="text-xs text-gray-500">
+                  در صورت فعال بودن، ویدیو برای همه کاربران قابل مشاهده است
+                </span>
+              </div>
+
+              <label className="relative inline-flex cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  checked={publicShow === 1}
+                  onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
+                  className="sr-only peer"
+                />
+
+                <div
+                  className="
+      h-6 w-11 rounded-full bg-gray-300 
       peer-checked:bg-blue-600 
       transition-colors duration-300
       after:content-[''] after:absolute after:top-[2px] after:left-[2px]
@@ -473,41 +474,43 @@ function Upload() {
       peer-checked:after:translate-x-5
       
     "
-              />
-            </label>
+                />
+              </label>
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-2 justify-center sm:justify-between pt-2">
-          <div
-            className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${canEditMetadata ? "w-full" : "w-full "}`}
-          >
-            <div className="space-y-6">
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-semibold text-gray-900">
-                    دسته‌بندی‌ها
-                  </label>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-2 justify-center sm:justify-between pt-2">
+            <div
+              className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${canEditMetadata ? "w-full" : "w-full "}`}
+            >
+              <div className="space-y-6">
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-semibold text-gray-900">
+                      دسته‌بندی‌ها
+                    </label>
+                  </div>
+                  {isLoadingCategories ? (
+                    <p className="text-sm text-gray-500">
+                      در حال بارگذاری دسته‌بندی‌ها...
+                    </p>
+                  ) : isCategoriesError ? (
+                    <p className="text-sm text-red-600">
+                      خطا در دریافت دسته‌بندی‌ها
+                    </p>
+                  ) : (
+                    <MultiSelect
+                      options={categories}
+                      value={selectedCategories}
+                      onChange={setSelectedCategories}
+                      placeholder="جستجوی دسته‌بندی..."
+                      getOptionLabel={(item) =>
+                        item?.title || item?.name || `دسته ${item?.id}`
+                      }
+                    />
+                  )}
                 </div>
-                {isLoadingCategories ? (
-                  <p className="text-sm text-gray-500">
-                    در حال بارگذاری دسته‌بندی‌ها...
-                  </p>
-                ) : isCategoriesError ? (
-                  <p className="text-sm text-red-600">
-                    خطا در دریافت دسته‌بندی‌ها
-                  </p>
-                ) : (
-                  <MultiSelect
-                    options={categories}
-                    value={selectedCategories}
-                    onChange={setSelectedCategories}
-                    placeholder="جستجوی دسته‌بندی..."
-                    getOptionLabel={(item) => item?.title || item?.name || `دسته ${item?.id}`}
-                  />
-                )}
-              </div>
-              {/* <div>
+                {/* <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-semibold text-gray-900">
                     پلی‌لیست‌ها
@@ -545,64 +548,64 @@ function Upload() {
                   )}
                 </div>
               </div> */}
+              </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
-            <div className="space-y-4">
-              <div>
-                <label className=" text-sm font-semibold text-gray-900 mb-5">
-                  تصویر کاور (اجباری)
-                </label>
-                <CoverPicker
-                  // isFormDisabled={isFormDisabled}
-                  value={thumbFile}
-                  onChange={(file) => setThumbFile(file)}
-                  onConfirm={(file) => {
-                    setThumbFile(file);
-                  }}
-                  defaultCovers={[
-                    cover,
-                    "/covers/default2.jpg",
-                    "/covers/default3.jpg",
-                  ]}
-                  videoFile={videoFile}
-                  videoUrl={tempPath}
-                  videoThumbnails={thumbnails}
-                />
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
+              <div className="space-y-4">
+                <div>
+                  <label className=" text-sm font-semibold text-gray-900 mb-5">
+                    تصویر کاور (اجباری)
+                  </label>
+                  <CoverPicker
+                    // isFormDisabled={isFormDisabled}
+                    value={thumbFile}
+                    onChange={(file) => setThumbFile(file)}
+                    onConfirm={(file) => {
+                      setThumbFile(file);
+                    }}
+                    defaultCovers={[
+                      cover,
+                      "/covers/default2.jpg",
+                      "/covers/default3.jpg",
+                    ]}
+                    videoFile={videoFile}
+                    videoUrl={tempPath}
+                    videoThumbnails={thumbnails}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex gap-2 justify-end ">
-          <Button
-            variant="secondary"
-            onClick={handleCancelAndRefresh}
-            icon={<CloseCircle size={16}             color="currentColor"
- />}
-            className="hover:border-red-300 hover:text-red-700 hover:bg-red-50"
-          >
-            انصراف
-          </Button>
-          <Button
-            onClick={handleUpload}
-            disabled={
-              !title.trim() ||
-              !chanId ||
-              (uploadType === "file" && !tempPath) ||
-              (uploadType === "url" && !videoUrl) ||
-              !thumbFile
-            }
-            isLoading={isPending}
-            icon={<TickCircle size={20}             color="currentColor"
- />}
-            className="h-12"
-          >
-            انتشار ویدیو
-          </Button>
+          <div className="flex gap-2 justify-end ">
+            <Button
+              variant="secondary"
+              onClick={handleCancelAndRefresh}
+              icon={<CloseCircle size={16} color="currentColor" />}
+              className="hover:border-red-300 hover:text-red-700 hover:bg-red-50"
+            >
+              انصراف
+            </Button>
+            <Button
+              onClick={handleUpload}
+              disabled={
+                !title.trim() ||
+                !chanId ||
+                (uploadType === "file" && !tempPath) ||
+                (uploadType === "url" && !videoUrl) ||
+                !thumbFile
+              }
+              isLoading={isPending}
+              icon={<TickCircle size={20} color="currentColor" />}
+              className="h-12"
+            >
+              انتشار ویدیو
+            </Button>
+          </div>
         </div>
       </div>
+
       <PlaylistModal
         isOpen={isPlaylistModalOpen}
         onClose={() => setPlaylistModalOpen(false)}
@@ -611,7 +614,7 @@ function Upload() {
           await createPlaylistMutation.mutateAsync(payload);
         }}
       />
-    </DashboardLayout>
+    </Layout>
   );
 }
 

@@ -55,11 +55,11 @@ axiosInstanceNew.interceptors.response.use(
           : [String(data.errors[field])]
 
         messages.forEach((message) => {
-          toast.error(message, { position: 'top-right', theme: 'colored' })
+          toast.error(message, { position: 'bottom-right', theme: 'colored' })
         })
       })
     } else if (data?.message && status !== 401 && status !== 403) {
-      toast.error(String(data.message), { position: 'top-right', theme: 'colored' })
+      toast.error(String(data.message), { position: 'bottom-right', theme: 'colored' })
     }
 
     if ((status === 401 || status === 403) && shouldHandleUnauthorized && !isHandlingUnauthorized) {
@@ -67,7 +67,7 @@ axiosInstanceNew.interceptors.response.use(
       clearAuthSession()
       dispatchUnauthorized({ status })
       toast.info('نشست شما منقضی شده است. لطفاً دوباره وارد شوید.', {
-        position: 'top-right',
+        position: 'bottom-right',
         theme: 'colored',
       })
 

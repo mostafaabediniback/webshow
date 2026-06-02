@@ -7,11 +7,11 @@ export default function FramePickerModal({
   videoFile,
   onSelect,
 }) {
-
   const videoRef = useRef(null);
   const [videoSrc, setVideoSrc] = useState(null);
   const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);[]
+  const [currentTime, setCurrentTime] = useState(0);
+  const [loadingFrames, setLoadingFrames] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [suggested, setSuggested] = useState([]);
 
@@ -50,16 +50,20 @@ export default function FramePickerModal({
         canvas.height = video.videoHeight;
         const ctx = canvas.getContext("2d");
         ctx.drawImage(video, 0, 0);
-        canvas.toBlob((blob) => {
-          const file = new File([blob], `frame-${time}.jpg`, {
-            type: "image/jpeg",
-          });
-          resolve({
-            url: URL.createObjectURL(blob),
-            file,
-            time,
-          });
-        }, "image/jpeg", 0.9);
+        canvas.toBlob(
+          (blob) => {
+            const file = new File([blob], `frame-${time}.jpg`, {
+              type: "image/jpeg",
+            });
+            resolve({
+              url: URL.createObjectURL(blob),
+              file,
+              time,
+            });
+          },
+          "image/jpeg",
+          0.9,
+        );
         video.removeEventListener("seeked", handler);
       };
       video.addEventListener("seeked", handler);
@@ -71,17 +75,22 @@ export default function FramePickerModal({
   const generateFrames = useCallback(async () => {
     const video = videoRef.current;
     if (!video?.duration) return;
-    const positions = [0.1, 0.3, 0.5, 0.7, 0.9];
+
+    setLoadingFrames(true);
+
+    const positions = [0.2, 0.4, 0.6, 0.8]; // 👉 4 تا فریم
     const frames = [];
+
     for (let p of positions) {
       const time = video.duration * p;
       try {
         const frame = await captureAt(time);
         frames.push(frame);
-      } catch (e) {
-      }
+      } catch (e) {}
     }
+
     setSuggested(frames);
+    setLoadingFrames(false);
   }, []);
 
   // 📦 بعد از لود ویدیو
@@ -113,9 +122,8 @@ export default function FramePickerModal({
   if (!open || !videoFile) return null;
 
   return (
-    // تغییرات: my-auto برای وسط‌چین عمودی، p-4 برای فاصله از بالا و پایین در موبایل
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl w-full h-auto sm:max-w-3xl overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-2xl w-full h-auto sm:max-w-xl overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col">
         {/* HEADER */}
         <div className="flex justify-end items-center px-4 sm:px-6 py-3 sm:py-4 shrink-0">
           <button className="text-xl px-2" onClick={onClose}>
@@ -123,61 +131,25 @@ export default function FramePickerModal({
           </button>
         </div>
 
-        {/* تغییرات: overflow-y-auto به اینجا منتقل شد تا محتوا اسکرول شود و هدر ثابت بماند */}
         <div className="px-4 sm:px-6 pb-6 space-y-5 overflow-y-auto">
           {/* 🎬 VIDEO */}
           <div className="bg-[#24364A] rounded-xl overflow-hidden relative shrink-0">
-            {/* <video
+            <video
               ref={videoRef}
               src={videoSrc}
-              video
+              controls
               onLoadedMetadata={handleLoadedMetadata}
               onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
               className="w-full h-[220px] sm:h-[300px] object-contain"
-              muted
               playsInline
               crossOrigin="anonymous"
-
-            /> */}
-            {/* controls */}
-            {/* <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2 sm:gap-3">
-              <button
-                onClick={togglePlay}
-                className="bg-white px-3 py-2 rounded-full text-sm"
-              >
-                {playing ? "⏸" : "▶"}
-              </button>
-              <input
-                type="range"
-                min={0}
-                max={duration}
-                value={currentTime}
-                onChange={(e) =>
-                  (videoRef.current.currentTime = e.target.value)
-                }
-                className="flex-1 h-2"
-              />
-              <span className="text-white text-[10px] sm:text-xs">
-                {Math.floor(currentTime)} / {Math.floor(duration)}
-              </span>
-            </div> */}
-            <div className="bg-[#24364A] rounded-xl overflow-hidden relative shrink-0">
-              <video
-                ref={videoRef}
-                src={videoSrc}
-                controls
-                onLoadedMetadata={handleLoadedMetadata}
-                onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
-                className="w-full h-[220px] sm:h-[300px] object-contain"
-                playsInline
-                crossOrigin="anonymous"
-              />
-            </div>
+            />
           </div>
 
           <div className="flex flex-col gap-4">
             <p className="text-sm text-gray-600">
-              برای انتخاب تصویر شاخص می توانیدحین پخش ویدیو ،تصویر دلخواه خود را برش بزنید.
+              برای انتخاب تصویر شاخص می توانیدحین پخش ویدیو ،تصویر دلخواه خود را
+              برش بزنید.
             </p>
             {/* 📸 انتخاب فریم فعلی */}
             <div className="flex justify-center items-center">
@@ -190,8 +162,7 @@ export default function FramePickerModal({
                 className="bg-gray-100 hover:bg-gray-200 p-3 sm:p-4 rounded-3xl text-sm sm:text-base w-full sm:w-auto"
               >
                 <div className="flex gap-2 justify-center">
-                  <ScanBarcode size={24}             color="currentColor"
- />
+                  <ScanBarcode size={24} color="currentColor" />
                   <span>انتخاب فریم فعلی ({Math.floor(currentTime)}s)</span>
                 </div>
               </button>
@@ -205,30 +176,35 @@ export default function FramePickerModal({
                 لطفا از بین تصاویر یکی را انتخاب کنید:
               </p>
             )}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
-              {suggested.map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                    onSelect(item.file);
-                    onClose();
-                  }}
-                  className="cursor-pointer rounded-lg overflow-hidden active:scale-95 sm:hover:scale-105 transition border"
-                >
-                  <img
-                    src={item.url}
-                    className="w-full h-20 sm:h-24 object-cover"
-                    alt={`frame-${index}`}
-                  />
-                  <div className="text-center text-[10px] sm:text-xs py-1 bg-gray-50">
-                    {Math.floor(item.time)}s
+            {loadingFrames ? (
+              <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+                <div className="w-10 h-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
+                <p className="mt-3 text-sm">در حال استخراج فریم‌ها...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
+                {suggested.map((item, index) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      onSelect(item.file);
+                      onClose();
+                    }}
+                    className="cursor-pointer rounded-lg overflow-hidden active:scale-95 sm:hover:scale-105 transition"
+                  >
+                    <img
+                      src={item.url}
+                      className="w-full h-24 object-cover"
+                      alt={`frame-${index}`}
+                    />
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
           <p className="text-sm text-gray-600">
-            (برای تصویر شاخص حتما یک عکس جذاب ، واضح، با کیفیت و مرتب با ویدیو انتخاب کنید )
+            (برای تصویر شاخص حتما یک عکس جذاب ، واضح، با کیفیت و مرتب با ویدیو
+            انتخاب کنید )
           </p>
         </div>
       </div>
