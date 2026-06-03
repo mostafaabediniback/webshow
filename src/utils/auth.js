@@ -84,15 +84,20 @@ export const clearAuthSession = () => {
 }
 
 export const isChannelAdminRole = (role) => normalizeRole(role) === 'admin'
+export const isUserRole = (role) => normalizeRole(role) === 'user'
 
-export const getDefaultDashboardRoute = (role) => (
-  isChannelAdminRole(role) ? '/dashboard/user-videos' : '/dashboard/channels'
-)
+export const getDefaultDashboardRoute = (role) => {
+  const normalized = normalizeRole(role)
+  if (normalized === 'admin') return '/dashboard/user-videos'
+  if (normalized === 'user') return '/user-dashboard'
+  return '/dashboard/channels'
+}
 
 export const buildAuthState = (session = readAuthSession()) => ({
   ...session,
   isAuthenticated: Boolean(session.token),
   isChannelAdmin: isChannelAdminRole(session.role),
+  isUser: isUserRole(session.role),
   defaultDashboardRoute: getDefaultDashboardRoute(session.role),
 })
 

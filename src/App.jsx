@@ -12,6 +12,7 @@ import SettingsPage from './pages/SettingsPage'
 import Upload from './pages/Upload'
 import UploadedVideos from './pages/UploadedVideos'
 import Users from './pages/Users'
+import UserDashboard from './pages/UserDashboard'
 import UserVideos from './pages/UserVideos'
 import Video from './pages/Video'
 import VideoEdit from './pages/VideoEdit'
@@ -23,13 +24,28 @@ const RequireAuth = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" replace />
 }
 
+const RequireUser = ({ children }) => {
+  const isUser = useAuthStore((state) => state.isUser)
+  const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
+  
+  if (isUser) return children
+  if (isChannelAdmin) return <Navigate to="/dashboard/user-videos" replace />
+  return <Navigate to="/dashboard" replace />
+}
+
 const RequirePlatformAdmin = ({ children }) => {
   const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
+  const isUser = useAuthStore((state) => state.isUser)
+
+  if (isUser) return <Navigate to="/user-dashboard" replace />
   return isChannelAdmin ? <Navigate to="/dashboard/user-videos" replace /> : children
 }
 
 const RequireChannelAdmin = ({ children }) => {
   const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
+  const isUser = useAuthStore((state) => state.isUser)
+
+  if (isUser) return <Navigate to="/user-dashboard" replace />
   return isChannelAdmin ? children : <Navigate to="/dashboard" replace />
 }
 
@@ -81,6 +97,7 @@ function App() {
         <Route path="/playlists/:playlistId" element={<PlaylistDetail />} />
         <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
 
+        <Route path="/user-dashboard" element={<RequireAuth><RequireUser><UserDashboard /></RequireUser></RequireAuth>} />
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/dashboard/channels" element={<RequireAuth><RequirePlatformAdmin><Channels /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/upload" element={<RequireAuth><RequirePlatformAdmin><Upload /></RequirePlatformAdmin></RequireAuth>} />

@@ -36,6 +36,11 @@ const CHANNEL_ADMIN_NAV = [
   { to: "/dashboard/settings", label: "تنظیمات", icon: Setting2 },
 ];
 
+const USER_NAV = [
+  { to: "/user-dashboard", label: "داشبورد", icon: Home2 },
+  { to: "/dashboard/settings", label: "تنظیمات", icon: Setting2 },
+];
+
 function DashboardLayout({ children }) {
   const { pathname } = useLocation();
   const name = sessionStorage.getItem("name");
@@ -44,14 +49,18 @@ function DashboardLayout({ children }) {
   const { LogOut, isLoggingOut } = useLogin();
 
   const { data, refetch } = useChannelDetail(null, {
-    enabled: !isSuperAdmin,
+    enabled: !isSuperAdmin && role !== 'user',
   });
   const userLogo = data?.data?.image || user;
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin);
-  const navItems = isChannelAdmin ? CHANNEL_ADMIN_NAV : PLATFORM_ADMIN_NAV;
+  const isUser = useAuthStore((state) => state.isUser);
+
+  let navItems = PLATFORM_ADMIN_NAV;
+  if (isChannelAdmin) navItems = CHANNEL_ADMIN_NAV;
+  if (isUser) navItems = USER_NAV;
 
   const LOGOUT_ITEM = {
     to: "#",
