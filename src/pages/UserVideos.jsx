@@ -323,7 +323,7 @@ function UserVideos() {
   return (
     <Layout>
       <div className="flex justify-center items-center  ">
-        <div className="space-y-6 w-full h-full sm:max-w-7xl pb-20 pt-10 px-5 ">
+        <div className="space-y-6 w-full h-full sm:max-w-7xl pb-24 pt-5 px-5 sm:pb-20  ">
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             <div className="flex justify-center mb-4">
               <div className="flex bg-gray-100 p-1 rounded-lg">

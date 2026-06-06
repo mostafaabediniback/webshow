@@ -2,9 +2,9 @@ import { CloseCircle, Logout, Menu, SearchNormal1, User } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo/logo-01-01.png";
+import useLogin from "../hooks/auth/useLogin";
 import useAuthStore from "../store/useAuthStore";
 import SearchInput from "./SearchInput";
-import useLogin from "../hooks/auth/useLogin";
 
 function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -170,6 +170,19 @@ function Navbar() {
                   className="flex items-center gap-3 p-3 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
                 >
                   <span>مدیریت کانال‌ها</span>
+                </Link>
+              )}
+              {isAuthenticated && (isSuperAdmin || isAdmin) && (
+                <Link
+                  to={
+                    isSuperAdmin
+                      ? "/dashboard/upload"
+                      : "/dashboard/user-upload"
+                  }
+                  onClick={closeSidebar}
+                  className="flex items-center gap-3 p-3 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+                >
+                  <span>بارگذاری ویدیو</span>
                 </Link>
               )}
             </nav>

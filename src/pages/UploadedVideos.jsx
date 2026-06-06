@@ -1,6 +1,8 @@
 import { Pagination } from "@mui/material";
+import { Category } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import bgImag from "../assets/img/bgImag.jpg";
 import EditVideoModal from "../components/EditVideoModal";
 import VideoRow from "../components/VideoRow";
 import VideoTypeFilter from "../components/VideoTypeFilter";
@@ -15,10 +17,8 @@ import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import useDeleteVideo from "../hooks/video/useDeleteVideo";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { ConfirmModal, EmptyState, ErrorMessage, Spinner } from "../ui";
-import PlaylistCard from "./PlaylistCard";
-import bgImag from "../assets/img/bgImag.jpg";
-import { Category } from "iconsax-react";
 import { serverUrl } from "../utils/axiosConfigNew";
+import PlaylistCard from "./PlaylistCard";
 
 const PAGE_SIZE = 25;
 
@@ -78,7 +78,7 @@ export default function UploadedVideos() {
         <div className="">
           <div className=" overflow-hidden ">
             {/* COVER */}
-            <div className="relative aspect-[7/1] w-full overflow-hidden rounded-2xl ">
+            <div className="relative aspect-[7/1] w-full overflow-hidden rounded-[10px] ">
               <img
                 src={channel?.background_image || bgImag}
                 alt="cover"
@@ -93,12 +93,12 @@ export default function UploadedVideos() {
             <div className="relative p-4 sm:p-6">
               <div className="flex flex-col gap-4">
                 {/* AVATAR */}
-                <div className="relative -mt-16 sm:-mt-20">
+                <div className="relative -mt-11 sm:-mt-20">
                   <img
                     src={channel?.image}
                     alt="avatar"
                     className="
-  w-24 h-24 sm:w-24 sm:h-24
+  w-16 h-16 sm:w-24 sm:h-24
   rounded-[10px]
   object-cover
   bg-white
@@ -108,7 +108,7 @@ export default function UploadedVideos() {
                   />
                 </div>
 
-                <div className="flex gap-2 justify-between items-center flex-wrap">
+                <div className="flex gap-2 justify-between items-start flex-wrap sm: flex-col">
                   {/* INFO */}
                   <div className="mx-4">
                     <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words">
