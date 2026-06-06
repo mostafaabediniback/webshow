@@ -14,6 +14,8 @@ import useChannelDetail from "../hooks/channel/useChannelDetail";
 import { useInfiniteScroll } from "../hooks/ui/useInfiniteScroll";
 import { useInfiniteLandingVideos } from "../hooks/video/useInfiniteLandingVideos";
 import { EmptyState, ErrorMessage } from "../ui";
+import bgImag from "../assets/img/bgImag.jpg";
+
 
 const PAGE_SIZE = 25;
 
@@ -99,9 +101,9 @@ const ProfileChannel = () => {
           ) : (
             <div className="overflow-hidden mb-8">
               {/* COVER */}
-              <div className="relative w-full aspect-[7/1] overflow-hidden rounded-2xl border border-gray-200">
+              <div className="relative w-full aspect-[7/1] overflow-hidden rounded-[10px] border border-gray-200">
                 <img
-                  src={channel?.background_image}
+                  src={channel?.background_image|| bgImag}
                   alt="cover"
                   className="w-full h-full object-cover"
                 />
@@ -112,11 +114,11 @@ const ProfileChannel = () => {
               {/* CONTENT */}
               <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-end gap-4 relative">
                 {/* AVATAR */}
-                <div className="relative -mt-16 sm:-mt-20">
+                <div className="relative -mt-11 sm:-mt-16">
                   <img
                     src={channel?.image}
                     alt="avatar"
-                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-white object-cover shadow-md bg-white"
+                    className="w-16 h-16 sm:w-28 sm:h-28 rounded-[10px] border-4 border-white object-cover shadow-md bg-white"
                   />
                 </div>
 

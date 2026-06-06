@@ -12,6 +12,7 @@ import SettingsPage from './pages/SettingsPage'
 import Upload from './pages/Upload'
 import UploadedVideos from './pages/UploadedVideos'
 import UserDashboard from './pages/UserDashboard'
+import UserCreateChannel from './pages/UserCreateChannel'
 import Users from './pages/Users'
 import UserVideos from './pages/UserVideos'
 import Video from './pages/Video'
@@ -98,6 +99,7 @@ function App() {
         <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
 
         <Route path="/user-dashboard" element={<RequireAuth><RequireUser><UserDashboard /></RequireUser></RequireAuth>} />
+        <Route path="/user-dashboard/create-channel" element={<RequireAuth><RequireUser><UserCreateChannel /></RequireUser></RequireAuth>} />
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/dashboard/channels" element={<RequireAuth><RequirePlatformAdmin><Channels /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/upload" element={<RequireAuth><RequirePlatformAdmin><Upload /></RequirePlatformAdmin></RequireAuth>} />
