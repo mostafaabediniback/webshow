@@ -6,17 +6,17 @@ const useChannelVideos = ({
   channelId,
   pageNumber = 1,
   pageSize = 25,
-  videoType = DEFAULT_VIDEO_TYPE,
+  video_type = DEFAULT_VIDEO_TYPE,
   enabled = true,
 } = {}) => {
   return useQuery({
-    queryKey: ['channelVideos', channelId || 'all', pageNumber, pageSize, videoType],
+    queryKey: ['channelVideos', channelId || 'all', pageNumber, pageSize, video_type],
 
     queryFn: () => {
       if (channelId) {
-        return getVideosByChannel(channelId, pageNumber, pageSize, videoType)
+        return getVideosByChannel(channelId, pageNumber, pageSize, video_type)
       }
-      return getAllVideos(pageNumber, pageSize, videoType)
+      return getAllVideos(pageNumber, pageSize, video_type)
     },
 
     enabled,

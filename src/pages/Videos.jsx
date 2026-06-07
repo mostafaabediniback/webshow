@@ -2,7 +2,10 @@ import { Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VideoTypeFilter from "../components/VideoTypeFilter";
-import { DEFAULT_VIDEO_TYPE, VIDEO_TYPE_OPTIONS } from "../constants/videoTypeOptions";
+import {
+  DEFAULT_VIDEO_TYPE,
+  VIDEO_TYPE_OPTIONS,
+} from "../constants/videoTypeOptions";
 import EditVideoModal from "../components/EditVideoModal";
 import VideoRow from "../components/VideoRow";
 import useChannel from "../hooks/channel/useChannel";
@@ -11,6 +14,8 @@ import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import useDeleteVideo from "../hooks/video/useDeleteVideo";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { ConfirmModal, EmptyState, ErrorMessage, Spinner } from "../ui";
+import usePlaylists from "../hooks/playlist/usePlaylists";
+import PlaylistCard from "./PlaylistCard";
 
 function Videos() {
   const navigate = useNavigate();
@@ -23,11 +28,28 @@ function Videos() {
     channelId: chanId,
     pageNumber: page,
     pageSize: 25,
-    videoType,
+    video_type: videoType,
   });
   const { deleteVideoAsync, isDeleting } = useDeleteVideo();
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [editingVideo, setEditingVideo] = useState(null);
+
+  const [viewMode, setViewMode] = useState("videos");
+
+  const {
+    data: playlistsResponse,
+    isLoading: isLoadingPlaylists,
+    isError: playlistsError,
+    refetch: refetchPlaylists,
+  } = usePlaylists(chanId, {
+    enabled: viewMode === "playlists",
+  });
+
+  const playlists = playlistsResponse?.items || [];
+
+  const isPageLoading = viewMode === "videos" ? isLoading : isLoadingPlaylists;
+
+  const isPageError = viewMode === "videos" ? isError : playlistsError;
 
   useEffect(() => {
     setPage(1);
@@ -46,7 +68,7 @@ function Videos() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2">ویدیوهای آپلودشده</h1>
           <p className="text-sm text-gray-600">مشاهده و مدیریت تمام ویدیوهای آپلود شده</p>
@@ -75,14 +97,22 @@ function Videos() {
 
             <div className="space-y-2">
               <p className="text-sm font-semibold text-gray-900">نوع ویدیو</p>
-              <VideoTypeFilter value={videoType} onChange={setVideoType} />
+              <VideoTypeFilter
+                value={videoType}
+                viewMode={viewMode}
+                onChange={(value) => {
+                  setViewMode("videos");
+                  setVideoType(value);
+                }}
+                onPlaylistClick={() => setViewMode("playlists")}
+              />{" "}
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div>
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20">
+            <div className="flex flex-col items-center justify-center ">
               <Spinner size="lg" />
               <p className="mt-4 text-gray-500">در حال بارگذاری ویدیوها...</p>
             </div>
@@ -90,26 +120,41 @@ function Videos() {
             <ErrorMessage onRetry={refetch} />
           ) : (data?.items || []).length === 0 ? (
             <EmptyState
-              title={chanId ? "ویدیویی در این کانال یافت نشد" : "هنوز ویدیویی آپلود نشده است"}
+              title={
+                viewMode === "videos"
+                  ? chanId
+                    ? "ویدیویی در این کانال یافت نشد"
+                    : "هنوز ویدیویی آپلود نشده است"
+                  : "هنوز پلی‌لیستی ثبت نشده است"
+              }
               message={`فیلتر فعلی: ${VIDEO_TYPE_OPTIONS.find((item) => item.value === videoType)?.label || "همه ویدیوها"}`}
             />
           ) : (
             <>
-              <div className="flex gap-4 flex-wrap space-y-3">
-                {(data?.items || []).map((v) => (
-                  <VideoRow
-                    key={v.id}
-                    item={v}
-                    onDelete={handleDelete}
-                    // onShow={handleShow}
-                    onShow={(id) => navigate(`/v/${id}`)}
-                    onEdit={setEditingVideo}
-                    isDeleting={isDeleting}
-                  />
-                ))}
+              <div className="flex gap-2 flex-wrap space-y-3">
+                {viewMode === "videos" ? (
+                  <div className="flex gap-2 flex-wrap space-y-3">
+                    {(data?.items || []).map((v) => (
+                      <VideoRow
+                        key={v.id}
+                        item={v}
+                        onDelete={handleDelete}
+                        onShow={(id) => navigate(`/v/${id}`)}
+                        onEdit={setEditingVideo}
+                        isDeleting={isDeleting}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {playlists.map((playlist) => (
+                      <PlaylistCard key={playlist.id} playlist={playlist} />
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {data?.totalPages > 1 && (
+              {viewMode === "videos" && data?.totalPages > 1 && (
                 <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
                   <Pagination
                     count={data.totalPages}

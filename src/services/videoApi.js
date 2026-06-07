@@ -1,9 +1,5 @@
 import axiosInstanceNew from "../utils/axiosConfigNew";
 
-/**
- * @typedef {"all" | "published" | "private"} VideoType
- */
-// کمک برای صفحه‌بندی
 const mapPaginatedResponse = (data) => {
   const items =
     Array.isArray(data?.data) ? data.data :
@@ -24,14 +20,14 @@ const mapPaginatedResponse = (data) => {
   return { items, totalPages, totalItems };
 };
 
-const buildVideoListParams = ({ page = 1, per_page = 25, videoType = "all" } = {}) => {
+const buildVideoListParams = ({ page = 1, per_page = 25, video_type = "all" } = {}) => {
   const params = {
     page,
     per_page,
   };
 
-  if (videoType) {
-    params.videoType = videoType;
+  if (video_type) {
+    params.video_type = video_type;
   }
 
   return params;
@@ -117,10 +113,10 @@ export const getVideosByChannel = async (
   channelId,
   page = 1,
   per_page = 25,
-  videoType = "all",
+  video_type = "all",
 ) => {
   const res = await axiosInstanceNew.get(`/video/${channelId}`, {
-    params: buildVideoListParams({ page, per_page, videoType }),
+    params: buildVideoListParams({ page, per_page, video_type }),
   });
   return mapPaginatedResponse(res.data);
 };
@@ -130,9 +126,9 @@ export const getVideoDetail = async (id) => {
   return res.data;
 };
 
-export const getAllVideos = async (page = 1, per_page = 25, videoType = "all") => {
+export const getAllVideos = async (page = 1, per_page = 25, video_type = "all") => {
   const res = await axiosInstanceNew.get("/video", {
-    params: buildVideoListParams({ page, per_page, videoType }),
+    params: buildVideoListParams({ page, per_page, video_type }),
   });
   return mapPaginatedResponse(res.data);
 };
