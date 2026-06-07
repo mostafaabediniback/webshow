@@ -1,17 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import useAuthStore from '../store/useAuthStore';
 import { Personalcard, Sms, User, FolderAdd } from 'iconsax-react';
 import { Button, Modal } from '../ui';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 function UserDashboard() {
   const name = useAuthStore((state) => state.name);
   const userId = useAuthStore((state) => state.userId);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('action') === 'create-channel') {
+      setIsTermsModalOpen(true);
+    }
+  }, [searchParams]);
+
+  const handleCloseModal = () => {
+    setIsTermsModalOpen(false);
+    if (searchParams.has('action')) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('action');
+      setSearchParams(newParams, { replace: true });
+    }
+  };
 
   const handleCreateChannelClick = () => {
     setIsTermsModalOpen(true);
@@ -24,7 +40,7 @@ function UserDashboard() {
   };
 
   return (
-    <DashboardLayout>
+    <DashboardLayout navMode="bottom">
       <div className="space-y-6">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -86,11 +102,11 @@ function UserDashboard() {
 
       <Modal
         isOpen={isTermsModalOpen}
-        onClose={() => setIsTermsModalOpen(false)}
+        onClose={handleCloseModal}
         title="قوانین و شرایط ایجاد کانال"
         footer={
           <div className="flex gap-3 justify-end w-full">
-            <Button variant="secondary" onClick={() => setIsTermsModalOpen(false)}>انصراف</Button>
+            <Button variant="secondary" onClick={handleCloseModal}>انصراف</Button>
             <Button disabled={!isAgreed} onClick={handleContinue}>تایید و ادامه</Button>
           </div>
         }

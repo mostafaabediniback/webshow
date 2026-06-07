@@ -98,8 +98,6 @@ function App() {
         <Route path="/playlists/:playlistId" element={<PlaylistDetail />} />
         <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
 
-        <Route path="/user-dashboard" element={<RequireAuth><RequireUser><UserDashboard /></RequireUser></RequireAuth>} />
-        <Route path="/user-dashboard/create-channel" element={<RequireAuth><RequireUser><UserCreateChannel /></RequireUser></RequireAuth>} />
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/dashboard/channels" element={<RequireAuth><RequirePlatformAdmin><Channels /></RequirePlatformAdmin></RequireAuth>} />
         <Route path="/dashboard/upload" element={<RequireAuth><RequirePlatformAdmin><Upload /></RequirePlatformAdmin></RequireAuth>} />
@@ -112,6 +110,9 @@ function App() {
         <Route path="/dashboard/user-upload" element={<RequireAuth><RequireChannelAdmin><UserVideos /></RequireChannelAdmin></RequireAuth>} />
         <Route path="/dashboard/user-videos" element={<RequireAuth><RequireChannelAdmin><UploadedVideos /></RequireChannelAdmin></RequireAuth>} />
         <Route path="/dashboard/settings" element={<RequireAuth><RequireChannelAdmin><SettingsPage /></RequireChannelAdmin></RequireAuth>} />
+        
+        <Route path="/user-dashboard" element={<RequireAuth><RequireUser><UserDashboard /></RequireUser></RequireAuth>} />
+        <Route path="/user-dashboard/create-channel" element={<RequireAuth><RequireUser><UserCreateChannel /></RequireUser></RequireAuth>} />
       </Routes>
     </>
   )

@@ -18,6 +18,7 @@ function Navbar() {
   const role = sessionStorage.getItem("role");
   const isSuperAdmin = role === "super_admin";
   const isAdmin = role === "admin";
+  const isUser = role === "user";
 
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -79,18 +80,18 @@ function Navbar() {
             <div className="hidden md:flex items-center gap-3 ">
               {isAuthenticated ? (
                 <>
-                  {isAuthenticated && (isSuperAdmin || isAdmin) && (
-                    <Link
-                      to={
-                        isSuperAdmin
-                          ? "/dashboard/upload"
+                  <Link
+                    to={
+                      isSuperAdmin
+                        ? "/dashboard/upload"
+                        : isUser
+                          ? "/user-dashboard?action=create-channel"
                           : "/dashboard/user-upload"
-                      }
-                      className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
-                    >
-                      بارگذاری ویدیو
-                    </Link>
-                  )}
+                    }
+                    className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                  >
+                    بارگذاری ویدیو
+                  </Link>
 
                   <Link
                     to={defaultDashboardRoute}
@@ -172,12 +173,14 @@ function Navbar() {
                   <span>مدیریت کانال‌ها</span>
                 </Link>
               )}
-              {isAuthenticated && (isSuperAdmin || isAdmin) && (
+              {isAuthenticated && (
                 <Link
                   to={
                     isSuperAdmin
                       ? "/dashboard/upload"
-                      : "/dashboard/user-upload"
+                      : isUser
+                        ? "/user-dashboard?action=create-channel"
+                        : "/dashboard/user-upload"
                   }
                   onClick={closeSidebar}
                   className="flex items-center gap-3 p-3 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"

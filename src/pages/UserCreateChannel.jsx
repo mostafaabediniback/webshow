@@ -65,7 +65,7 @@ function UserCreateChannel() {
   };
 
   return (
-    <DashboardLayout>
+    <DashboardLayout navMode="bottom">
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-10 shadow-sm">
           <div className="mb-8 text-center">

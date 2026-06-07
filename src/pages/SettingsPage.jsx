@@ -14,7 +14,7 @@ function SettingsPage() {
   const [activeTab, setActiveTab] = useState("channel");
 
   return (
-    <DashboardLayout>
+    <DashboardLayout navMode="bottom">
       <div className="flex flex-col justify-center items-center gap-4">
         {/* Header */}
         {/* <div className="border-b pb-4">

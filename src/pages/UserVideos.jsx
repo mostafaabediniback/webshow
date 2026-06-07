@@ -11,7 +11,7 @@ import useCategories from "../hooks/category/useCategories";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
 import useVideoUpload from "../hooks/video/useVideoUpload";
-import Layout from "../layouts/Layout";
+import UplodLayout from "../layouts/UplodLayout";
 
 function UserVideos() {
   const { uploadAsync, isPending } = useVideoUpload();
@@ -321,9 +321,9 @@ function UserVideos() {
   const isFormDisabled = videoStatus !== "success"; // غیرفعال شدن وقتی ویدیو آپلود نشده
 
   return (
-    <Layout>
+    <UplodLayout>
       <div className="flex justify-center items-center  ">
-        <div className="space-y-6 w-full h-full sm:max-w-7xl pb-24 pt-5 px-5 sm:pb-20  ">
+        <div className="space-y-6 w-full h-full sm:max-w-7xl pb-8 pt-5 px-5">
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             <div className="flex justify-center mb-4">
               <div className="flex bg-gray-100 p-1 rounded-lg">
@@ -645,7 +645,7 @@ function UserVideos() {
           await createPlaylistMutation.mutateAsync(payload);
         }}
       />
-    </Layout>
+    </UplodLayout>
   );
 }
 

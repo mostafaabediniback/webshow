@@ -73,7 +73,7 @@ export default function UploadedVideos() {
   const videosList = Array.isArray(videos?.items) ? videos.items : [];
 
   return (
-    <DashboardLayout>
+    <DashboardLayout navMode="bottom">
       <div className="space-y-6">
         <div className="">
           <div className=" overflow-hidden ">
