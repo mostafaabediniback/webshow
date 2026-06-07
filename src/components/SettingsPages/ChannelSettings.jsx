@@ -78,7 +78,7 @@ function ChannelSettings({ channelId }) {
 
           {/* PROFILE */}
           <div className="absolute bottom-[-40px] right-8 group">
-            <div className="relative w-24 h-24 rounded-[10px] overflow-hidden border-4 border-white shadow-lg">
+            <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-[10px] overflow-hidden border-4 border-white shadow-lg">
               <img
                 src={data?.data?.image}
                 className="w-full h-full object-cover"

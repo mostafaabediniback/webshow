@@ -73,7 +73,7 @@ export default function CoverPicker({
   return (
     <div>
       <div
-        className={`rounded-xl border-2 transition-all ${thumbDrag ? "border-blue-500 bg-blue-50" : "border-dashed border-gray-300 hover:border-gray-400"} p-6 mt-5 flex flex-col items-center justify-center text-center cursor-pointer min-h-[250px]`}
+        className={`rounded-[10px] border-2 transition-all ${thumbDrag ? "border-blue-500 bg-blue-50" : "border-dashed border-gray-300 hover:border-gray-400"} p-6 mt-5 flex flex-col items-center justify-center text-center cursor-pointer min-h-[250px]`}
         onDragOver={(e) => {
           e.preventDefault();
           setThumbDrag(true);

@@ -389,61 +389,68 @@ function UserVideos() {
               {/* {videoStatus === 'uploading' && uploadProgress > 0 ? ` (${Math.round(uploadProgress)}%)` : ''} */}
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full flex flex-col gap-4">
-            {/* TITLE */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                عنوان ویدیو <span className="text-red-500">*</span>
-              </label>
+          {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full flex flex-col gap-4">
 
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="عنوان ویدیو را وارد کنید"
-                className="h-11 px-4 rounded-lg border border-gray-300 w-full
+          </div> */}
+
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full">
+              {/* FORM */}
+              <div className="space-y-5">
+                {/* TITLE */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    عنوان ویدیو <span className="text-red-500">*</span>
+                  </label>
+
+                  <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="عنوان ویدیو را وارد کنید"
+                    className="h-11 px-4 rounded-lg border border-gray-300 w-full
                    focus:outline-none focus:ring-2 focus:ring-blue-500
                    focus:border-transparent transition-all
                    disabled:bg-gray-100"
-              />
-            </div>
+                  />
+                </div>
 
-            {/* DESCRIPTION */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                توضیحات
-              </label>
+                {/* DESCRIPTION */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    توضیحات
+                  </label>
 
-              <textarea
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                className="h-48 px-4 py-3 rounded-lg border border-gray-300 w-full
+                  <textarea
+                    value={desc}
+                    onChange={(e) => setDesc(e.target.value)}
+                    placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+                    className="h-48 px-4 py-3 rounded-lg border border-gray-300 w-full
                    focus:outline-none focus:ring-2 focus:ring-blue-500
                    focus:border-transparent transition-all resize-none
                    disabled:bg-gray-100"
-              />
-            </div>
-            {/* PUBLIC SWITCH */}
-            <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 ">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-800">
-                  نمایش عمومی ویدیو
-                </span>
-                <span className="text-xs text-gray-500">
-                  در صورت فعال بودن، ویدیو برای همه کاربران قابل مشاهده است
-                </span>
-              </div>
+                  />
+                </div>
+                {/* PUBLIC SWITCH */}
+                <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 ">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-gray-800">
+                      نمایش عمومی ویدیو
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      در صورت فعال بودن، ویدیو برای همه کاربران قابل مشاهده است
+                    </span>
+                  </div>
 
-              <label className="relative inline-flex cursor-pointer items-center">
-                <input
-                  type="checkbox"
-                  checked={publicShow === 1}
-                  onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
-                  className="sr-only peer"
-                />
+                  <label className="relative inline-flex cursor-pointer items-center">
+                    <input
+                      type="checkbox"
+                      checked={publicShow === 1}
+                      onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
+                      className="sr-only peer"
+                    />
 
-                <div
-                  className="
+                    <div
+                      className="
       h-6 w-11 rounded-full bg-gray-300 
       peer-checked:bg-blue-600 
       transition-colors duration-300
@@ -453,15 +460,9 @@ function UserVideos() {
       peer-checked:after:translate-x-5
       
     "
-                />
-              </label>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full">
-              {/* FORM */}
-              <div className="space-y-5">
+                    />
+                  </label>
+                </div>
                 {/* CATEGORY */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
