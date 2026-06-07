@@ -13,6 +13,7 @@ import usePlaylists from "../hooks/playlist/usePlaylists";
 import useVideoUpload from "../hooks/video/useVideoUpload";
 import Layout from "../layouts/Layout";
 import { Button } from "../ui";
+import UplodLayout from "../layouts/UplodLayout";
 
 function Upload() {
   const { channels: chans, isLoadingChannels } = useChannel();
@@ -325,7 +326,7 @@ function Upload() {
 
   const isFormDisabled = videoStatus !== "success";
   return (
-    <Layout>
+    <UplodLayout>
       <div className="flex justify-center items-center">
         <div className="space-y-2 w-full h-full sm:max-w-7xl pb-20 pt-10 px-5 ">
           <div className="bg-white  rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -614,7 +615,7 @@ function Upload() {
           await createPlaylistMutation.mutateAsync(payload);
         }}
       />
-    </Layout>
+    </UplodLayout>
   );
 }
 
