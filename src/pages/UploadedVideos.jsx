@@ -71,131 +71,160 @@ export default function UploadedVideos() {
   };
 
   const videosList = Array.isArray(videos?.items) ? videos.items : [];
+  const socials = channel?.socials
+  ? Object.entries(channel.socials).filter(
+      ([, social]) => social?.link
+    )
+  : [];
 
   return (
     <DashboardLayout navMode="bottom">
       <div className="space-y-6">
         <div className="">
-          <div className=" overflow-hidden ">
-            {/* COVER */}
-            <div className="relative aspect-[7/1] w-full overflow-hidden rounded-[10px] ">
-              <img
-                src={channel?.background_image || bgImag}
-                alt="cover"
-                className="w-full h-full object-cover"
-              />
+<div className="overflow-hidden">
+  {/* COVER */}
+  <div className="hidden sm:block relative aspect-[7/1] w-full overflow-hidden rounded-[10px]">
+    <img
+      src={channel?.background_image || bgImag}
+      alt="cover"
+      className="w-full h-full object-cover"
+    />
+  </div>
 
-              {/* overlay */}
-              <div className="absolute inset-0 " />
-            </div>
+  {/* CONTENT */}
+  <div className="relative p-4 sm:p-6">
+    <div className="flex flex-col items-center sm:items-start gap-4">
+      {/* AVATAR */}
+      <div className="relative sm:-mt-20">
+        <img
+          src={channel?.image}
+          alt="avatar"
+          className="
+            w-24 h-24 sm:w-24 sm:h-24
+            rounded-[10px]
+            object-cover
+            bg-white
+            border-4 border-gray-100
+            shadow-lg shadow-black/20
+          "
+        />
+      </div>
 
-            {/* CONTENT */}
-            <div className="relative p-4 sm:p-6">
-              <div className="flex flex-col gap-4">
-                {/* AVATAR */}
-                <div className="relative -mt-11 sm:-mt-20">
-                  <img
-                    src={channel?.image}
-                    alt="avatar"
-                    className="
-  w-16 h-16 sm:w-24 sm:h-24
-  rounded-[10px]
-  object-cover
-  bg-white
-  border-4 border-gray-100
-  shadow-lg shadow-black/20
-"
-                  />
-                </div>
+      <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start w-full gap-4">
+        {/* INFO */}
+        <div className="text-center sm:text-right">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words">
+            {channel?.name}
+          </h2>
 
-                <div className="flex gap-2 justify-between items-start flex-wrap sm: flex-col">
-                  {/* INFO */}
-                  <div className="mx-4">
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words">
-                      {channel?.name}
-                    </h2>
-                    <p className="text-sm text-gray-500 break-all">
-                      {channel?.description || channel?.username}
-                    </p>
+          <p className="text-sm text-gray-500 break-all">
+            {channel?.description || channel?.username}
+          </p>
+        </div>
 
-                    {/* <p className="text-sm text-gray-500 break-all">
-                      {channel?.username}
-                    </p>
+        {/* SOCIALS */}
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          {socials.slice(0, 3).map(([key, social]) => {
+            const iconUrl = social.icon?.startsWith("https")
+              ? social.icon
+              : `${serverUrl}${social.icon}`;
 
-                    {channel?.description && (
-                      <p className="text-sm text-gray-600 line-clamp-2">
-                        {channel.description}
-                      </p>
-                    )} */}
-                  </div>
+            return (
+              <a
+                key={key}
+                href={social.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={key}
+                className="
+                  w-10 h-10
+                  flex items-center justify-center
+                  rounded-full
+                  bg-gray-100
+                  hover:bg-orange-50
+                  hover:scale-110
+                  transition-all duration-300
+                "
+              >
+                <img
+                  src={iconUrl}
+                  alt={key}
+                  className="w-5 h-5 object-contain"
+                />
+              </a>
+            );
+          })}
 
-                  {/* SOCIALS */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowSocials((prev) => !prev)}
+          {socials.length > 3 && (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowSocials((prev) => !prev)}
+                className="
+                  flex items-center justify-center
+                  w-10 h-10 rounded-full
+                  bg-orange-50 hover:bg-orange-100
+                  transition-all duration-300
+                "
+              >
+                <Category
+                  size="20"
+                  color="#FF8A65"
+                  variant="Bold"
+                />
+              </button>
+
+              <div
+                className={`
+                  absolute top-12 left-1/2 -translate-x-1/2
+                  flex items-center gap-2
+                  bg-white rounded-xl shadow-lg p-2 z-50
+                  transition-all duration-300
+                  ${
+                    showSocials
+                      ? "opacity-100 visible"
+                      : "opacity-0 invisible"
+                  }
+                `}
+              >
+                {socials.slice(3).map(([key, social]) => {
+                  const iconUrl = social.icon?.startsWith("https")
+                    ? social.icon
+                    : `${serverUrl}${social.icon}`;
+
+                  return (
+                    <a
+                      key={key}
+                      href={social.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={key}
                       className="
-      flex items-center justify-center
-      w-10 h-10 rounded-full
-      bg-orange-50 hover:bg-orange-100
-      transition-all duration-300
-    "
+                        w-10 h-10
+                        flex items-center justify-center
+                        rounded-full
+                        bg-gray-100
+                        hover:bg-orange-50
+                        hover:scale-110
+                        transition-all duration-300
+                      "
                     >
-                      <Category
-                        size="32"
-                        color="#FF8A65"
-                        variant="Bold"
+                      <img
+                        src={iconUrl}
+                        alt={key}
+                        className="w-5 h-5 object-contain"
                       />
-                    </button>
-
-                    <div
-                      className={`
-      flex items-center gap-2 overflow-hidden
-      transition-all duration-500 ease-in-out
-      ${showSocials ? "max-w-[500px] opacity-100" : "max-w-0 opacity-0"}
-    `}
-                    >
-                      {channel?.socials &&
-                        Object.entries(channel.socials)
-                          .filter(([, social]) => social?.link)
-                          .map(([key, social]) => {
-                            const iconUrl = social.icon?.startsWith("https")
-                              ? social.icon
-                              : `${serverUrl}${social.icon}`;
-                            console.log(iconUrl);
-
-                            return (
-                              <a
-                                key={key}
-                                href={social.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title={key}
-                                className="
-                w-10 h-10
-                flex items-center justify-center
-                rounded-full
-                bg-gray-100
-                hover:bg-orange-50
-                hover:scale-110
-                transition-all duration-300
-                shrink-0
-              "
-                              >
-                                <img
-                                  src={iconUrl}
-                                  alt={key}
-                                  className="w-5 h-5 object-contain"
-                                />
-                              </a>
-                            );
-                          })}
-                    </div>
-                  </div>
-                </div>
+                    </a>
+                  );
+                })}
               </div>
             </div>
-          </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
           <div className="mb-4 flex justify-center">
             <div className="flex flex-col gap-3  lg:flex-row lg:items-center lg:justify-between">

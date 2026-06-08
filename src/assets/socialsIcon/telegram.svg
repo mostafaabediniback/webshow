@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29.5 29.2">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: #adadad;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <rect id="Rectangle_5" data-name="Rectangle 5" class="cls-1" width="29.5" height="29.2" rx="11" ry="11"/>
+      <path id="icons8_telegram_app" data-name="icons8 telegram app" class="cls-2" d="m8.11,14.12c4.54-2.22,10.41-4.92,11.22-5.29,2.13-.98,2.78-.79,2.45,1.38-.23,1.56-.91,6.71-1.44,9.92-.32,1.9-1.03,2.13-2.16,1.31-.54-.4-3.27-2.4-3.86-2.87-.54-.43-1.29-.94-.35-1.96.33-.36,2.52-2.67,4.22-4.47.22-.24-.06-.62-.31-.44-2.29,1.69-5.47,4.03-5.87,4.33-.63.53-1.5.66-2.26.33-.8-.25-1.57-.56-1.88-.67-1.16-.44-.88-1.02.25-1.57Z"/>
+    </g>
+  </g>
+</svg>
