@@ -389,68 +389,69 @@ function UserVideos() {
               {/* {videoStatus === 'uploading' && uploadProgress > 0 ? ` (${Math.round(uploadProgress)}%)` : ''} */}
             </div>
           </div>
-          {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full flex flex-col gap-4">
+          {videoFile && (
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2">
+                <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full">
+                  {/* FORM */}
+                  <div className="space-y-5">
+                    {/* TITLE */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        عنوان ویدیو <span className="text-red-500">*</span>
+                      </label>
 
-          </div> */}
-
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-6 justify-center sm:justify-between pt-2">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full">
-              {/* FORM */}
-              <div className="space-y-5">
-                {/* TITLE */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    عنوان ویدیو <span className="text-red-500">*</span>
-                  </label>
-
-                  <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="عنوان ویدیو را وارد کنید"
-                    className="h-11 px-4 rounded-lg border border-gray-300 w-full
+                      <input
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="عنوان ویدیو را وارد کنید"
+                        className="h-11 px-4 rounded-lg border border-gray-300 w-full
                    focus:outline-none focus:ring-2 focus:ring-blue-500
                    focus:border-transparent transition-all
                    disabled:bg-gray-100"
-                  />
-                </div>
+                      />
+                    </div>
 
-                {/* DESCRIPTION */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    توضیحات
-                  </label>
+                    {/* DESCRIPTION */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        توضیحات
+                      </label>
 
-                  <textarea
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                    placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                    className="h-48 px-4 py-3 rounded-lg border border-gray-300 w-full
+                      <textarea
+                        value={desc}
+                        onChange={(e) => setDesc(e.target.value)}
+                        placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
+                        className="h-48 px-4 py-3 rounded-lg border border-gray-300 w-full
                    focus:outline-none focus:ring-2 focus:ring-blue-500
                    focus:border-transparent transition-all resize-none
                    disabled:bg-gray-100"
-                  />
-                </div>
-                {/* PUBLIC SWITCH */}
-                <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 ">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-800">
-                      نمایش عمومی ویدیو
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      در صورت فعال بودن، ویدیو برای همه کاربران قابل مشاهده است
-                    </span>
-                  </div>
+                      />
+                    </div>
+                    {/* PUBLIC SWITCH */}
+                    <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 ">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-800">
+                          نمایش عمومی ویدیو
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          در صورت فعال بودن، ویدیو برای همه کاربران قابل مشاهده
+                          است
+                        </span>
+                      </div>
 
-                  <label className="relative inline-flex cursor-pointer items-center">
-                    <input
-                      type="checkbox"
-                      checked={publicShow === 1}
-                      onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
-                      className="sr-only peer"
-                    />
+                      <label className="relative inline-flex cursor-pointer items-center">
+                        <input
+                          type="checkbox"
+                          checked={publicShow === 1}
+                          onChange={(e) =>
+                            setPublicShow(e.target.checked ? 1 : 0)
+                          }
+                          className="sr-only peer"
+                        />
 
-                    <div
-                      className="
+                        <div
+                          className="
       h-6 w-11 rounded-full bg-gray-300 
       peer-checked:bg-blue-600 
       transition-colors duration-300
@@ -460,29 +461,33 @@ function UserVideos() {
       peer-checked:after:translate-x-5
       
     "
-                    />
-                  </label>
-                </div>
-                {/* CATEGORY */}
-                <div>
-                  <div className="flex justify-between items-center mb-3">
-                    <label className="text-sm font-semibold text-gray-900">
-                      دسته‌بندی‌ها
-                    </label>
-                  </div>
+                        />
+                      </label>
+                    </div>
+                    {/* CATEGORY */}
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <label className="text-sm font-semibold text-gray-900">
+                          دسته‌بندی‌ها
+                        </label>
+                      </div>
 
-                  {isLoadingCategories ? (
-                    <p className="text-sm text-gray-500">در حال بارگذاری...</p>
-                  ) : isCategoriesError ? (
-                    <p className="text-sm text-red-600">
-                      خطا در دریافت دسته‌بندی‌ها
-                    </p>
-                  ) : (
-                    <div className="relative">
-                      <select
-                        value={selectedCategory || ""}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="
+                      {isLoadingCategories ? (
+                        <p className="text-sm text-gray-500">
+                          در حال بارگذاری...
+                        </p>
+                      ) : isCategoriesError ? (
+                        <p className="text-sm text-red-600">
+                          خطا در دریافت دسته‌بندی‌ها
+                        </p>
+                      ) : (
+                        <div className="relative">
+                          <select
+                            value={selectedCategory || ""}
+                            onChange={(e) =>
+                              setSelectedCategory(e.target.value)
+                            }
+                            className="
           w-full h-11
           appearance-none
           bg-transparent
@@ -492,119 +497,119 @@ function UserVideos() {
           border border-gray-200
           focus:outline-none focus:ring-2 focus:ring-blue-500
         "
-                      >
-                        <option value="">انتخاب دسته‌بندی</option>
+                          >
+                            <option value="">انتخاب دسته‌بندی</option>
 
-                        {categories.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.title || c.name}
-                          </option>
-                        ))}
-                      </select>
+                            {categories.map((c) => (
+                              <option key={c.id} value={c.id}>
+                                {c.title || c.name}
+                              </option>
+                            ))}
+                          </select>
 
-                      {/* icon */}
-                      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                        <ArrowDown2 size={14} color="currentColor" />
+                          {/* icon */}
+                          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                            <ArrowDown2 size={14} color="currentColor" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* PLAYLIST */}
+                    <div className="w-full">
+                      {/* Header */}
+                      <div className="flex justify-between items-center mb-3">
+                        <label className="text-sm font-semibold text-gray-900">
+                          پلی‌لیست (اختیاری)
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={() => setPlaylistModalOpen(true)}
+                          className="text-xs font-medium text-blue-600 hover:text-blue-700 transition"
+                        >
+                          + ایجاد پلی‌لیست
+                        </button>
+                      </div>
+
+                      {/* Body */}
+                      <div className="">
+                        {/* Loading */}
+                        {isLoadingPlaylists ? (
+                          <div className="p-3 text-sm text-gray-500">
+                            در حال بارگذاری پلی‌لیست‌ها...
+                          </div>
+                        ) : isPlaylistsError ? (
+                          <div className="p-3 text-sm text-red-600">
+                            خطا در دریافت پلی‌لیست‌ها
+                          </div>
+                        ) : playlists.length === 0 ? (
+                          <div className="p-3 text-sm text-gray-500">
+                            هیچ پلی‌لیستی وجود ندارد.
+                          </div>
+                        ) : (
+                          <MultiSelect
+                            options={playlists}
+                            value={selectedPlaylistIds}
+                            onChange={setSelectedPlaylistIds}
+                            placeholder="جستجوی پلی‌لیست..."
+                            emptyMessage="پلی‌لیستی وجود ندارد"
+                            getOptionLabel={(item) =>
+                              item?.name || `پلی‌لیست ${item?.id}`
+                            }
+                          />
+                        )}
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
 
-                {/* PLAYLIST */}
-                <div className="w-full">
-                  {/* Header */}
-                  <div className="flex justify-between items-center mb-3">
-                    <label className="text-sm font-semibold text-gray-900">
-                      پلی‌لیست (اختیاری)
-                    </label>
-
-                    <button
-                      type="button"
-                      onClick={() => setPlaylistModalOpen(true)}
-                      className="text-xs font-medium text-blue-600 hover:text-blue-700 transition"
-                    >
-                      + ایجاد پلی‌لیست
-                    </button>
-                  </div>
-
-                  {/* Body */}
-                  <div className="">
-                    {/* Loading */}
-                    {isLoadingPlaylists ? (
-                      <div className="p-3 text-sm text-gray-500">
-                        در حال بارگذاری پلی‌لیست‌ها...
+                <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        تصویر کاور (اجباری)
+                      </label>
+                      <div>
+                        <CoverPicker
+                          value={thumbFile}
+                          onChange={(file) => setThumbFile(file)}
+                          onConfirm={(file) => {
+                            setThumbFile(file);
+                          }}
+                          defaultCovers={[
+                            cover,
+                            "/covers/default2.jpg",
+                            "/covers/default3.jpg",
+                          ]}
+                          videoFile={videoFile}
+                          videoUrl={tempPath}
+                          videoThumbnails={thumbnails}
+                        />
                       </div>
-                    ) : isPlaylistsError ? (
-                      <div className="p-3 text-sm text-red-600">
-                        خطا در دریافت پلی‌لیست‌ها
-                      </div>
-                    ) : playlists.length === 0 ? (
-                      <div className="p-3 text-sm text-gray-500">
-                        هیچ پلی‌لیستی وجود ندارد.
-                      </div>
-                    ) : (
-                      <MultiSelect
-                        options={playlists}
-                        value={selectedPlaylistIds}
-                        onChange={setSelectedPlaylistIds}
-                        placeholder="جستجوی پلی‌لیست..."
-                        emptyMessage="پلی‌لیستی وجود ندارد"
-                        getOptionLabel={(item) =>
-                          item?.name || `پلی‌لیست ${item?.id}`
-                        }
-                      />
-                    )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    تصویر کاور (اجباری)
-                  </label>
-                  <div>
-                    <CoverPicker
-                      value={thumbFile}
-                      onChange={(file) => setThumbFile(file)}
-                      onConfirm={(file) => {
-                        setThumbFile(file);
-                      }}
-                      defaultCovers={[
-                        cover,
-                        "/covers/default2.jpg",
-                        "/covers/default3.jpg",
-                      ]}
-                      videoFile={videoFile}
-                      videoUrl={tempPath}
-                      videoThumbnails={thumbnails}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-2 justify-end">
-            <button
-              onClick={handleCancelAndRefresh}
-              className={`px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50 `}
-            >
-              <CloseCircle size={16} color="currentColor" />
-              انصراف
-            </button>
-            <button
-              onClick={handleUpload}
-              disabled={
-                !title ||
-                (uploadType === "file" && !tempPath) ||
-                (uploadType === "url" && !videoUrl) ||
-                isPending ||
-                !thumbFile
-              }
-              className="   h-12 px-6 rounded-lg
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={handleCancelAndRefresh}
+                  className={`px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm flex items-center gap-2 hover:border-red-300 hover:text-red-700 hover:bg-red-50 `}
+                >
+                  <CloseCircle size={16} color="currentColor" />
+                  انصراف
+                </button>
+                <button
+                  onClick={handleUpload}
+                  disabled={
+                    !title ||
+                    (uploadType === "file" && !tempPath) ||
+                    (uploadType === "url" && !videoUrl) ||
+                    isPending ||
+                    !thumbFile
+                  }
+                  className="   h-12 px-6 rounded-lg
     bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700
     hover:from-blue-600 hover:via-blue-600 hover:to-blue-600
     disabled:from-gray-300 disabled:via-gray-300 disabled:to-gray-300
@@ -614,28 +619,30 @@ function UserVideos() {
     flex items-center justify-center gap-2
     shadow-md hover:shadow-lg
   "
-            >
-              {isPending ? (
-                <>در حال آپلود...</>
-              ) : (
-                <>
-                  <TickCircle
-                    size={20}
-                    color={
-                      !title.trim() ||
-                      (uploadType === "file" && !tempPath) ||
-                      (uploadType === "url" && !videoUrl) ||
-                      isPending ||
-                      !thumbFile
-                        ? "#000000"
-                        : "#ffffff"
-                    }
-                  />
-                  انتشار ویدیو
-                </>
-              )}
-            </button>
-          </div>
+                >
+                  {isPending ? (
+                    <>در حال آپلود...</>
+                  ) : (
+                    <>
+                      <TickCircle
+                        size={20}
+                        color={
+                          !title.trim() ||
+                          (uploadType === "file" && !tempPath) ||
+                          (uploadType === "url" && !videoUrl) ||
+                          isPending ||
+                          !thumbFile
+                            ? "#000000"
+                            : "#ffffff"
+                        }
+                      />
+                      انتشار ویدیو
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <PlaylistModal
