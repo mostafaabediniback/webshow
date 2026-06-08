@@ -5,11 +5,12 @@ import VideoGrid from "../components/VideoGrid";
 import VideoSkeleton from "../components/VideoSkeleton";
 import Layout from "../layouts/Layout";
 
+import bgImag from "../assets/img/bgImag.jpg";
 import useChannelDetail from "../hooks/channel/useChannelDetail";
 import { useInfiniteScroll } from "../hooks/ui/useInfiniteScroll";
 import { useInfiniteLandingVideos } from "../hooks/video/useInfiniteLandingVideos";
 import { EmptyState, ErrorMessage } from "../ui";
-import bgImag from "../assets/img/bgImag.jpg";
+import { getSocialIcon } from "../utils/socialIcons";
 
 const PAGE_SIZE = 25;
 
@@ -25,7 +26,6 @@ const ProfileChannel = () => {
     isLoading: channelLoading,
     refetch: refetchChannel,
   } = useChannelDetail(channelId, { enabled: false });
-
 
   // VIDEOS
   const {
@@ -144,12 +144,9 @@ const ProfileChannel = () => {
                       )}
                     </div>
 
-                    {/* SOCIALS */}
                     <div className="flex items-center gap-2 flex-wrap justify-center">
                       {socials.slice(0, 3).map(([key, social]) => {
-                        const iconUrl = social.icon?.startsWith("https")
-                          ? social.icon
-                          : `${serverUrl}${social.icon}`;
+                        const iconUrl = getSocialIcon(key, social.icon);
 
                         return (
                           <a
@@ -171,7 +168,7 @@ const ProfileChannel = () => {
                             <img
                               src={iconUrl}
                               alt={key}
-                              className="w-5 h-5 object-contain"
+                              className="w-10 h-10 object-contain"
                             />
                           </a>
                         );
@@ -208,9 +205,7 @@ const ProfileChannel = () => {
                 `}
                           >
                             {socials.slice(3).map(([key, social]) => {
-                              const iconUrl = social.icon?.startsWith("https")
-                                ? social.icon
-                                : `${serverUrl}${social.icon}`;
+                              const iconUrl = getSocialIcon(key, social.icon);
 
                               return (
                                 <a

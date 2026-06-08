@@ -6,6 +6,7 @@ import { FaGlobe, FaInstagram, FaTelegram, FaYoutube } from "react-icons/fa";
 import { toast } from "react-toastify";
 import useChannelDetail from "../../hooks/channel/useChannelDetail";
 import useChannel from "../../hooks/channel/useChannel";
+import { getSocialIcon } from "../../utils/socialIcons";
 
 const SOCIAL_CONFIG = [
   {
@@ -161,11 +162,11 @@ const handleSubmit = () => {
               "
             >
               <div className="w-12 h-12 rounded-[10px] bg-white border border-gray-200 flex items-center justify-center shadow-sm">
-                {socials?.[item.name]?.icon ? (
+                {socials?.[item.name]?.icon || getSocialIcon(item.name) ? (
                   <img
-                    src={socials[item.name].icon}
+                    src={getSocialIcon(item.name, socials?.[item.name]?.icon)}
                     alt={item.label}
-                    className="w-6 h-6 object-contain"
+                    className="w-12 h-12 object-contain"
                   />
                 ) : (
                   <Icon className="text-gray-600 text-lg" />

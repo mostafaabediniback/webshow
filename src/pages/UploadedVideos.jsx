@@ -17,7 +17,7 @@ import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import useDeleteVideo from "../hooks/video/useDeleteVideo";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { ConfirmModal, EmptyState, ErrorMessage, Spinner } from "../ui";
-import { serverUrl } from "../utils/axiosConfigNew";
+import { getSocialIcon } from "../utils/socialIcons";
 import PlaylistCard from "./PlaylistCard";
 
 const PAGE_SIZE = 25;
@@ -125,9 +125,7 @@ export default function UploadedVideos() {
         {/* SOCIALS */}
         <div className="flex items-center gap-2 flex-wrap justify-center">
           {socials.slice(0, 3).map(([key, social]) => {
-            const iconUrl = social.icon?.startsWith("https")
-              ? social.icon
-              : `${serverUrl}${social.icon}`;
+            const iconUrl = getSocialIcon(key, social.icon);
 
             return (
               <a
@@ -149,7 +147,7 @@ export default function UploadedVideos() {
                 <img
                   src={iconUrl}
                   alt={key}
-                  className="w-5 h-5 object-contain"
+                  className="w-10 h-10 object-contain"
                 />
               </a>
             );
@@ -188,9 +186,7 @@ export default function UploadedVideos() {
                 `}
               >
                 {socials.slice(3).map(([key, social]) => {
-                  const iconUrl = social.icon?.startsWith("https")
-                    ? social.icon
-                    : `${serverUrl}${social.icon}`;
+                  const iconUrl = getSocialIcon(key, social.icon);
 
                   return (
                     <a
