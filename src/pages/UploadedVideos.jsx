@@ -42,7 +42,7 @@ export default function UploadedVideos() {
   } = useChannelVideos({
     pageNumber: page,
     pageSize: PAGE_SIZE,
-    videoType,
+    video_type: videoType,
     enabled: true, // 👈 مهم
   });
   const { data } = useChannelDetail();
@@ -72,34 +72,32 @@ export default function UploadedVideos() {
 
   const videosList = Array.isArray(videos?.items) ? videos.items : [];
   const socials = channel?.socials
-  ? Object.entries(channel.socials).filter(
-      ([, social]) => social?.link
-    )
-  : [];
+    ? Object.entries(channel.socials).filter(([, social]) => social?.link)
+    : [];
 
   return (
     <DashboardLayout navMode="bottom">
       <div className="space-y-6">
         <div className="">
-<div className="overflow-hidden">
-  {/* COVER */}
-  <div className="hidden sm:block relative aspect-[7/1] w-full overflow-hidden rounded-[10px]">
-    <img
-      src={channel?.background_image || bgImag}
-      alt="cover"
-      className="w-full h-full object-cover"
-    />
-  </div>
+          <div className="overflow-hidden">
+            {/* COVER */}
+            <div className="hidden sm:block relative aspect-[7/1] w-full overflow-hidden rounded-[10px]">
+              <img
+                src={channel?.background_image || bgImag}
+                alt="cover"
+                className="w-full h-full object-cover"
+              />
+            </div>
 
-  {/* CONTENT */}
-  <div className="relative p-4 sm:p-6">
-    <div className="flex flex-col items-center sm:items-start gap-4">
-      {/* AVATAR */}
-      <div className="relative sm:-mt-20">
-        <img
-          src={channel?.image}
-          alt="avatar"
-          className="
+            {/* CONTENT */}
+            <div className="relative p-4 sm:p-6">
+              <div className="flex flex-col items-center sm:items-start gap-4">
+                {/* AVATAR */}
+                <div className="relative sm:-mt-20">
+                  <img
+                    src={channel?.image}
+                    alt="avatar"
+                    className="
             w-24 h-24 sm:w-24 sm:h-24
             rounded-[10px]
             object-cover
@@ -107,34 +105,34 @@ export default function UploadedVideos() {
             border-4 border-gray-100
             shadow-lg shadow-black/20
           "
-        />
-      </div>
+                  />
+                </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start w-full gap-4">
-        {/* INFO */}
-        <div className="text-center sm:text-right">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words">
-            {channel?.name}
-          </h2>
+                <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start w-full gap-4">
+                  {/* INFO */}
+                  <div className="text-center sm:text-right">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words">
+                      {channel?.name}
+                    </h2>
 
-          <p className="text-sm text-gray-500 break-all">
-            {channel?.description || channel?.username}
-          </p>
-        </div>
+                    <p className="text-sm text-gray-500 break-all">
+                      {channel?.description || channel?.username}
+                    </p>
+                  </div>
 
-        {/* SOCIALS */}
-        <div className="flex items-center gap-2 flex-wrap justify-center">
-          {socials.slice(0, 3).map(([key, social]) => {
-            const iconUrl = getSocialIcon(key, social.icon);
+                  {/* SOCIALS */}
+                  <div className="flex items-center gap-2 flex-wrap justify-center">
+                    {socials.slice(0, 3).map(([key, social]) => {
+                      const iconUrl = getSocialIcon(key, social.icon);
 
-            return (
-              <a
-                key={key}
-                href={social.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={key}
-                className="
+                      return (
+                        <a
+                          key={key}
+                          href={social.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={key}
+                          className="
                   w-10 h-10
                   flex items-center justify-center
                   rounded-full
@@ -143,59 +141,51 @@ export default function UploadedVideos() {
                   hover:scale-110
                   transition-all duration-300
                 "
-              >
-                <img
-                  src={iconUrl}
-                  alt={key}
-                  className="w-10 h-10 object-contain"
-                />
-              </a>
-            );
-          })}
+                        >
+                          <img
+                            src={iconUrl}
+                            alt={key}
+                            className="w-10 h-10 object-contain"
+                          />
+                        </a>
+                      );
+                    })}
 
-          {socials.length > 3 && (
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setShowSocials((prev) => !prev)}
-                className="
+                    {socials.length > 3 && (
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setShowSocials((prev) => !prev)}
+                          className="
                   flex items-center justify-center
                   w-10 h-10 rounded-full
                   bg-orange-50 hover:bg-orange-100
                   transition-all duration-300
                 "
-              >
-                <Category
-                  size="20"
-                  color="#FF8A65"
-                  variant="Bold"
-                />
-              </button>
+                        >
+                          <Category size="20" color="#FF8A65" variant="Bold" />
+                        </button>
 
-              <div
-                className={`
+                        <div
+                          className={`
                   absolute top-12 left-1/2 -translate-x-1/2
                   flex items-center gap-2
                   bg-white rounded-xl shadow-lg p-2 z-50
                   transition-all duration-300
-                  ${
-                    showSocials
-                      ? "opacity-100 visible"
-                      : "opacity-0 invisible"
-                  }
+                  ${showSocials ? "opacity-100 visible" : "opacity-0 invisible"}
                 `}
-              >
-                {socials.slice(3).map(([key, social]) => {
-                  const iconUrl = getSocialIcon(key, social.icon);
+                        >
+                          {socials.slice(3).map(([key, social]) => {
+                            const iconUrl = getSocialIcon(key, social.icon);
 
-                  return (
-                    <a
-                      key={key}
-                      href={social.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title={key}
-                      className="
+                            return (
+                              <a
+                                key={key}
+                                href={social.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={key}
+                                className="
                         w-10 h-10
                         flex items-center justify-center
                         rounded-full
@@ -204,24 +194,23 @@ export default function UploadedVideos() {
                         hover:scale-110
                         transition-all duration-300
                       "
-                    >
-                      <img
-                        src={iconUrl}
-                        alt={key}
-                        className="w-5 h-5 object-contain"
-                      />
-                    </a>
-                  );
-                })}
+                              >
+                                <img
+                                  src={iconUrl}
+                                  alt={key}
+                                  className="w-5 h-5 object-contain"
+                                />
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
+          </div>
           <div className="mb-4 flex justify-center">
             <div className="flex flex-col gap-3  lg:flex-row lg:items-center lg:justify-between">
               <VideoTypeFilter
