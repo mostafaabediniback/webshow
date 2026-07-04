@@ -243,7 +243,7 @@ export default function UploadedVideos() {
               <div className="flex flex-wrap ">
                 {viewMode === "videos" ? (
                   <>
-                    <div className="w-full justify-between flex flex-wrap gap-2">
+                    <div className="w-full  flex flex-wrap gap-2">
                       {videosList.map((v) => (
                         <VideoRow
                           key={v.id}
@@ -278,7 +278,7 @@ export default function UploadedVideos() {
               </div>
 
               {videos?.totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
+                <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4 ">
                   <Pagination
                     count={videos.totalPages}
                     page={page}
@@ -308,6 +308,7 @@ export default function UploadedVideos() {
         initialVideo={editingVideo}
         isOpen={!!editingVideo}
         onClose={() => setEditingVideo(null)}
+        
       />
     </DashboardLayout>
   );

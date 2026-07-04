@@ -29,17 +29,15 @@ function VideoCard({ video }) {
       {/* Thumbnail */}
       <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
         {/* Thumbnail Image */}
-        <img
-          src={thumbnail}
-          alt={video?.title}
-          className="w-full h-full object-cover transition-all duration-700 group-hover/card:scale-110 group-hover/card:brightness-110"
-          loading="lazy"
-          onError={(e) => {
-            e.target.src = "/fallback-thumbnail.jpg";
-            // e.target.src;
-            // e.target.classList.add("animate-pulse");
-          }}
-        />
+<img
+  src={thumbnail}
+  alt={video?.title}
+  className="w-full h-full bg-black object-contain transition-all duration-700 group-hover/card:scale-105"
+  loading="lazy"
+  onError={(e) => {
+    e.currentTarget.src = "/fallback-thumbnail.jpg";
+  }}
+/>
 
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-all duration-500" />
