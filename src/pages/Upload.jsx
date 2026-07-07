@@ -1,607 +1,158 @@
 import { CloseCircle, TickCircle } from "iconsax-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import cover from "../assets/img/cover.jpg";
-import CoverPicker from "../components/Upload/CoverPicker";
-import MultiSelect from "../components/Upload/MultiSelect";
 import PlaylistModal from "../components/Upload/PlaylistModal";
-import VideoDropzone from "../components/VideoDropzone";
+import {
+  BasicMetadataFields,
+  CategoryMultiSelect,
+  CoverField,
+} from "../features/video-upload/components/VideoMetadataFields";
+import UploadSourceCard from "../features/video-upload/components/UploadSourceCard";
+import { UPLOAD_TEXT } from "../features/video-upload/constants/uploadText";
+import useVideoUploadDraft from "../features/video-upload/hooks/useVideoUploadDraft";
 import useCategories from "../hooks/category/useCategories";
 import useChannel from "../hooks/channel/useChannel";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
-import usePlaylists from "../hooks/playlist/usePlaylists";
 import useVideoUpload from "../hooks/video/useVideoUpload";
-import Layout from "../layouts/Layout";
-import { Button } from "../ui";
 import UplodLayout from "../layouts/UplodLayout";
+import { Button } from "../ui";
 
 function Upload() {
-  const { channels: chans, isLoadingChannels } = useChannel();
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [videoFile, setVideoFile] = useState(null);
-  const [thumbFile, setThumbFile] = useState(null);
-  const [thumbPreviewUrl, setThumbPreviewUrl] = useState(null);
-  const [chanId, setChanId] = useState("");
+  const navigate = useNavigate();
+  const draft = useVideoUploadDraft({
+    urlReadyText: UPLOAD_TEXT.urlReadyPlatform,
+  });
   const { uploadAsync, isPending } = useVideoUpload();
-  const [tempPath, setTempPath] = useState(null);
-  const [videoStatus, setVideoStatus] = useState("idle");
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [thumbnails, setThumbnails] = useState([]);
-  const [videoUrl, setVideoUrl] = useState("");
-  const [publicShow, setPublicShow] = useState(1);
-  const [uploadType, setUploadType] = useState("file"); // 'file' | 'url'
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedPlaylistIds, setSelectedPlaylistIds] = useState([]);
-  const [isPlaylistModalOpen, setPlaylistModalOpen] = useState(false);
+  const { channels, isLoadingChannels } = useChannel();
   const {
     data: categories = [],
     isLoading: isLoadingCategories,
     isError: isCategoriesError,
   } = useCategories();
-  const {
-    data: playlistsResponse,
-    isLoading: isLoadingPlaylists,
-    isError: isPlaylistsError,
-  } = usePlaylists(chanId);
-  const playlists = playlistsResponse?.items || [];
   const createPlaylistMutation = useCreatePlaylist();
 
-  const navigate = useNavigate();
+  const [channelId, setChannelId] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedPlaylistIds, setSelectedPlaylistIds] = useState([]);
+  const [isPlaylistModalOpen, setPlaylistModalOpen] = useState(false);
+
+  const resetForm = () => {
+    draft.resetDraft();
+    setChannelId("");
+    setSelectedCategories([]);
+    setSelectedPlaylistIds([]);
+  };
 
   const handleCancelAndRefresh = () => {
     window.location.reload();
   };
 
-  const captureFrameFromUrl = (videoUrl, timeInSeconds = 0) => {
-    return new Promise((resolve, reject) => {
-      const video = document.createElement("video");
-      video.crossOrigin = "anonymous";
-      video.src = videoUrl;
-      video.muted = true;
-      video.playsInline = true;
-      const cleanup = () => {
-        try {
-          video.src = "";
-        } catch (e) {}
-      };
-      const onError = () => {
-        cleanup();
-        reject(new Error("video load error / CORS or invalid url"));
-      };
-      video.addEventListener("loadedmetadata", () => {
-        if (!video.duration || isNaN(video.duration)) {
-          video.currentTime = 0;
-        } else {
-          const t = Math.min(timeInSeconds, video.duration);
-          video.currentTime = t;
-        }
-      });
-      video.addEventListener("seeked", () => {
-        try {
-          const w = video.videoWidth || 640;
-          const h = video.videoHeight || 360;
-          const canvas = document.createElement("canvas");
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(video, 0, 0, w, h);
-          canvas.toBlob((blob) => {
-            cleanup();
-            if (!blob) return reject(new Error("cannot capture frame"));
-            resolve(blob);
-          }, "image/png");
-        } catch (err) {
-          cleanup();
-          reject(err);
-        }
-      });
-      video.addEventListener("error", onError);
-    });
-  };
-
-  const captureFrameFromFile = async (file, timeInSeconds = 0) => {
-    const url = URL.createObjectURL(file);
-    try {
-      const blob = await captureFrameFromUrl(url, timeInSeconds);
-      return blob;
-    } finally {
-      URL.revokeObjectURL(url);
-    }
-  };
-
-  const handleVideoSelected = (file) => {
-    setVideoFile(file || null);
-    setTempPath(null);
-    setVideoStatus(file ? "uploading" : "idle");
-    setUploadProgress(0);
-    setThumbFile(null);
-    setVideoUrl("");
-  };
-
-  const handleVideoUploaded = (payload) => {
-    if (!payload) return;
-
-    if (typeof payload === "string") {
-      setTempPath(payload);
-      setVideoStatus("success");
-    } else if (typeof payload === "object") {
-      setTempPath(payload.temp_path || null);
-      setVideoFile(payload.file || null);
-      setVideoStatus("success");
-    }
-
-    setUploadProgress(100);
-  };
-  useEffect(() => {
-    let canceled = false;
-    const createdUrls = [];
-
-    const generate = async () => {
-      setThumbnails([]);
-      if (!videoFile && !tempPath) return;
-
-      try {
-        let duration = 0;
-        if (videoFile) {
-          const tmp = document.createElement("video");
-          const url = URL.createObjectURL(videoFile);
-          tmp.src = url;
-          await new Promise((res, rej) => {
-            tmp.addEventListener("loadedmetadata", res);
-            tmp.addEventListener("error", rej);
-          });
-          duration = tmp.duration || 0;
-          URL.revokeObjectURL(url);
-
-          const positions = [0.1, 0.5, 0.9].map((p) =>
-            Math.min(duration * p, duration || 0),
-          );
-          const resArr = [];
-          for (const t of positions) {
-            try {
-              const blob = await captureFrameFromFile(videoFile, t);
-              if (canceled) break;
-              const u = URL.createObjectURL(blob);
-              createdUrls.push(u);
-              resArr.push({ time: t, blob, url: u });
-            } catch (err) {
-              console.warn("capture from file failed", err);
-            }
-          }
-          if (!canceled) setThumbnails(resArr);
-        } else if (tempPath) {
-          const tmp = document.createElement("video");
-          tmp.crossOrigin = "anonymous";
-          tmp.src = tempPath;
-          await new Promise((res, rej) => {
-            tmp.addEventListener("loadedmetadata", res);
-            tmp.addEventListener("error", rej);
-          });
-          duration = tmp.duration || 0;
-          const positions = [0.1 * duration, 0.5 * duration, 0.9 * duration];
-          const resArr = [];
-          for (const t of positions) {
-            try {
-              const blob = await captureFrameFromUrl(tempPath, t);
-              if (canceled) break;
-              const u = URL.createObjectURL(blob);
-              createdUrls.push(u);
-              resArr.push({ time: t, blob, url: u });
-            } catch (err) {
-              console.warn("capture from url failed", err);
-            }
-          }
-          if (!canceled) setThumbnails(resArr);
-        }
-      } catch (err) {
-        console.warn("thumbnail generation overall error", err);
-      }
-    };
-
-    generate();
-
-    return () => {
-      canceled = true;
-      createdUrls.forEach((u) => URL.revokeObjectURL(u));
-    };
-  }, [videoFile, tempPath]);
-
-  useEffect(() => {
-    if (!thumbFile) {
-      if (thumbPreviewUrl) {
-        try {
-          URL.revokeObjectURL(thumbPreviewUrl);
-        } catch (e) {}
-        setThumbPreviewUrl(null);
-      }
-      return;
-    }
-    if (thumbFile instanceof File || thumbFile instanceof Blob) {
-      const u = URL.createObjectURL(thumbFile);
-      if (thumbPreviewUrl) {
-        try {
-          URL.revokeObjectURL(thumbPreviewUrl);
-        } catch (e) {}
-      }
-      setThumbPreviewUrl(u);
-    } else {
-      if (thumbPreviewUrl) {
-        try {
-          URL.revokeObjectURL(thumbPreviewUrl);
-        } catch (e) {}
-        setThumbPreviewUrl(null);
-      }
-    }
-  }, [thumbFile]);
-
   const handleUpload = async () => {
-    if (!title.trim() || !chanId) {
-      alert("لطفاً عنوان و کانال را کامل کنید");
+    if (!draft.title.trim() || !channelId) {
+      alert(UPLOAD_TEXT.validationTitleChannel);
       return;
     }
 
-    // 👇 شرط جدید
-    if (!tempPath && !videoUrl) {
-      alert("لطفاً ویدیو آپلود کنید یا لینک وارد کنید");
+    if (!draft.tempPath && !draft.videoUrl) {
+      alert(UPLOAD_TEXT.validationVideo);
       return;
     }
 
-    if (!thumbFile) {
-      alert("لطفاً یک تصویر کاور انتخاب کنید");
+    if (!draft.coverFile) {
+      alert(UPLOAD_TEXT.validationCover);
       return;
     }
 
     try {
       await uploadAsync({
-        channelId: chanId,
-        title,
-        description: desc,
-        temp_path: tempPath,
-        url: videoUrl,
-        coverFile: thumbFile,
-        public_show: publicShow,
+        channelId,
+        title: draft.title,
+        description: draft.description,
+        temp_path: draft.tempPath,
+        url: draft.videoUrl,
+        coverFile: draft.coverFile,
+        public_show: draft.publicShow,
         categories: selectedCategories.map(Number).filter(Number.isFinite),
         play_lists: selectedPlaylistIds.map(Number).filter(Number.isFinite),
       });
 
       navigate("/dashboard/videos");
       resetForm();
-    } catch {}
-  };
-
-  const resetForm = () => {
-    setTitle("");
-    setDesc("");
-    setVideoFile(null);
-    setThumbFile(null);
-    setThumbPreviewUrl(null);
-    setChanId("");
-    setTempPath(null);
-    setThumbnails([]);
-    setVideoStatus("idle");
-    setUploadProgress(0);
-    setVideoUrl("");
-    setPublicShow(1);
-    setSelectedCategories([]);
-    setSelectedPlaylistIds([]);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (thumbPreviewUrl) {
-        try {
-          URL.revokeObjectURL(thumbPreviewUrl);
-        } catch (e) {}
-      }
-      thumbnails.forEach((t) => {
-        try {
-          URL.revokeObjectURL(t.url);
-        } catch (e) {}
-      });
-    };
-  }, []);
-
-  useEffect(() => {
-    setTempPath(null);
-    setVideoFile(null);
-    setVideoStatus("idle");
-    setUploadProgress(0);
-    setVideoUrl("");
-  }, [uploadType]);
-
-  const canEditMetadata = Boolean(videoFile || tempPath);
-  const uploadStatusText = useMemo(() => {
-    if (uploadType === "url") {
-      return videoUrl
-        ? "لینک ویدیو وارد شده است."
-        : "لطفاً لینک ویدیو را وارد کنید.";
+    } catch {
+      // Error toast is handled by useVideoUpload.
     }
+  };
 
-    if (videoStatus === "success")
-      return "آپلود ویدیو کامل شده و آماده انتشار است.";
-    if (videoStatus === "uploading") return "آپلود ویدیو در حال انجام است.";
-    return "ابتدا فایل ویدیو را انتخاب کنید.";
-  }, [videoStatus, uploadType, videoUrl]);
-
-  const isFormDisabled = videoStatus !== "success";
   return (
     <UplodLayout>
       <div className="flex justify-center items-center">
-        <div className="space-y-2 w-full h-full sm:max-w-7xl pb-20 pt-10 px-5 ">
-          <div className="bg-white  rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex justify-center mb-4">
-              <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
-                <button
-                  onClick={() => setUploadType("file")}
-                  className={`px-4 py-2 text-sm rounded-md transition-all ${
-                    uploadType === "file"
-                      ? "bg-white shadow text-gray-900"
-                      : "text-gray-500"
-                  }`}
+        <div className="space-y-2 w-full h-full sm:max-w-7xl pb-20 pt-10 px-5">
+          <UploadSourceCard draft={draft} showUploadTypeTabs showProgress />
+
+          <BasicMetadataFields
+            draft={draft}
+            channelSelector={
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  {UPLOAD_TEXT.chooseChannel}{" "}
+                  <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={channelId}
+                  onChange={(event) => setChannelId(event.target.value)}
+                  disabled={isLoadingChannels}
+                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
-                  آپلود فایل
-                </button>
-
-                <button
-                  onClick={() => setUploadType("url")}
-                  className={`px-4 py-2 text-sm rounded-md transition-all ${
-                    uploadType === "url"
-                      ? "bg-white shadow text-gray-900"
-                      : "text-gray-500"
-                  }`}
-                >
-                  لینک ویدیو
-                </button>
+                  <option value="">{UPLOAD_TEXT.chooseChannel}</option>
+                  {(channels || []).map((channel) => (
+                    <option key={channel.id} value={channel.id}>
+                      {channel.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-            </div>
-
-            {uploadType === "file" ? (
-              <VideoDropzone
-                onFileSelected={(file) => {
-                  handleVideoSelected(file);
-                  setVideoUrl("");
-                }}
-                onUploaded={handleVideoUploaded}
-                onProgress={(percent) => {
-                  setUploadProgress(percent);
-                  if (percent > 0 && percent < 100) {
-                    setVideoStatus("uploading");
-                  }
-                }}
-              />
-            ) : (
-              <div className="mt-4">
-                <input
-                  value={videoUrl}
-                  onChange={(e) => {
-                    setVideoUrl(e.target.value);
-                    setTempPath(null);
-                    setVideoFile(null);
-                    setVideoStatus("idle");
-                  }}
-                  placeholder="https://example.com/video.mp4"
-                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            )}
-
-            <div className="mt-4 space-y-2">
-              {isFormDisabled && (
-                <p className="text-sm">
-                  لطفا پیش از بارگذاری ویدیو{" "}
-                  <span className="text-blue-500">قوانین اربعین تی وی</span> را
-                  مطالعه کنید{" "}
-                </p>
-              )}
-              <div
-                className={`rounded-lg border px-3 py-2 text-sm ${videoStatus === "success" ? "border-green-200 bg-green-50 text-green-700" : canEditMetadata ? "border-blue-200 bg-blue-50 text-blue-700" : "border-slate-200 bg-slate-50 text-slate-600"}`}
-              >
-                {uploadStatusText}
-                {videoStatus === "uploading" && uploadProgress > 0
-                  ? ` (${Math.round(uploadProgress)}%)`
-                  : ""}
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full flex flex-col gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                عنوان ویدیو <span className="text-red-500">*</span>
-              </label>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="عنوان ویدیو را وارد کنید"
-                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                توضیحات
-              </label>
-              <textarea
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                placeholder="توضیحات ویدیو را وارد کنید (اختیاری)"
-                className="h-24 px-4 py-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                انتخاب کانال <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={chanId}
-                onChange={(e) => setChanId(e.target.value)}
-                disabled={isLoadingChannels}
-                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="">انتخاب کانال</option>
-                {(chans || []).map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* PUBLIC SWITCH */}
-            <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 mt-2">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-800">
-                  نمایش عمومی ویدیو
-                </span>
-                <span className="text-xs text-gray-500">
-                  در صورت فعال بودن، ویدیو برای همه کاربران قابل مشاهده است
-                </span>
-              </div>
-
-              <label className="relative inline-flex cursor-pointer items-center">
-                <input
-                  type="checkbox"
-                  checked={publicShow === 1}
-                  onChange={(e) => setPublicShow(e.target.checked ? 1 : 0)}
-                  className="sr-only peer"
-                />
-
-                <div
-                  className="
-      h-6 w-11 rounded-full bg-gray-300 
-      peer-checked:bg-blue-600 
-      transition-colors duration-300
-      after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-      after:h-5 after:w-5 after:rounded-full after:bg-white
-      after:transition-all after:duration-300
-      peer-checked:after:translate-x-5
-      
-    "
-                />
-              </label>
-            </div>
-          </div>
+            }
+          />
 
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 md:gap-2 justify-center sm:justify-between pt-2">
-            <div
-              className={`bg-white rounded-xl border border-gray-200 p-6 shadow-sm ${canEditMetadata ? "w-full" : "w-full "}`}
-            >
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full">
               <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="block text-sm font-semibold text-gray-900">
-                      دسته‌بندی‌ها
-                    </label>
-                  </div>
-                  {isLoadingCategories ? (
-                    <p className="text-sm text-gray-500">
-                      در حال بارگذاری دسته‌بندی‌ها...
-                    </p>
-                  ) : isCategoriesError ? (
-                    <p className="text-sm text-red-600">
-                      خطا در دریافت دسته‌بندی‌ها
-                    </p>
-                  ) : (
-                    <MultiSelect
-                      options={categories}
-                      value={selectedCategories}
-                      onChange={setSelectedCategories}
-                      placeholder="جستجوی دسته‌بندی..."
-                      getOptionLabel={(item) =>
-                        item?.title || item?.name || `دسته ${item?.id}`
-                      }
-                    />
-                  )}
-                </div>
-                {/* <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-semibold text-gray-900">
-                    پلی‌لیست‌ها
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setPlaylistModalOpen(true)}
-                    className="text-xs text-blue-600 hover:underline"
-                  >
-                    + ایجاد پلی‌لیست
-                  </button>
-                </div>
-                <div className="rounded-lg border border-gray-200 bg-white p-3">
-                  {!chanId ? (
-                    <div className="text-sm text-gray-500">
-                      ابتدا کانال را انتخاب کنید.
-                    </div>
-                  ) : isLoadingPlaylists ? (
-                    <div className="text-sm text-gray-500">
-                      در حال بارگذاری پلی‌لیست‌ها...
-                    </div>
-                  ) : isPlaylistsError ? (
-                    <div className="text-sm text-red-600">
-                      خطا در دریافت پلی‌لیست‌ها
-                    </div>
-                  ) : (
-                    <MultiSelect
-                      options={playlists}
-                      value={selectedPlaylistIds}
-                      onChange={setSelectedPlaylistIds}
-                      placeholder="جستجوی پلی‌لیست..."
-                      emptyMessage="پلی‌لیستی پیدا نشد"
-                      getOptionLabel={(item) => item?.name || `پلی‌لیست ${item?.id}`}
-                    />
-                  )}
-                </div>
-              </div> */}
+                <CategoryMultiSelect
+                  categories={categories}
+                  isLoading={isLoadingCategories}
+                  isError={isCategoriesError}
+                  selectedCategories={selectedCategories}
+                  onChange={setSelectedCategories}
+                />
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm w-full ">
-              <div className="space-y-4">
-                <div>
-                  <label className=" text-sm font-semibold text-gray-900 mb-5">
-                    تصویر کاور (اجباری)
-                  </label>
-                  <CoverPicker
-                    // isFormDisabled={isFormDisabled}
-                    value={thumbFile}
-                    onChange={(file) => setThumbFile(file)}
-                    onConfirm={(file) => {
-                      setThumbFile(file);
-                    }}
-                    defaultCovers={[
-                      cover,
-                      "/covers/default2.jpg",
-                      "/covers/default3.jpg",
-                    ]}
-                    videoFile={videoFile}
-                    videoUrl={tempPath}
-                    videoThumbnails={thumbnails}
-                  />
-                </div>
-              </div>
-            </div>
+            <CoverField draft={draft} />
           </div>
 
-          <div className="flex gap-2 justify-end ">
+          <div className="flex gap-2 justify-end">
             <Button
               variant="secondary"
               onClick={handleCancelAndRefresh}
               icon={<CloseCircle size={16} color="currentColor" />}
               className="hover:border-red-300 hover:text-red-700 hover:bg-red-50"
             >
-              انصراف
+              {UPLOAD_TEXT.cancel}
             </Button>
             <Button
               onClick={handleUpload}
               disabled={
-                !title.trim() ||
-                !chanId ||
-                (uploadType === "file" && !tempPath) ||
-                (uploadType === "url" && !videoUrl) ||
-                !thumbFile
+                !draft.title.trim() ||
+                !channelId ||
+                (draft.uploadType === "file" && !draft.tempPath) ||
+                (draft.uploadType === "url" && !draft.videoUrl) ||
+                !draft.coverFile
               }
               isLoading={isPending}
               icon={<TickCircle size={20} color="currentColor" />}
               className="h-12"
             >
-              انتشار ویدیو
+              {UPLOAD_TEXT.publish}
             </Button>
           </div>
         </div>

@@ -1,196 +1,84 @@
-import { Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import VideoTypeFilter from "../components/VideoTypeFilter";
-import {
-  DEFAULT_VIDEO_TYPE,
-  VIDEO_TYPE_OPTIONS,
-} from "../constants/videoTypeOptions";
-import EditVideoModal from "../components/EditVideoModal";
-import VideoRow from "../components/VideoRow";
+import { DEFAULT_VIDEO_TYPE } from "../constants/videoTypeOptions";
+import ManageableVideoCollection from "../features/videos/components/ManageableVideoCollection";
 import useChannel from "../hooks/channel/useChannel";
 import useChannelVideos from "../hooks/channel/useChannelVideos";
-import { usePaginationParams } from "../hooks/ui/usePaginationParams";
-import useDeleteVideo from "../hooks/video/useDeleteVideo";
-import DashboardLayout from "../layouts/DashboardLayout";
-import { ConfirmModal, EmptyState, ErrorMessage, Spinner } from "../ui";
 import usePlaylists from "../hooks/playlist/usePlaylists";
-import PlaylistCard from "./PlaylistCard";
+import { usePaginationParams } from "../hooks/ui/usePaginationParams";
+import DashboardLayout from "../layouts/DashboardLayout";
+
+const PAGE_SIZE = 25;
 
 function Videos() {
-  const navigate = useNavigate();
-
-  const { channels: chans, isLoadingChannels } = useChannel();
-  const [chanId, setChanId] = useState("");
+  const { channels, isLoadingChannels } = useChannel();
+  const [channelId, setChannelId] = useState("");
   const [videoType, setVideoType] = useState(DEFAULT_VIDEO_TYPE);
+  const [viewMode, setViewMode] = useState("videos");
   const { page, setPage } = usePaginationParams(1);
-  const { data, isLoading, isError, refetch } = useChannelVideos({
-    channelId: chanId,
+
+  const videosQuery = useChannelVideos({
+    channelId,
     pageNumber: page,
-    pageSize: 25,
+    pageSize: PAGE_SIZE,
     video_type: videoType,
   });
-  const { deleteVideoAsync, isDeleting } = useDeleteVideo();
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-  const [editingVideo, setEditingVideo] = useState(null);
 
-  const [viewMode, setViewMode] = useState("videos");
-
-  const {
-    data: playlistsResponse,
-    isLoading: isLoadingPlaylists,
-    isError: playlistsError,
-    refetch: refetchPlaylists,
-  } = usePlaylists(chanId, {
+  const playlistsQuery = usePlaylists(channelId, {
     enabled: viewMode === "playlists",
   });
 
-  const playlists = playlistsResponse?.items || [];
-
-  const isPageLoading = viewMode === "videos" ? isLoading : isLoadingPlaylists;
-
-  const isPageError = viewMode === "videos" ? isError : playlistsError;
-
   useEffect(() => {
     setPage(1);
-  }, [chanId, videoType, setPage]);
-
-  const handleDelete = (videoId) => {
-    setDeleteConfirmId(videoId);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!deleteConfirmId) return;
-
-    await deleteVideoAsync(deleteConfirmId);
-    setDeleteConfirmId(null);
-  };
+  }, [channelId, videoType, setPage]);
 
   return (
     <DashboardLayout>
       <div className="space-y-3">
-        {/* <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">ویدیوهای آپلودشده</h1>
-          <p className="text-sm text-gray-600">مشاهده و مدیریت تمام ویدیوهای آپلود شده</p>
-        </div> */}
-
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                فیلتر بر اساس کانال
-              </label>
-              <select
-                value={chanId}
-                onChange={(e) => setChanId(e.target.value)}
-                className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                disabled={isLoadingChannels}
-              >
-                <option value="">همه ویدیوها</option>
-                {(chans || []).map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-gray-900">نوع ویدیو</p>
-              <VideoTypeFilter
-                value={videoType}
-                viewMode={viewMode}
-                onChange={(value) => {
-                  setViewMode("videos");
-                  setVideoType(value);
-                }}
-                onPlaylistClick={() => setViewMode("playlists")}
-              />{" "}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          {isLoading ? (
-            <div className="flex flex-col items-center justify-center ">
-              <Spinner size="lg" />
-              <p className="mt-4 text-gray-500">در حال بارگذاری ویدیوها...</p>
-            </div>
-          ) : isError ? (
-            <ErrorMessage onRetry={refetch} />
-          ) : (data?.items || []).length === 0 ? (
-            <EmptyState
-              title={
-                viewMode === "videos"
-                  ? chanId
-                    ? "ویدیویی در این کانال یافت نشد"
-                    : "هنوز ویدیویی آپلود نشده است"
-                  : "هنوز پلی‌لیستی ثبت نشده است"
-              }
-              message={`فیلتر فعلی: ${VIDEO_TYPE_OPTIONS.find((item) => item.value === videoType)?.label || "همه ویدیوها"}`}
-            />
-          ) : (
-            <>
-              <div className="flex gap-2 flex-wrap space-y-3">
-                {viewMode === "videos" ? (
-                  <div className="flex gap-2 flex-wrap space-y-3">
-                    {(data?.items || []).map((v) => (
-                      <VideoRow
-                        key={v.id}
-                        item={v}
-                        onDelete={handleDelete}
-                        onShow={(id) => navigate(`/v/${id}`)}
-                        onEdit={setEditingVideo}
-                        isDeleting={isDeleting}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                    {playlists.map((playlist) => (
-                      <PlaylistCard key={playlist.id} playlist={playlist} />
-                    ))}
-                  </div>
-                )}
+        <div >
+          <ManageableVideoCollection
+            videosResponse={videosQuery.data}
+            playlistsResponse={playlistsQuery.data}
+            page={page}
+            setPage={setPage}
+            videoType={videoType}
+            setVideoType={setVideoType}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            isLoadingVideos={videosQuery.isLoading}
+            isVideosError={videosQuery.isError}
+            refetchVideos={videosQuery.refetch}
+            isLoadingPlaylists={playlistsQuery.isLoading}
+            isPlaylistsError={playlistsQuery.isError}
+            refetchPlaylists={playlistsQuery.refetch}
+            emptyVideosTitle={
+              channelId
+                ? "ویدیویی در این کانال یافت نشد"
+                : "هنوز ویدیویی آپلود نشده است"
+            }
+            deleteMessage="آیا از حذف این ویدیو مطمئن هستید؟ این عمل قابل بازگشت نیست."
+            toolbarStart={
+              <div className="min-w-0 flex-1">
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  فیلتر بر اساس کانال
+                </label>
+                <select
+                  value={channelId}
+                  onChange={(event) => setChannelId(event.target.value)}
+                  className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  disabled={isLoadingChannels}
+                >
+                  <option value="">همه ویدیوها</option>
+                  {(channels || []).map((channel) => (
+                    <option key={channel.id} value={channel.id}>
+                      {channel.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-
-              {viewMode === "videos" && data?.totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
-                  <Pagination
-                    count={data.totalPages}
-                    page={page}
-                    onChange={(_, value) => setPage(value)}
-                    shape="rounded"
-                    color="primary"
-                  />
-                </div>
-              )}
-            </>
-          )}
+            }
+          />
         </div>
       </div>
-      {/* <VideoModal
-        videoId={selectedVideoId}
-        isOpen={!!selectedVideoId}
-        onClose={() => setSelectedVideoId(null)}
-      /> */}
-      <ConfirmModal
-        isOpen={!!deleteConfirmId}
-        onClose={() => setDeleteConfirmId(null)}
-        onConfirm={handleConfirmDelete}
-        title="حذف ویدیو"
-        message="آیا از حذف این ویدیو مطمئن هستید؟ این عمل قابل بازگشت نیست."
-        confirmText="حذف"
-        cancelText="انصراف"
-        variant="danger"
-        isLoading={isDeleting}
-      />
-      <EditVideoModal
-        videoId={editingVideo?.id}
-        initialVideo={editingVideo}
-        isOpen={!!editingVideo}
-        onClose={() => setEditingVideo(null)}
-      />
     </DashboardLayout>
   );
 }

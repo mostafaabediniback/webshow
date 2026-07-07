@@ -1,121 +1,13 @@
-import { useEffect } from 'react'
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
-import Categories from './pages/Categories'
-import Channels from './pages/Channels'
-import Dashboard from './pages/Dashboard'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import PlaylistDetail from './pages/PlaylistDetail'
-import ProfileChannel from './pages/ProfileChannel'
-import Search from './pages/Search'
-import SettingsPage from './pages/SettingsPage'
-import Upload from './pages/Upload'
-import UploadedVideos from './pages/UploadedVideos'
-import UserDashboard from './pages/UserDashboard'
-import UserCreateChannel from './pages/UserCreateChannel'
-import Users from './pages/Users'
-import UserVideos from './pages/UserVideos'
-import Video from './pages/Video'
-import VideoEdit from './pages/VideoEdit'
-import Videos from './pages/Videos'
-import useAuthStore, { hydrateAuthStore } from './store/useAuthStore'
-
-const RequireAuth = ({ children }) => {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  return isAuthenticated ? children : <Navigate to="/login" replace />
-}
-
-const RequireUser = ({ children }) => {
-  const isUser = useAuthStore((state) => state.isUser)
-  const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
-  
-  if (isUser) return children
-  if (isChannelAdmin) return <Navigate to="/dashboard/user-videos" replace />
-  return <Navigate to="/dashboard" replace />
-}
-
-const RequirePlatformAdmin = ({ children }) => {
-  const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
-  const isUser = useAuthStore((state) => state.isUser)
-
-  if (isUser) return <Navigate to="/user-dashboard" replace />
-  return isChannelAdmin ? <Navigate to="/dashboard/user-videos" replace /> : children
-}
-
-const RequireChannelAdmin = ({ children }) => {
-  const isChannelAdmin = useAuthStore((state) => state.isChannelAdmin)
-  const isUser = useAuthStore((state) => state.isUser)
-
-  if (isUser) return <Navigate to="/user-dashboard" replace />
-  return isChannelAdmin ? children : <Navigate to="/dashboard" replace />
-}
-
-const PublicOnly = ({ children }) => {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  const defaultDashboardRoute = useAuthStore((state) => state.defaultDashboardRoute)
-
-  return isAuthenticated
-    ? <Navigate to={defaultDashboardRoute} replace />
-    : children
-}
-
-function AuthNavigationEffects() {
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    hydrateAuthStore()
-
-    const handleUnauthorized = () => {
-      hydrateAuthStore()
-      navigate('/login', { replace: true })
-    }
-
-    const handleStorageChange = () => {
-      hydrateAuthStore()
-    }
-
-    window.addEventListener('auth:unauthorized', handleUnauthorized)
-    window.addEventListener('storage', handleStorageChange)
-
-    return () => {
-      window.removeEventListener('auth:unauthorized', handleUnauthorized)
-      window.removeEventListener('storage', handleStorageChange)
-    }
-  }, [navigate])
-
-  return null
-}
+import AppRoutes from "./routes/AppRoutes";
+import AuthNavigationEffects from "./routes/AuthNavigationEffects";
 
 function App() {
   return (
     <>
       <AuthNavigationEffects />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/:username?" element={<ProfileChannel />} />
-        <Route path="/search/:q" element={<Search />} />
-        <Route path="/v/:id" element={<Video />} />
-        <Route path="/playlists/:playlistId" element={<PlaylistDetail />} />
-        <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
-
-        <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
-        <Route path="/dashboard/channels" element={<RequireAuth><RequirePlatformAdmin><Channels /></RequirePlatformAdmin></RequireAuth>} />
-        <Route path="/dashboard/upload" element={<RequireAuth><RequirePlatformAdmin><Upload /></RequirePlatformAdmin></RequireAuth>} />
-        {/* <Route path="/dashboard/playlists" element={<RequireAuth><DashboardPlaylists /></RequireAuth>} /> */}
-        <Route path="/dashboard/playlists/:playlistId" element={<RequireAuth><PlaylistDetail /></RequireAuth>} />
-        <Route path="/dashboard/videos" element={<RequireAuth><RequirePlatformAdmin><Videos /></RequirePlatformAdmin></RequireAuth>} />
-        <Route path="/dashboard/videos/:id" element={<RequireAuth><RequirePlatformAdmin><VideoEdit /></RequirePlatformAdmin></RequireAuth>} />
-        <Route path="/dashboard/users" element={<RequireAuth><RequirePlatformAdmin><Users /></RequirePlatformAdmin></RequireAuth>} />
-        <Route path="/dashboard/categories" element={<RequireAuth><RequirePlatformAdmin><Categories /></RequirePlatformAdmin></RequireAuth>} />
-        <Route path="/dashboard/user-upload" element={<RequireAuth><RequireChannelAdmin><UserVideos /></RequireChannelAdmin></RequireAuth>} />
-        <Route path="/dashboard/user-videos" element={<RequireAuth><RequireChannelAdmin><UploadedVideos /></RequireChannelAdmin></RequireAuth>} />
-        <Route path="/dashboard/settings" element={<RequireAuth><RequireChannelAdmin><SettingsPage /></RequireChannelAdmin></RequireAuth>} />
-        
-        <Route path="/user-dashboard" element={<RequireAuth><RequireUser><UserDashboard /></RequireUser></RequireAuth>} />
-        <Route path="/user-dashboard/create-channel" element={<RequireAuth><RequireUser><UserCreateChannel /></RequireUser></RequireAuth>} />
-      </Routes>
+      <AppRoutes />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
