@@ -57,6 +57,8 @@ function Video() {
   const currentVideo = data?.data;
   const currentChannelId = currentVideo?.channel_id || currentVideo?.channelId;
 
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
+
   const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos(
     {
       channelId: currentChannelId,
@@ -86,6 +88,7 @@ function Video() {
     useState(false);
 
   const videoRef = useRef(null);
+  const downloadMenuRef = useRef(null);
   const isMobile = window.innerWidth < 768;
 
   const {
@@ -99,6 +102,20 @@ function Video() {
     perPage: 100,
     enabled: !!selectedPlaylistId,
   });
+
+  const availableQualities = useMemo(() => {
+    const links = currentVideo?.video_links;
+
+    if (!links || typeof links !== "object") return [];
+
+    return Object.entries(links)
+      .filter(([, url]) => !!url)
+      .sort((a, b) => Number(b[0]) - Number(a[0]))
+      .map(([quality, url]) => ({
+        quality,
+        url,
+      }));
+  }, [currentVideo]);
 
   useEffect(() => {
     const src = currentVideo?.video_link || currentVideo?.videoUrl || "";
@@ -224,11 +241,12 @@ function Video() {
     return null;
   };
 
-  const handleDownload = async () => {
-    if (!videoSource) {
+  const handleDownload = async (downloadUrl = videoSource, quality = "") => {
+    if (!downloadUrl) {
       toast.error("آدرس ویدیو موجود نیست");
       return;
     }
+
     if (isDownloading) return;
 
     setIsDownloading(true);
@@ -238,7 +256,7 @@ function Video() {
 
     try {
       const { token } = readAuthSession();
-      const res = await axios.get(videoSource, {
+      const res = await axios.get(downloadUrl, {
         responseType: "blob",
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -257,7 +275,9 @@ function Video() {
       else if (mime.includes("ogg")) ext = ".ogg";
       else if (mime.includes("mp4")) ext = ".mp4";
 
-      let downloadName = `${safeName}${ext}`;
+      let downloadName = quality
+        ? `${safeName}-${quality}p${ext}`
+        : `${safeName}${ext}`;
       const cdHeader =
         res.headers &&
         (res.headers["content-disposition"] ||
@@ -278,7 +298,7 @@ function Video() {
     } catch (err) {
       console.error("download error", err);
       try {
-        window.open(videoSource, "_blank", "noopener");
+        window.open(downloadUrl, "_blank", "noopener");
         toast.info(
           "لینک ویدیو در تب جدید باز شد. در صورت نیاز می‌توانید روی آن راست‌کلیک و Save as کنید.",
         );
@@ -304,6 +324,21 @@ function Video() {
       }
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        downloadMenuRef.current &&
+        !downloadMenuRef.current.contains(e.target)
+      ) {
+        setShowDownloadMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (!videoSource || !videoRef.current) return;
@@ -458,27 +493,56 @@ function Video() {
                   </div>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={handleDownload}
-                  disabled={isDownloading || !videoSource}
-                  className="inline-flex h-12 w-24 items-center justify-center gap-2 rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 text-xs font-bold transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
-                  title={
-                    !videoSource ? "آدرس ویدیو موجود نیست" : "دانلود ویدیو"
-                  }
-                >
-                  {isDownloading ? (
-                    <>
-                      <div className="h-4 w-4 rounded-full border-2 border-gray-300 border-t-transparent font-bold animate-spin" />
-                      در حال دانلود...
-                    </>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2">
-                      <DownloadIcon size={24} color="#4a5565" />
-                      <span className="text-[16px]">دانلود</span>
+                <div className="relative" ref={downloadMenuRef}>
+                  <button
+                    type="button"
+                    disabled={isDownloading || !videoSource}
+                    onClick={() => {
+                      if (availableQualities.length) {
+                        setShowDownloadMenu((prev) => !prev);
+                      } else {
+                        handleDownload();
+                      }
+                    }}
+                    className="inline-flex h-12 w-24 items-center justify-center gap-2 rounded-[10px] bg-[#f0f0f0] px-3 py-1.5 text-xs font-bold transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
+                  >
+                    {isDownloading ? (
+                      <>
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent" />
+                        درحال دانلود...
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <DownloadIcon size={24} />
+                        <span className="text-[16px]">دانلود</span>
+
+                        {availableQualities.length > 0 && (
+<></>
+                        )}
+                      </div>
+                    )}
+                  </button>
+
+                  {showDownloadMenu && availableQualities.length > 0 && (
+                    <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border bg-white shadow-xl">
+                      {availableQualities.map((item) => (
+                        <button
+                          key={item.quality}
+                          type="button"
+                          onClick={() => {
+                            setShowDownloadMenu(false);
+                            handleDownload(item.url, item.quality);
+                          }}
+                          className="flex w-full items-center justify-between px-4 py-3 text-right transition hover:bg-gray-100"
+                        >
+                          <span>{item.quality}p</span>
+
+                          <DownloadIcon size={16} />
+                        </button>
+                      ))}
                     </div>
                   )}
-                </button>
+                </div>
               </div>
             </div>
 
@@ -517,7 +581,7 @@ function Video() {
                   ویدیوهای مرتبط
                 </h3>
 
-                <div className="space-y-1">
+                <div className="space-y-1 mb-24 sm:mb-0">
                   {isRelatedLoading
                     ? Array.from({ length: 5 }).map((_, index) => (
                         <div key={index} className="flex gap-3 rounded-lg p-2">
@@ -532,7 +596,7 @@ function Video() {
                         <Link
                           to={`/v/${video.id}`}
                           key={video.id}
-                          className="group flex cursor-pointer gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
+                          className="group flex cursor-pointer gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50 "
                         >
                           <div className="relative h-24 w-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200">
                             <img
