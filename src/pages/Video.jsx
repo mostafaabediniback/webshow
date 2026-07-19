@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { Share } from "iconsax-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import VideoPlaylistPanel from "../components/VideoPlaylistPanel";
@@ -58,6 +58,10 @@ function Video() {
   const currentChannelId = currentVideo?.channel_id || currentVideo?.channelId;
 
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
+  const [showQualityMenu, setShowQualityMenu] = useState(false);
+  const [isAutoQuality, setIsAutoQuality] = useState(true);
+  const [selectedQuality, setSelectedQuality] = useState(null);
+  const [isSwitchingQuality, setIsSwitchingQuality] = useState(false);
 
   const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos(
     {
@@ -89,6 +93,7 @@ function Video() {
 
   const videoRef = useRef(null);
   const downloadMenuRef = useRef(null);
+  const qualityMenuRef = useRef(null);
   const isMobile = window.innerWidth < 768;
 
   const {
@@ -117,15 +122,137 @@ function Video() {
       }));
   }, [currentVideo]);
 
+  // Helper functions
+  const getBestQuality = useCallback((qualities) => {
+    if (!qualities.length) return null;
+
+    const connection = navigator.connection;
+    let downlink = 0;
+
+    if (connection) {
+      downlink = connection.downlink || 0;
+      const effectiveType = connection.effectiveType;
+
+      // Fallback if downlink is not available
+      if (!downlink) {
+        switch (effectiveType) {
+          case "4g":
+            downlink = 15;
+            break;
+          case "3g":
+            downlink = 6;
+            break;
+          default:
+            downlink = 0;
+        }
+      }
+    }
+
+    // Determine target quality based on speed
+    let targetQuality;
+    if (downlink >= 15) {
+      targetQuality = 1080;
+    } else if (downlink >= 6) {
+      targetQuality = 482;
+    } else {
+      targetQuality = 360;
+    }
+
+    // Find nearest lower available quality
+    const sortedQualities = [...qualities].sort(
+      (a, b) => Number(b.quality) - Number(a.quality),
+    );
+    let bestQuality = sortedQualities.find(
+      (q) => Number(q.quality) <= targetQuality,
+    );
+
+    // If no lower quality found, use the lowest available
+    if (!bestQuality) {
+      bestQuality = sortedQualities[sortedQualities.length - 1];
+    }
+
+    return bestQuality;
+  }, []);
+
+  const currentQuality = useMemo(() => {
+    if (availableQualities.length === 0) return null;
+
+    if (isAutoQuality) {
+      return getBestQuality(availableQualities);
+    }
+
+    return (
+      availableQualities.find((q) => q.quality === selectedQuality) ||
+      availableQualities[availableQualities.length - 1]
+    );
+  }, [availableQualities, isAutoQuality, selectedQuality, getBestQuality]);
+
+  // Switch video source
+  const switchVideoSource = useCallback((newSource) => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    setIsSwitchingQuality(true);
+
+    const currentTime = video.currentTime;
+    const wasPaused = video.paused;
+    const playbackRate = video.playbackRate;
+
+    video.src = newSource;
+    video.currentTime = currentTime;
+    video.playbackRate = playbackRate;
+
+    if (!wasPaused) {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    }
+
+    setIsSwitchingQuality(false);
+  }, []);
+
+  // Update video source based on current quality
   useEffect(() => {
-    const src = currentVideo?.video_link || currentVideo?.videoUrl || "";
-    setVideoSource(src);
-  }, [currentVideo]);
+    let src = currentVideo?.video_link || currentVideo?.videoUrl || "";
+
+    if (availableQualities.length > 0 && currentQuality) {
+      src = currentQuality.url;
+    }
+
+    if (src !== videoSource) {
+      switchVideoSource(src);
+      setVideoSource(src);
+    }
+  }, [
+    currentVideo,
+    availableQualities,
+    currentQuality,
+    videoSource,
+    switchVideoSource,
+  ]);
+
+  // Network change listener
+  useEffect(() => {
+    const connection = navigator.connection;
+    if (!connection || !isAutoQuality) return;
+
+    const handleConnectionChange = () => {
+      // The currentQuality useMemo will automatically update
+    };
+
+    connection.addEventListener("change", handleConnectionChange);
+    return () =>
+      connection.removeEventListener("change", handleConnectionChange);
+  }, [isAutoQuality]);
 
   useEffect(() => {
     setSelectedPlaylistId(null);
     setHasResolvedInitialPlaylist(false);
     setIsResolvingInitialPlaylist(false);
+    setIsAutoQuality(true);
+    setSelectedQuality(null);
+    setShowQualityMenu(false);
   }, [id]);
 
   useEffect(() => {
@@ -316,13 +443,13 @@ function Video() {
     const video = videoRef.current;
     if (!video) return;
 
-    if (isMobile) {
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      } else if (video.webkitEnterFullscreen) {
-        video.webkitEnterFullscreen();
-      }
-    }
+    // if (isMobile) {
+    //   if (video.requestFullscreen) {
+    //     video.requestFullscreen();
+    //   } else if (video.webkitEnterFullscreen) {
+    //     video.webkitEnterFullscreen();
+    //   }
+    // }
   };
 
   useEffect(() => {
@@ -332,6 +459,12 @@ function Video() {
         !downloadMenuRef.current.contains(e.target)
       ) {
         setShowDownloadMenu(false);
+      }
+      if (
+        qualityMenuRef.current &&
+        !qualityMenuRef.current.contains(e.target)
+      ) {
+        setShowQualityMenu(false);
       }
     };
 
@@ -351,6 +484,13 @@ function Video() {
       }
     }
   }, [videoSource, isMobile]);
+
+  useEffect(() => {
+  if (videoRef.current) {
+    videoRef.current.setAttribute("playsinline", "");
+    videoRef.current.setAttribute("webkit-playsinline", "");
+  }
+}, []);
 
   if (isLoading) {
     return (
@@ -397,6 +537,7 @@ function Video() {
                 ref={videoRef}
                 controls
                 playsInline
+                webkit-playsinline="true"
                 autoPlay
                 preload="auto"
                 src={videoSource}
@@ -412,7 +553,117 @@ function Video() {
                     playPromise.catch(() => {});
                   }
                 }}
+                onError={() => {
+                  // Fallback to next quality or video_link
+                  if (availableQualities.length > 0) {
+                    const currentIndex = availableQualities.findIndex(
+                      (q) => q.url === videoSource,
+                    );
+                    if (currentIndex < availableQualities.length - 1) {
+                      const nextQuality = availableQualities[currentIndex + 1];
+                      setVideoSource(nextQuality.url);
+                    } else {
+                      const fallbackSrc =
+                        currentVideo?.video_link ||
+                        currentVideo?.videoUrl ||
+                        "";
+                      setVideoSource(fallbackSrc);
+                    }
+                  } else {
+                    const fallbackSrc =
+                      currentVideo?.video_link || currentVideo?.videoUrl || "";
+                    setVideoSource(fallbackSrc);
+                  }
+                }}
               />
+
+              {/* Quality Selector */}
+              {availableQualities.length > 0 && (
+                <div
+                  className="absolute left-1 top-1 z-10 sm:left-4 sm:top-4"
+                  ref={qualityMenuRef}
+                >
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowQualityMenu(!showQualityMenu)}
+                      className="
+          flex items-center gap-1.5
+          rounded-lg bg-black/70
+          px-2 py-1.5
+          text-xs
+          font-medium text-white
+          transition-colors hover:bg-black/80
+          sm:gap-2 sm:px-3 sm:py-2 sm:text-sm
+        "
+                    >
+                      {isSwitchingQuality && (
+                        <div className="h-1 w-1 animate-spin rounded-full border-2 border-white/30 border-t-white sm:h-3 sm:w-3" />
+                      )}
+
+                      <span className="whitespace-nowrap">
+                        {isAutoQuality
+                          ? currentQuality
+                            ? `Auto (${currentQuality.quality}p)`
+                            : "Auto"
+                          : currentQuality
+                            ? `${currentQuality.quality}p`
+                            : ""}
+                      </span>
+                    </button>
+
+                    {showQualityMenu && (
+                      <div
+                        className="
+            absolute left-0 z-50 
+            w-28 overflow-hidden
+            rounded-lg border bg-white shadow-xl
+            sm:w-40 sm:rounded-xl sm:mt-2
+          "
+                      >
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsAutoQuality(true);
+                            setShowQualityMenu(false);
+                          }}
+                          className={`flex w-full items-center justify-between px-3 py-2 !min-h-8 text-xs transition hover:bg-gray-100 sm:px-4 sm:py-3 sm:text-sm ${
+                            isAutoQuality
+                              ? "bg-blue-50 text-blue-600"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          <span>خودکار</span>
+                          {isAutoQuality && <span>✓</span>}
+                        </button>
+
+                        {availableQualities.map((item) => (
+                          <button
+                            key={item.quality}
+                            type="button"
+                            onClick={() => {
+                              setIsAutoQuality(false);
+                              setSelectedQuality(item.quality);
+                              setShowQualityMenu(false);
+                            }}
+                            className={`flex w-full items-center justify-between px-3 py-2 !min-h-8 text-xs transition hover:bg-gray-100 sm:px-4 sm:py-3 sm:text-sm ${
+                              !isAutoQuality && selectedQuality === item.quality
+                                ? "bg-blue-50 text-blue-600"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            <span>{item.quality}p</span>
+                            {!isAutoQuality &&
+                              selectedQuality === item.quality && (
+                                <span>✓</span>
+                              )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <h1 className="mt-4 px-1 text-lg font-extrabold leading-tight text-gray-900 sm:mt-6 sm:text-xl md:text-2xl lg:text-3xl">
@@ -516,9 +767,7 @@ function Video() {
                         <DownloadIcon size={24} />
                         <span className="text-[16px]">دانلود</span>
 
-                        {availableQualities.length > 0 && (
-<></>
-                        )}
+                        {availableQualities.length > 0 && <></>}
                       </div>
                     )}
                   </button>
