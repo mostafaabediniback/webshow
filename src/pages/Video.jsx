@@ -59,7 +59,9 @@ function Video() {
 
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
   const [showQualityMenu, setShowQualityMenu] = useState(false);
-  const [isAutoQuality, setIsAutoQuality] = useState(true);
+  // const [isAutoQuality, setIsAutoQuality] = useState(true);
+  const [isAutoQuality, setIsAutoQuality] = useState(false);
+
   const [selectedQuality, setSelectedQuality] = useState(null);
   const [isSwitchingQuality, setIsSwitchingQuality] = useState(false);
 
@@ -246,14 +248,16 @@ function Video() {
       connection.removeEventListener("change", handleConnectionChange);
   }, [isAutoQuality]);
 
-  useEffect(() => {
-    setSelectedPlaylistId(null);
-    setHasResolvedInitialPlaylist(false);
-    setIsResolvingInitialPlaylist(false);
-    setIsAutoQuality(true);
-    setSelectedQuality(null);
-    setShowQualityMenu(false);
-  }, [id]);
+useEffect(() => {
+  setSelectedPlaylistId(null);
+  setHasResolvedInitialPlaylist(false);
+  setIsResolvingInitialPlaylist(false);
+
+  setIsAutoQuality(false);
+  setSelectedQuality(null);
+
+  setShowQualityMenu(false);
+}, [id]);
 
   useEffect(() => {
     if (!playlists.length) {
@@ -442,14 +446,6 @@ function Video() {
   const handlePlay = () => {
     const video = videoRef.current;
     if (!video) return;
-
-    // if (isMobile) {
-    //   if (video.requestFullscreen) {
-    //     video.requestFullscreen();
-    //   } else if (video.webkitEnterFullscreen) {
-    //     video.webkitEnterFullscreen();
-    //   }
-    // }
   };
 
   useEffect(() => {
@@ -690,9 +686,7 @@ function Video() {
                     <p className="truncate text-sm font-semibold text-gray-900">
                       {currentVideo?.channel_name}
                     </p>
-                    {/* <p className="mt-0.5 text-xs text-gray-500">
-                      {(currentVideo?.view_count || 0).toLocaleString("fa-IR")} بازدید
-                    </p> */}
+
                   </div>
                 </Link>
               </div>
@@ -869,9 +863,6 @@ function Video() {
                             <p className="mt-1 text-xs text-gray-500">
                               {video.channelName || video.channel_name}
                             </p>
-                            {/* <p className="mt-1 text-xs text-gray-400">
-                            {(video.views || 0).toLocaleString("fa-IR")} بازدید
-                          </p> */}
                           </div>
                         </Link>
                       ))}
