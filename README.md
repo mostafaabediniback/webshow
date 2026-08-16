@@ -1,16 +1,65 @@
-# React + Vite
+<div align="center">
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 🎬 WebShow
 
-Currently, two official plugins are available:
+Modern media-oriented frontend built with React and a scalable component-driven architecture.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![React](https://img.shields.io/badge/React-19-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)
+![MUI](https://img.shields.io/badge/MUI-7-007FFF?style=flat-square&logo=mui&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![React Query](https://img.shields.io/badge/TanStack_Query-5-FF4154?style=flat-square&logo=reactquery&logoColor=white)
 
-## React Compiler
+</div>
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Overview
 
-## Expanding the ESLint configuration
+WebShow is a modern frontend project for media and video-oriented experiences. The repository includes an evolving React architecture with work toward a Next.js-based version in dedicated branches.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The project focuses on reusable UI, API-driven data flows, maintainable form handling, responsive layouts and scalable frontend structure.
+
+## Tech Stack
+
+- React 19
+- Vite
+- Material UI
+- Tailwind CSS
+- TanStack React Query
+- Axios
+- Formik
+- Yup
+- React Router
+- React Toastify
+
+## Key Engineering Areas
+
+- Component-driven UI architecture
+- API integration and server-state management
+- Form validation and user input workflows
+- Responsive layouts
+- Reusable media-oriented interfaces
+- Progressive migration experiments toward Next.js
+
+## Development
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Build for production:
+
+```bash
+pnpm build
+```
+
+## Branches
+
+This repository contains multiple development and migration branches, including work around refactoring, dashboard services, landing pages, upload flows and Next.js migration.
+
+## Author
+
+**Mostafa Abedini**  
+Frontend Developer — React / Next.js
+
+[GitHub Profile](https://github.com/mostafaabediniback)
