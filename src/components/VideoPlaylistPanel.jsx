@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { EmptyState, ErrorMessage, Skeleton } from "../ui";
-import { useState } from "react";
 import { useEffect } from "react";
 import { Firstline } from "iconsax-react";
 
@@ -97,37 +96,45 @@ function VideoPlaylistPanel({
   onRetryPlaylistDetail,
   currentVideoId,
 }) {
-  // const [openedPlaylist, setOpenedPlaylist] = useState(
-  //   selectedPlaylistId || null,
-  // );
-  const [openedPlaylist, setOpenedPlaylist] = useState(null);
-
   useEffect(() => {
-    if (!openedPlaylist && playlists.length > 0) {
-      const firstPlaylistId = selectedPlaylistId || playlists[0].id;
+    if (!playlists.length) return;
 
-      setOpenedPlaylist(firstPlaylistId);
-      onSelectPlaylist?.(firstPlaylistId);
+    const hasSelectedPlaylist = playlists.some(
+      (item) => String(item.id) === String(selectedPlaylistId),
+    );
+
+    if (!hasSelectedPlaylist) {
+      onSelectPlaylist?.(playlists[0].id);
     }
-  }, [playlists, selectedPlaylistId]);
+  }, [playlists, selectedPlaylistId, onSelectPlaylist]);
+
   if (isPlaylistsLoading) {
     return (
-      <section className="rounded-[10px] border border-slate-200 bg-gradient-to-b from-white via-slate-50 to-slate-100/80 p-4 shadow-sm">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div className="space-y-2">
-            <Skeleton className="h-5 w-20" />
-            <Skeleton className="h-4 w-32" />
+      <section className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 p-4">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-9 w-9 rounded-[10px]" />
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-20" />
+              <Skeleton className="h-3 w-28" />
+            </div>
           </div>
-          <Skeleton className="h-9 w-24 rounded-[10px]" />
         </div>
-        <PlaylistItemsSkeleton />
+        <div className="space-y-2 border-b border-slate-100 p-3">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <Skeleton key={index} className="h-12 w-full rounded-[10px]" />
+          ))}
+        </div>
+        <div className="p-3">
+          <PlaylistItemsSkeleton />
+        </div>
       </section>
     );
   }
 
   if (isPlaylistsError) {
     return (
-      <section className="rounded-[10px] border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
         <ErrorMessage
           title="خطا در دریافت پلی‌لیست‌ها"
           message="فهرست پلی‌لیست‌های این کانال بارگذاری نشد."
@@ -140,187 +147,219 @@ function VideoPlaylistPanel({
 
   if (!playlists.length) {
     return (
-      <section className="rounded-[10px] border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
         <EmptyState
           title="پلی‌لیستی برای این کانال ثبت نشده"
-          message="بعد از ساخت پلی‌لیست، همین بخش آهنگ‌ها و ویدیوهای داخل آن را نمایش می‌دهد."
+          message="بعد از ساخت پلی‌لیست، ویدیوهای آن در همین بخش نمایش داده می‌شوند."
           className="py-10"
         />
       </section>
     );
   }
 
-  const playlist = playlistDetail?.playlist;
+  const playlist = playlistDetail?.playlist || playlistDetail?.play_list;
   const items = Array.isArray(playlistDetail?.items)
     ? playlistDetail.items
-    : [];
+    : Array.isArray(playlistDetail?.videos)
+      ? playlistDetail.videos
+      : [];
 
-  const totalItems =
-    Number(playlistDetail?.totalItems || items.length) || items.length;
-  const heading = playlist?.name || "آهنگ‌ها";
+  const selectedPlaylist =
+    playlists.find(
+      (item) => String(item.id) === String(selectedPlaylistId),
+    ) || playlists[0];
+
+  const selectedPlaylistTotal =
+    Number(
+      selectedPlaylist?.total_videos ??
+        selectedPlaylist?.videos_count ??
+        playlist?.total_videos ??
+        items.length,
+    ) || items.length;
 
   return (
-    <section className="overflow-hidden ">
-      <div className="  border-slate-200/80  pb-4 ">
-        {/* <h3 className="mb-4 text-lg font-bold text-gray-900">پلی‌لیست</h3> */}
+    <section className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
+      <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3.5">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-[10px] bg-slate-100 text-slate-700">
+            <Firstline size="22" color="currentColor" />
+          </div>
 
-        <div className="space-y-3">
+          <div className="min-w-0">
+            <h3 className="text-base font-extrabold text-slate-900">پلی‌لیست‌ها</h3>
+            <p className="mt-0.5 text-xs text-slate-500">
+              {playlists.length.toLocaleString("fa-IR")} پلی‌لیست
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-b border-slate-100 bg-slate-50/70 p-2.5">
+        <div className="space-y-1.5">
           {playlists.map((playlistOption) => {
-            const isOpen = String(openedPlaylist) === String(playlistOption.id);
-
             const isSelected =
               String(selectedPlaylistId) === String(playlistOption.id);
-              console.log(playlistOption);
+
+            const count = Number(
+              playlistOption?.total_videos ?? playlistOption?.videos_count ?? 0,
+            );
 
             return (
-              <div
+              <button
                 key={playlistOption.id}
-                className="overflow-hidden rounded-[10px] border border-slate-200 bg-white shadow-sm"
+                type="button"
+                onClick={() => onSelectPlaylist?.(playlistOption.id)}
+                className={`flex w-full items-center justify-between gap-3 rounded-[10px] px-3 py-3 text-right transition-all ${
+                  isSelected
+                    ? "bg-white shadow-sm ring-1 ring-slate-200"
+                    : "hover:bg-white/80"
+                }`}
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isOpen) {
-                      setOpenedPlaylist(null);
-                      return;
-                    }
-
-                    setOpenedPlaylist(playlistOption.id);
-                    onSelectPlaylist(playlistOption.id);
-                  }}
-                  className="flex w-full items-center justify-between px-4 py-4 text-right transition-colors hover:bg-slate-50"
-                >
-                  <div>
-                    <div className="flex justify-center items-center gap-2">
-                      <Firstline
-                        size="24"
-                        color="currentColor"
-                      />
-                      <h3 className="text-lg font-bold text-slate-900">
-                        پلی‌لیست
-                      </h3>
-                    </div>
-
-                    <h3 className="text-sm font-medium text-slate-900 m-4">
-                      {playlistOption.name || `پلی‌لیست ${playlistOption.id}`}
-                    </h3>
-
-                    {playlistOption.videos_count ? (
-                      <p className="mt-1 text-xs text-slate-500">
-                        {Number(playlistOption.videos_count).toLocaleString(
-                          "fa-IR",
-                        )}{" "}
-                        ویدیو
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className={`h-5 w-5 text-slate-500 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`h-2 w-2 flex-shrink-0 rounded-full ${
+                        isSelected ? "bg-blue-600" : "bg-slate-300"
                       }`}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 9l6 6 6-6"
                     />
-                  </svg>
-                </button>
 
-                {isOpen && (
-                  <div className="border-t border-slate-100 p-3">
-                    {isPlaylistDetailLoading && isSelected ? (
-                      <PlaylistItemsSkeleton />
-                    ) : isPlaylistDetailError && isSelected ? (
-                      <ErrorMessage
-                        title="خطا در دریافت آیتم‌های پلی‌لیست"
-                        message="جزئیات این پلی‌لیست بارگذاری نشد."
-                        onRetry={onRetryPlaylistDetail}
-                        className="py-8"
-                      />
-                    ) : isSelected && items.length ? (
-                      <div className="max-h-[420px] space-y-2 overflow-y-auto pr-1">
-                        {items.map((item, index) => {
-                          const videoId = item?.id;
-                          const isActive =
-                            String(videoId) === String(currentVideoId);
-
-                          const thumbnail = getPlaylistVideoThumbnail(item);
-
-                          const duration = getPlaylistVideoDuration(item);
-
-                          const order = getPlaylistVideoOrder(item, index);
-
-                          return (
-                            <Link
-                              key={`${playlistOption.id}-${videoId}-${index}`}
-                              to={`/v/${videoId}`}
-                              className={`group flex items-center gap-3 rounded-[10px] border p-2.5 transition-all ${isActive
-                                ? "border-blue-200 bg-blue-50 shadow-sm"
-                                : "border-transparent bg-white hover:border-slate-200 hover:bg-slate-50"
-                                }`}
-                            >
-                              <div
-                                className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px] text-xs font-extrabold ${isActive
-                                  ? "bg-blue-600 text-white"
-                                  : "bg-slate-100 text-slate-600 group-hover:bg-slate-200"
-                                  }`}
-                              >
-                                {Number(order).toLocaleString("fa-IR")}
-                              </div>
-
-                              <div className="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-[10px] bg-slate-200">
-                                <img
-                                  src={thumbnail}
-                                  alt={item?.title || `video-${videoId}`}
-                                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                  loading="lazy"
-                                  onError={(event) => {
-                                    event.currentTarget.src =
-                                      FALLBACK_THUMBNAIL;
-                                  }}
-                                />
-
-                                {duration && (
-                                  <span className="absolute bottom-1 left-1 rounded-[10px] bg-black/75 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                                    {duration}
-                                  </span>
-                                )}
-                              </div>
-
-                              <div className="min-w-0 flex-1">
-                                <h4
-                                  className={`line-clamp-2 text-sm font-bold leading-6 ${isActive
-                                    ? "text-blue-900"
-                                    : "text-slate-900"
-                                    }`}
-                                >
-                                  {item?.title || `ویدیو ${videoId}`}
-                                </h4>
-
-                                <p className="mt-1 truncate text-xs text-slate-500">
-                                  {getPlaylistVideoChannelName(item)}
-                                </p>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="py-6 text-center text-sm text-slate-500">
-                        برای مشاهده ویدیوهای این پلی‌لیست کلیک کنید
-                      </div>
-                    )}
+                    <span
+                      className={`truncate text-sm ${
+                        isSelected
+                          ? "font-extrabold text-slate-950"
+                          : "font-semibold text-slate-700"
+                      }`}
+                    >
+                      {playlistOption.name || `پلی‌لیست ${playlistOption.id}`}
+                    </span>
                   </div>
-                )}
-              </div>
+
+                  {count > 0 && (
+                    <p className="mt-1 pr-4 text-[11px] text-slate-500">
+                      {count.toLocaleString("fa-IR")} ویدیو
+                    </p>
+                  )}
+                </div>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className={`h-4 w-4 flex-shrink-0 transition-transform ${
+                    isSelected ? "rotate-90 text-blue-600" : "text-slate-400"
+                  }`}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 18l6-6-6-6"
+                  />
+                </svg>
+              </button>
             );
           })}
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between gap-3 px-4 py-3">
+          <div className="min-w-0">
+            <h4 className="truncate text-sm font-extrabold text-slate-900">
+              {playlist?.name || selectedPlaylist?.name || "ویدیوهای پلی‌لیست"}
+            </h4>
+            <p className="mt-1 text-xs text-slate-500">
+              {selectedPlaylistTotal.toLocaleString("fa-IR")} ویدیو
+            </p>
+          </div>
+        </div>
+
+        <div className="border-t border-slate-100 p-3">
+          {isPlaylistDetailLoading ? (
+            <PlaylistItemsSkeleton />
+          ) : isPlaylistDetailError ? (
+            <ErrorMessage
+              title="خطا در دریافت آیتم‌های پلی‌لیست"
+              message="جزئیات این پلی‌لیست بارگذاری نشد."
+              onRetry={onRetryPlaylistDetail}
+              className="py-8"
+            />
+          ) : items.length ? (
+            <div className="max-h-[420px] space-y-1.5 overflow-y-auto pl-1">
+              {items.map((item, index) => {
+                const videoId = item?.id;
+                const isActive = String(videoId) === String(currentVideoId);
+                const thumbnail = getPlaylistVideoThumbnail(item);
+                const duration = getPlaylistVideoDuration(item);
+                const order = getPlaylistVideoOrder(item, index);
+
+                return (
+                  <Link
+                    key={`${selectedPlaylist?.id}-${videoId}-${index}`}
+                    to={`/v/${videoId}`}
+                    className={`group flex items-center gap-3 rounded-[10px] p-2 transition-all ${
+                      isActive
+                        ? "bg-blue-50 ring-1 ring-blue-100"
+                        : "hover:bg-slate-50"
+                    }`}
+                  >
+                    <div className="relative h-[68px] w-[108px] flex-shrink-0 overflow-hidden rounded-[9px] bg-slate-200">
+                      <img
+                        src={thumbnail}
+                        alt={item?.title || `video-${videoId}`}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
+                        onError={(event) => {
+                          event.currentTarget.src = FALLBACK_THUMBNAIL;
+                        }}
+                      />
+
+                      {duration && (
+                        <span className="absolute bottom-1 left-1 rounded-md bg-black/75 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                          {duration}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-center gap-1.5">
+                        <span
+                          className={`text-[11px] font-bold ${
+                            isActive ? "text-blue-600" : "text-slate-400"
+                          }`}
+                        >
+                          {Number(order).toLocaleString("fa-IR")}
+                        </span>
+
+                        {isActive && (
+                          <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-700">
+                            در حال پخش
+                          </span>
+                        )}
+                      </div>
+
+                      <h5
+                        className={`line-clamp-2 text-sm font-bold leading-6 ${
+                          isActive ? "text-blue-950" : "text-slate-900"
+                        }`}
+                      >
+                        {item?.title || `ویدیو ${videoId}`}
+                      </h5>
+
+                      <p className="mt-1 truncate text-xs text-slate-500">
+                        {getPlaylistVideoChannelName(item)}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-sm text-slate-500">
+              ویدیویی در این پلی‌لیست وجود ندارد
+            </div>
+          )}
         </div>
       </div>
     </section>
