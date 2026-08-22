@@ -100,14 +100,21 @@ const mapPlaylistDetailResponse = (payload) => {
   };
 };
 
-export const getPlaylists = async (channelId, { page = 1, per_page = 25 } = {}) => {
+export const getPlaylists = async (channelId, pagination) => {
   const url = channelId
     ? `/play-list/index/${channelId}`
     : `/play-list/index`;
 
-  const res = await axiosInstanceNew.get(url, {
-    params: { page, per_page },
-  });
+  const config = pagination
+    ? {
+        params: {
+          page: pagination.page ?? 1,
+          per_page: pagination.per_page ?? 25,
+        },
+      }
+    : undefined;
+
+  const res = await axiosInstanceNew.get(url, config);
 
   return mapPlaylistListResponse(res.data);
 };
@@ -124,7 +131,7 @@ export const addVideoToPlaylist = async ({ playlistId, videoId }) => {
 
 export const removeVideoFromPlaylist = async ({ playlistId, videoId }) => {
   try {
-    const res = await axiosInstanceNew.delete(`/play-list/remove/${playlistId}/${videoId}`);
+    const res = await axiosInstanceNew.post(`/play-list/remove/${playlistId}/${videoId}`);
     return mapPlaylistDetailResponse(res.data);
   } catch (error) {
     if (error?.response?.status !== 405) {

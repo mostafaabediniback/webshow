@@ -12,8 +12,10 @@ import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
 import useVideoUpload from "../hooks/video/useVideoUpload";
 import UplodLayout from "../layouts/UplodLayout";
+import { readAuthSession } from "../utils/auth";
 
 function UserVideos() {
+  const { channelId } = readAuthSession();
   const { uploadAsync, isPending } = useVideoUpload();
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -42,7 +44,10 @@ function UserVideos() {
     data: playlistsResponse,
     isLoading: isLoadingPlaylists,
     isError: isPlaylistsError,
-  } = usePlaylists();
+  } = usePlaylists(channelId, {
+    enabled: Boolean(channelId),
+    withPagination: false,
+  });
   const playlists = playlistsResponse?.items || [];
 
   const createPlaylistMutation = useCreatePlaylist();
