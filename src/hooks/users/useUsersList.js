@@ -14,7 +14,6 @@ function useUsersList(phoneNumber = '', page = 1) {
   } = useQuery({
     queryKey: [QueryKeys.user, normalizedPhoneNumber, page],
     queryFn: () => getUsersByPhone(normalizedPhoneNumber, page),
-    enabled: Boolean(normalizedPhoneNumber),
   })
 
   return {

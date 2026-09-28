@@ -133,22 +133,8 @@ export const getAllVideos = async (page = 1, per_page = 25, video_type = "all") 
   return mapPaginatedResponse(res.data);
 };
 
-export const getLandingChannels = async ({
-  pageNumber = 1,
-  pageSize = 10
-} = {}) => {
-  const page = Number(pageNumber) || 1;
-  const perPage = Number(pageSize) || 10;
-
-
-  const params = new URLSearchParams({
-    page: page.toString(),
-    per_page: perPage.toString(),
-  });
-
-  const queryString = params.toString();
-
-  const res = await axiosInstanceNew.get(`/landing/channels?${queryString}`);
+export const getLandingChannels = async () => {
+  const res = await axiosInstanceNew.get('/landing/channels');
   return mapPaginatedResponse(res.data);
 };
 

@@ -19,7 +19,7 @@ function Home() {
     data: channelsData,
     isLoading: channelsLoading,
     refetch: channelsRefetch,
-  } = useLandingChannels({ pageSize: 20 });
+  } = useLandingChannels();
 
   const {
     data: videosData,

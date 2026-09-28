@@ -55,7 +55,7 @@ function Users() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
-  const { users, pagination, isLoadingUsers, isFetchingUsers } =
+  const { users, pagination, isLoadingUsers, isFetchingUsers, refetchUsers } =
     useUsersList(searchPhoneNumber, page);
   const totalPages = Number(pagination?.totalPages || 1);
 
@@ -104,14 +104,16 @@ function Users() {
     });
   };
 
-  const handleSearch = async () => {
-    if (!searchInput.trim()) {
-      toast.error("شماره موبایل را وارد کنید");
+  const handleSearch = () => {
+    const normalizedPhoneNumber = searchInput.trim();
+
+    if (normalizedPhoneNumber === searchPhoneNumber && page === 1) {
+      refetchUsers();
       return;
     }
 
     setPage(1);
-    setSearchPhoneNumber(searchInput.trim());
+    setSearchPhoneNumber(normalizedPhoneNumber);
   };
 
   const handleFormChange = (key, value) => {
@@ -326,7 +328,6 @@ function Users() {
             <Button
               variant="outline"
               onClick={handleSearch}
-              disabled={!searchInput.trim()}
               isLoading={isFetchingUsers}
               icon={<SearchNormal1 size={18} color="currentColor" />}
             >
@@ -454,14 +455,12 @@ function Users() {
             )}
           </div>
 
-          {searchPhoneNumber && (
-            <PaginationComponent
-              totalPages={totalPages}
-              currentPage={page}
-              onPageChange={setPage}
-              totalItems={pagination?.totalItems}
-            />
-          )}
+          <PaginationComponent
+            totalPages={totalPages}
+            currentPage={page}
+            onPageChange={setPage}
+            totalItems={pagination?.totalItems}
+          />
         </div>
       </div>
 

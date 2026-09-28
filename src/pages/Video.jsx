@@ -789,7 +789,7 @@ useEffect(() => {
               </div>
             </div>
 
-            <div className="mt-4 rounded-lg bg-gray-50 p-3 sm:rounded-xl sm:p-4">
+            <div className="mt-4 mb-11 rounded-lg bg-gray-50 p-3 sm:rounded-xl sm:p-4">
               <p className="break-words text-sm leading-6 text-gray-700 sm:text-base sm:leading-7">
                 {currentVideo?.description}
               </p>

@@ -1,13 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getLandingChannels } from "../../services/videoApi";
-import { usePaginationParams } from "../ui/usePaginationParams";
 
-export const useLandingChannels = (initialPage = 1) => {
-  const { page, setPage } = usePaginationParams(initialPage);
-  
+export const useLandingChannels = () => {
   return useQuery({
-    queryKey: ["landing-channels", page],
-    queryFn: () => getLandingChannels({ pageNumber: page }),
+    queryKey: ["landing-channels"],
+    queryFn: getLandingChannels,
     keepPreviousData: true,
     staleTime: 5 * 60 * 1000, // 5 دقیقه
     select: (data) => ({

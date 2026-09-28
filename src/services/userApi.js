@@ -12,15 +12,13 @@ export const createAttachUser = async (payload) => {
 // }
 export const getUsersByPhone = async (phoneNumber, page = 1) => {
   const normalizedPhoneNumber = String(phoneNumber || '').trim()
+  const url = normalizedPhoneNumber
+    ? `/user/search/${encodeURIComponent(normalizedPhoneNumber)}`
+    : '/user/search'
 
-  if (!normalizedPhoneNumber) {
-    return normalizePaginatedResponse({ data: [] })
-  }
-
-  const res = await axiosInstanceNew.get(
-    `/user/search/${encodeURIComponent(normalizedPhoneNumber)}`,
-    { params: { page: normalizePage(page) } },
-  )
+  const res = await axiosInstanceNew.get(url, {
+    params: { page: normalizePage(page) },
+  })
 
   return normalizePaginatedResponse(res.data)
 }

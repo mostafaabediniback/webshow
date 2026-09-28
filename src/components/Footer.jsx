@@ -1,6 +1,22 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Modal } from '../ui'
+
+const TERMS_OF_USE = [
+  'استفاده از خدمات اربعین‌تی‌وی باید مطابق قوانین و مقررات مربوط باشد.',
+  'کاربران مسئول محتوایی هستند که در سایت بارگذاری یا منتشر می‌کنند.',
+  'انتشار محتوای ناقض حقوق دیگران، مالکیت فکری، حریم خصوصی یا قوانین ممنوع است.',
+  'اربعین‌تی‌وی می‌تواند محتوای ناقض قوانین یا این شرایط را حذف یا دسترسی به آن را محدود کند.',
+  'محتوای ارسال‌شده توسط کاربران ممکن است برای نمایش، آرشیو، دسته‌بندی، ترجمه و انتشار در خدمات اربعین‌تی‌وی مورد استفاده قرار گیرد.',
+  'حقوق محتوای متعلق به تولیدکنندگان و صاحبان اصلی آن، محفوظ است.',
+  'کاربران مسئول حفظ اطلاعات حساب کاربری خود هستند و نباید اطلاعات ورود خود را در اختیار دیگران قرار دهند.',
+  'اربعین‌تی‌وی می‌تواند برای حفظ امنیت و عملکرد پلتفرم، دسترسی حساب‌های متخلف را محدود یا مسدود کند.',
+  'اربعین‌تی‌وی ممکن است این شرایط را در آینده به‌روزرسانی کند. نسخه جدید در همین صفحه منتشر خواهد شد.',
+]
 
 function Footer() {
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
+
   return (
     <footer >
       <div className="bg-white mx-auto max-w-7xl px-4 sm:px-6 sm:py-4">
@@ -44,10 +60,36 @@ function Footer() {
           </p>
           <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm text-gray-600">
             <Link to="/" className="hover:text-blue-600 transition-colors">حریم خصوصی</Link>
-            <Link to="/" className="hover:text-blue-600 transition-colors">شرایط استفاده</Link>
+            <button
+              type="button"
+              onClick={() => setIsTermsModalOpen(true)}
+              className="hover:text-blue-600 transition-colors"
+            >
+              شرایط استفاده
+            </button>
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+        title="شرایط استفاده"
+        size="md"
+      >
+        <div dir="rtl" className="space-y-5 text-right text-sm leading-8 text-slate-700 sm:text-base">
+          <p>
+            با استفاده از وب‌سایت و خدمات اربعین‌تی‌وی (ArbaeenTV)، شما با شرایط زیر موافقت می‌کنید:
+          </p>
+          <ul className="list-disc space-y-3 pr-5 marker:text-blue-600">
+            {TERMS_OF_USE.map((term) => (
+              <li key={term}>{term}</li>
+            ))}
+          </ul>
+          <p className="border-t border-slate-200 pt-4 text-xs text-slate-500 sm:text-sm">
+            آخرین به‌روزرسانی: شهریور ۱۴۰۵
+          </p>
+        </div>
+      </Modal>
     </footer>
   )
 }

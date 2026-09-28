@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { CloseCircle, GalleryAdd } from "iconsax-react";
 import { toast } from "react-toastify";
 import usePlaylists from "../hooks/playlist/usePlaylists";
 import { Modal, Button, Spinner } from "../ui";
@@ -11,6 +12,7 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
   const [description, setDescription] = useState("");
   const [coverFile, setCoverFile] = useState(null);
   const [coverPreview, setCoverPreview] = useState("");
+  const [isCoverDragActive, setIsCoverDragActive] = useState(false);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [publicShow, setPublicShow] = useState(true);
   const [channelId, setChannelId] = useState("");
@@ -119,6 +121,22 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
   const handleClose = () => {
     if (isUpdating) return;
     onClose();
+  };
+
+  const selectCoverFile = (file) => {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("لطفاً یک فایل تصویری انتخاب کنید");
+      return;
+    }
+
+    setCoverFile(file);
+  };
+
+  const resetCover = () => {
+    setCoverFile(null);
+    setCoverPreview(initialCover);
   };
 
   return (
@@ -239,20 +257,83 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
             <label className="block text-sm font-semibold text-gray-900 mb-2">
               تصویر کاور
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
-              disabled={isUpdating}
-              className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-3 file:rounded-[10px] file:border-0 file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-            />
-            {coverPreview && (
-              <img
-                src={coverPreview}
-                alt="cover preview"
-                className="mt-3 w-44 h-24 rounded-[10px] object-cover border border-gray-200"
+            <div
+              className={`overflow-hidden rounded-xl border-2 transition-colors ${
+                isCoverDragActive
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-dashed border-gray-300 bg-slate-50 hover:border-blue-400"
+              } ${isUpdating ? "pointer-events-none opacity-60" : ""}`}
+              onDragOver={(event) => {
+                event.preventDefault();
+                setIsCoverDragActive(true);
+              }}
+              onDragLeave={() => setIsCoverDragActive(false)}
+              onDrop={(event) => {
+                event.preventDefault();
+                setIsCoverDragActive(false);
+                selectCoverFile(event.dataTransfer.files?.[0]);
+              }}
+            >
+              <input
+                id="edit-video-cover"
+                type="file"
+                accept="image/*"
+                onChange={(event) => selectCoverFile(event.target.files?.[0])}
+                disabled={isUpdating}
+                className="sr-only"
               />
-            )}
+
+              {coverPreview ? (
+                <div className="flex flex-col gap-4 p-3 sm:flex-row sm:items-center">
+                  <img
+                    src={coverPreview}
+                    alt="پیش‌نمایش تصویر کاور"
+                    className="aspect-video w-full rounded-lg border border-gray-200 bg-white object-cover sm:w-52"
+                  />
+                  <div className="min-w-0 flex-1 space-y-2 text-center sm:text-right">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {coverFile ? "کاور جدید آمادهٔ ذخیره است" : "کاور فعلی ویدیو"}
+                    </p>
+                    <p className="truncate text-xs text-gray-500">
+                      {coverFile?.name || "برای تغییر تصویر، فایل جدید انتخاب کنید"}
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
+                      <label
+                        htmlFor="edit-video-cover"
+                        className="inline-flex h-10 cursor-pointer items-center justify-center rounded-lg border border-blue-200 bg-white px-3 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-50"
+                      >
+                        تغییر تصویر
+                      </label>
+                      {coverFile && (
+                        <button
+                          type="button"
+                          onClick={resetCover}
+                          className="inline-flex h-10 items-center justify-center gap-1 rounded-lg px-3 text-sm font-medium text-gray-600 hover:bg-white"
+                        >
+                          <CloseCircle size={16} color="currentColor" />
+                          بازگشت به کاور فعلی
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <label
+                  htmlFor="edit-video-cover"
+                  className="flex min-h-40 cursor-pointer flex-col items-center justify-center gap-2 p-6 text-center"
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                    <GalleryAdd size={24} color="currentColor" />
+                  </span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    تصویر کاور را انتخاب کنید
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    فایل را اینجا بکشید یا برای انتخاب کلیک کنید
+                  </span>
+                </label>
+              )}
+            </div>
           </div>
         </form>
       )}

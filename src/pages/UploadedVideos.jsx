@@ -258,7 +258,7 @@ export default function UploadedVideos() {
               <div className="flex flex-wrap ">
                 {viewMode === "videos" ? (
                   <>
-                    <div className="w-full  flex flex-wrap gap-2">
+                    <div className="flex w-full flex-wrap justify-center gap-2 lg:justify-start">
                       {videosList.map((v) => (
                         <VideoRow
                           key={v.id}
