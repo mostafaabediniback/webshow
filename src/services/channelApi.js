@@ -1,11 +1,18 @@
 import axiosInstanceNew from "../utils/axiosConfigNew";
 import { readAuthSession } from "../utils/auth";
+import { normalizePage, normalizePaginatedResponse } from "../utils/pagination";
 
-export const getChannels = async (pageNumber = 1, pageSize = 25) => {
+export const getChannels = async (pageNumber) => {
+  const params =
+    pageNumber !== undefined && pageNumber !== null
+      ? { page: normalizePage(pageNumber) }
+      : {};
+
   const res = await axiosInstanceNew.get("/channel", {
-    params: { page: pageNumber, per_page: pageSize },
+    params,
   });
-  return res.data?.data || [];
+
+  return normalizePaginatedResponse(res.data);
 };
 
 export const createChannel = async (payload) => {

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { QueryKeys } from '../../enums'
 import { getUsersByPhone } from '../../services/userApi'
 
-function useUsersList(phoneNumber = '') {
+function useUsersList(phoneNumber = '', page = 1) {
   const normalizedPhoneNumber = phoneNumber.trim()
 
   const {
@@ -12,12 +12,14 @@ function useUsersList(phoneNumber = '') {
     isError,
     refetch,
   } = useQuery({
-    queryKey: [QueryKeys.user, normalizedPhoneNumber],
-    queryFn: () => getUsersByPhone(normalizedPhoneNumber),
+    queryKey: [QueryKeys.user, normalizedPhoneNumber, page],
+    queryFn: () => getUsersByPhone(normalizedPhoneNumber, page),
+    enabled: Boolean(normalizedPhoneNumber),
   })
 
   return {
-    users: data?.data || [],
+    users: data?.items || [],
+    pagination: data,
     isLoadingUsers: isLoading,
     isFetchingUsers: isFetching,
     isErrorUsers: isError,

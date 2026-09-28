@@ -1,4 +1,3 @@
-import { Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VideoTypeFilter from "../components/VideoTypeFilter";
@@ -7,6 +6,7 @@ import {
   VIDEO_TYPE_OPTIONS,
 } from "../constants/videoTypeOptions";
 import EditVideoModal from "../components/EditVideoModal";
+import PaginationComponent from "../components/PaginationComponent";
 import VideoRow from "../components/VideoRow";
 import useChannel from "../hooks/channel/useChannel";
 import useChannelVideos from "../hooks/channel/useChannelVideos";
@@ -24,6 +24,7 @@ function Videos() {
   const [chanId, setChanId] = useState("");
   const [videoType, setVideoType] = useState(DEFAULT_VIDEO_TYPE);
   const { page, setPage } = usePaginationParams(1);
+  const { page: playlistPage, setPage: setPlaylistPage } = usePaginationParams(1);
   const { data, isLoading, isError, refetch } = useChannelVideos({
     channelId: chanId,
     pageNumber: page,
@@ -42,6 +43,7 @@ function Videos() {
     isError: playlistsError,
     refetch: refetchPlaylists,
   } = usePlaylists(chanId, {
+    page: playlistPage,
     enabled: viewMode === "playlists",
   });
 
@@ -50,10 +52,16 @@ function Videos() {
   const isPageLoading = viewMode === "videos" ? isLoading : isLoadingPlaylists;
 
   const isPageError = viewMode === "videos" ? isError : playlistsError;
+  const activeItems = viewMode === "videos" ? data?.items || [] : playlists;
+  const activeRefetch = viewMode === "videos" ? refetch : refetchPlaylists;
 
   useEffect(() => {
     setPage(1);
   }, [chanId, videoType, setPage]);
+
+  useEffect(() => {
+    setPlaylistPage(1);
+  }, [chanId, setPlaylistPage]);
 
   const handleDelete = (videoId) => {
     setDeleteConfirmId(videoId);
@@ -104,21 +112,24 @@ function Videos() {
                   setViewMode("videos");
                   setVideoType(value);
                 }}
-                onPlaylistClick={() => setViewMode("playlists")}
+                onPlaylistClick={() => {
+                  setPlaylistPage(1);
+                  setViewMode("playlists");
+                }}
               />{" "}
             </div>
           </div>
         </div>
 
         <div>
-          {isLoading ? (
+          {isPageLoading ? (
             <div className="flex flex-col items-center justify-center ">
               <Spinner size="lg" />
               <p className="mt-4 text-gray-500">در حال بارگذاری ویدیوها...</p>
             </div>
-          ) : isError ? (
-            <ErrorMessage onRetry={refetch} />
-          ) : (data?.items || []).length === 0 ? (
+          ) : isPageError ? (
+            <ErrorMessage onRetry={activeRefetch} />
+          ) : activeItems.length === 0 ? (
             <EmptyState
               title={
                 viewMode === "videos"
@@ -154,16 +165,22 @@ function Videos() {
                 )}
               </div>
 
-              {viewMode === "videos" && data?.totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
-                  <Pagination
-                    count={data.totalPages}
-                    page={page}
-                    onChange={(_, value) => setPage(value)}
-                    shape="rounded"
-                    color="primary"
-                  />
-                </div>
+              {viewMode === "videos" && (
+                <PaginationComponent
+                  totalPages={data?.totalPages}
+                  currentPage={page}
+                  onPageChange={setPage}
+                  totalItems={data?.totalItems}
+                />
+              )}
+
+              {viewMode === "playlists" && (
+                <PaginationComponent
+                  totalPages={playlistsResponse?.totalPages}
+                  currentPage={playlistPage}
+                  onPageChange={setPlaylistPage}
+                  totalItems={playlistsResponse?.totalItems}
+                />
               )}
             </>
           )}

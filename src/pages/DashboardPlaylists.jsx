@@ -1,11 +1,13 @@
 import { Add, Eye } from "iconsax-react";
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import PaginationComponent from "../components/PaginationComponent";
 import PlaylistModal from "../components/Upload/PlaylistModal";
 import useChannelDetail from "../hooks/channel/useChannelDetail";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylist from "../hooks/playlist/usePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
+import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { Button, EmptyState, ErrorMessage, Skeleton } from "../ui";
 
@@ -20,14 +22,12 @@ function PlaylistCard({ playlist }) {
     staleTime: 60_000,
   });
 
-  const hydratedCount = detail?.totalItems || detail?.items?.length || 0;
   const hydratedThumbnail =
     detail?.items?.[0]?.cover_link ||
     detail?.items?.[0]?.cover ||
     detail?.items?.[0]?.thumbnail ||
     "";
 
-  const totalVideos = Number(playlist?.videos_count || hydratedCount || 0);
   const thumbnail = playlist?.thumbnail || hydratedThumbnail || FALLBACK_THUMBNAIL;
 
   return (
@@ -113,6 +113,7 @@ function PlaylistListSkeleton() {
 
 function DashboardPlaylists() {
   const navigate = useNavigate();
+  const { page, setPage } = usePaginationParams(1);
   const { data: channelDetail } = useChannelDetail(null, { enabled: true });
   const channelId = channelDetail?.data?.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -122,7 +123,7 @@ function DashboardPlaylists() {
     isLoading,
     isError,
     refetch,
-  } = usePlaylists(channelId, { enabled: true });
+  } = usePlaylists(channelId, { page, enabled: true });
   const createPlaylist = useCreatePlaylist();
 
   const playlists = useMemo(
@@ -177,11 +178,20 @@ function DashboardPlaylists() {
               }
             />
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {playlists.map((playlist) => (
-                <PlaylistCard key={playlist.id} playlist={playlist} />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {playlists.map((playlist) => (
+                  <PlaylistCard key={playlist.id} playlist={playlist} />
+                ))}
+              </div>
+
+              <PaginationComponent
+                totalPages={playlistsResponse?.totalPages}
+                currentPage={page}
+                onPageChange={setPage}
+                totalItems={playlistsResponse?.totalItems}
+              />
+            </>
           )}
         </section>
       </div>

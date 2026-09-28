@@ -11,19 +11,19 @@ import {
   updateChannelInfo,
 } from '../../services/channelApi'
 
-function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
-  const queryClient = useQueryClient()
+function useChannel(pageNumber, pageSize = 10, filters = {}, options = {}) {
+  const queryClient = useQueryClient();
 
   const {
-    data: channels,
+    data: channelsPage,
     isLoading: isLoadingChannels,
     isError: isErrorChannels,
     refetch: refetchChannels,
   } = useQuery({
     queryKey: [QueryKeys.channel, pageNumber, pageSize, filters],
-    queryFn: () => getChannels(pageNumber, pageSize, filters),
+    queryFn: () => getChannels(pageNumber),
     enabled: options.enabled ?? true,
-  })
+  });
 
   const invalidateChannelQueries = async () => {
     await Promise.all([
@@ -70,7 +70,8 @@ function useChannel(pageNumber = 1, pageSize = 10, filters = {}, options = {}) {
   })
 
   return {
-    channels,
+    channels: channelsPage?.items || [],
+    pagination: channelsPage,
     isLoadingChannels,
     isErrorChannels,
     refetchChannels,

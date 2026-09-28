@@ -26,13 +26,13 @@ function useDashboard() {
     enabled: true,
   });
   
-  const channels = channelsData || [];
+  const channels = channelsData?.items || [];
   const videos = videosData || [];
 
   return {
     channels,
     videos,
-    totalChannels: channels.length,
+    totalChannels: channelsData?.totalItems ?? channels.length,
     totalVideos: videos.totalItems ,
     isLoading: isLoadingChannels || isLoadingVideos,
     isError: isErrorChannels || isErrorVideos,

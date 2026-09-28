@@ -1,9 +1,9 @@
-import { Pagination } from "@mui/material";
 import { Category } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import bgImag from "../assets/img/bgImag.jpg";
 import EditVideoModal from "../components/EditVideoModal";
+import PaginationComponent from "../components/PaginationComponent";
 import VideoRow from "../components/VideoRow";
 import VideoTypeFilter from "../components/VideoTypeFilter";
 import {
@@ -25,6 +25,7 @@ const PAGE_SIZE = 25;
 export default function UploadedVideos() {
   const navigate = useNavigate();
   const { page, setPage } = usePaginationParams(1);
+  const { page: playlistPage, setPage: setPlaylistPage } = usePaginationParams(1);
   const { deleteVideoAsync, isDeleting } = useDeleteVideo();
   const [videoType, setVideoType] = useState(DEFAULT_VIDEO_TYPE);
 
@@ -54,14 +55,26 @@ export default function UploadedVideos() {
     isError: playlistsError,
     refetch: refetchPlaylists,
   } = usePlaylists(channel?.id, {
+    page: playlistPage,
     enabled: viewMode === "playlists",
   });
 
   const playlists = playlistsResponse?.items || [];
+  const videosList = Array.isArray(videos?.items) ? videos.items : [];
+  const isActiveLoading = viewMode === "videos"
+    ? isLoadingVideos || isFetching
+    : isLoadingPlaylists;
+  const isActiveError = viewMode === "videos" ? isError : playlistsError;
+  const activeItems = viewMode === "videos" ? videosList : playlists;
+  const activeRefetch = viewMode === "videos" ? refetchVideos : refetchPlaylists;
 
   useEffect(() => {
     setPage(1);
   }, [videoType, setPage]);
+
+  useEffect(() => {
+    setPlaylistPage(1);
+  }, [channel?.id, setPlaylistPage]);
 
   const handleConfirmDelete = async () => {
     if (deleteConfirmId) {
@@ -70,7 +83,6 @@ export default function UploadedVideos() {
     }
   };
 
-  const videosList = Array.isArray(videos?.items) ? videos.items : [];
   const socials = channel?.socials
     ? Object.entries(channel.socials).filter(([, social]) => social?.link)
     : [];
@@ -220,20 +232,23 @@ export default function UploadedVideos() {
                   setViewMode("videos");
                   setVideoType(value);
                 }}
-                onPlaylistClick={() => setViewMode("playlists")}
+                onPlaylistClick={() => {
+                  setPlaylistPage(1);
+                  setViewMode("playlists");
+                }}
               />
             </div>
           </div>
           {/* <div className="border-b m-2"></div> */}
 
-          {isLoadingVideos || isFetching ? (
+          {isActiveLoading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <Spinner size="lg" />
               <p className="mt-4 text-gray-500">در حال بارگذاری ویدیوها...</p>
             </div>
-          ) : isError ? (
-            <ErrorMessage onRetry={refetchVideos} />
-          ) : videosList.length === 0 ? (
+          ) : isActiveError ? (
+            <ErrorMessage onRetry={activeRefetch} />
+          ) : activeItems.length === 0 ? (
             <EmptyState
               title="هنوز ویدیویی ثبت نشده"
               message={`فیلتر فعلی: ${VIDEO_TYPE_OPTIONS.find((item) => item.value === videoType)?.label || "همه ویدیوها"}`}
@@ -256,17 +271,12 @@ export default function UploadedVideos() {
                       ))}
                     </div>
 
-                    {videos?.totalPages > 1 && (
-                      <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4">
-                        <Pagination
-                          count={videos.totalPages}
-                          page={page}
-                          onChange={(_, value) => setPage(value)}
-                          shape="rounded"
-                          color="primary"
-                        />
-                      </div>
-                    )}
+                    <PaginationComponent
+                      totalPages={videos?.totalPages}
+                      currentPage={page}
+                      onPageChange={setPage}
+                      totalItems={videos?.totalItems}
+                    />
                   </>
                 ) : (
                   <div className="grid gap-4 w-full md:grid-cols-2 xl:grid-cols-3">
@@ -277,16 +287,13 @@ export default function UploadedVideos() {
                 )}
               </div>
 
-              {videos?.totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-center border-t border-gray-100 pt-4 ">
-                  <Pagination
-                    count={videos.totalPages}
-                    page={page}
-                    onChange={(_, value) => setPage(value)}
-                    shape="rounded"
-                    color="primary"
-                  />
-                </div>
+              {viewMode === "playlists" && (
+                <PaginationComponent
+                  totalPages={playlistsResponse?.totalPages}
+                  currentPage={playlistPage}
+                  onPageChange={setPlaylistPage}
+                  totalItems={playlistsResponse?.totalItems}
+                />
               )}
             </>
           )}

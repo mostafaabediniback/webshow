@@ -11,6 +11,7 @@ import { useInfiniteScroll } from "../hooks/ui/useInfiniteScroll";
 import { useInfiniteLandingVideos } from "../hooks/video/useInfiniteLandingVideos";
 import { EmptyState, ErrorMessage } from "../ui";
 import { getSocialIcon } from "../utils/socialIcons";
+import { Category } from "iconsax-react";
 
 const PAGE_SIZE = 25;
 

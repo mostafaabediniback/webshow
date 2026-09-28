@@ -1,12 +1,14 @@
 import { Add, Category, Edit2, Music, SearchNormal1 } from "iconsax-react";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import PaginationComponent from "../components/PaginationComponent";
 import {
   useCategories,
   useCreateCategory,
   useUpdateCategory,
 } from "../hooks/category";
 import DashboardLayout from "../layouts/DashboardLayout";
+import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import { Button, Modal } from "../ui";
 
 const INITIAL_FORM = {
@@ -21,14 +23,19 @@ const INITIAL_EDIT_FORM = {
 };
 
 function Categories() {
+  const { page, setPage } = usePaginationParams(1);
   const [form, setForm] = useState(INITIAL_FORM);
   const [searchInput, setSearchInput] = useState("");
   const [filterText, setFilterText] = useState("");
   const [editForm, setEditForm] = useState(INITIAL_EDIT_FORM);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const { data: categories = [], isLoading: isLoadingCategories } =
-    useCategories();
+  const {
+    data: categories = [],
+    pagination,
+    isLoading: isLoadingCategories,
+  } = useCategories({ page });
+  const totalPages = Number(pagination?.totalPages || 1);
 
   const { createCategory, isCreatingCategory } = useCreateCategory({
     onSuccess: () => {
@@ -71,6 +78,7 @@ function Categories() {
 
   const handleSearch = () => {
     setFilterText(searchInput.trim());
+    setPage(1);
   };
 
   const handleFormChange = (key, value) => {
@@ -366,6 +374,13 @@ function Categories() {
               ))
             )}
           </div>
+
+          <PaginationComponent
+            totalPages={totalPages}
+            currentPage={page}
+            onPageChange={setPage}
+            totalItems={pagination?.totalItems}
+          />
         </div>
       </div>
 

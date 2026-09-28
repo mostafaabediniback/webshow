@@ -1,7 +1,7 @@
-import { Pagination } from "@mui/material";
 import { ArrowLeft, Trash } from "iconsax-react";
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
+import PaginationComponent from "../components/PaginationComponent";
 import usePlaylistDetail from "../hooks/playlist/usePlaylistDetail";
 import useRemoveVideoFromPlaylist from "../hooks/playlist/useRemoveVideoFromPlaylist";
 import { usePaginationParams } from "../hooks/ui/usePaginationParams";
@@ -190,17 +190,12 @@ function PlaylistDetail() {
                     ))}
                   </div>
 
-                  {data?.totalPages > 1 && (
-                    <div className="mt-8 flex items-center justify-center border-t border-gray-100 pt-5">
-                      <Pagination
-                        count={data.totalPages}
-                        page={page}
-                        onChange={(_, value) => setPage(value)}
-                        shape="rounded"
-                        color="primary"
-                      />
-                    </div>
-                  )}
+                  <PaginationComponent
+                    totalPages={data?.totalPages}
+                    currentPage={page}
+                    onPageChange={setPage}
+                    totalItems={data?.totalItems}
+                  />
                 </>
               )}
             </section>

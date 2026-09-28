@@ -9,6 +9,7 @@ import {
 } from "iconsax-react";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import PaginationComponent from "../components/PaginationComponent";
 import useChannel from "../hooks/channel/useChannel";
 import {
   useCreateUser,
@@ -18,6 +19,7 @@ import {
   useUsersList,
 } from "../hooks/users";
 import DashboardLayout from "../layouts/DashboardLayout";
+import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import { Button, ConfirmModal, Modal } from "../ui";
 
 const INITIAL_FORM = {
@@ -41,6 +43,7 @@ const INITIAL_PASSWORD_FORM = {
 };
 
 function Users() {
+  const { page, setPage } = usePaginationParams(1);
   const { channels, isLoadingChannels } = useChannel();
   const [form, setForm] = useState(INITIAL_FORM);
   const [searchInput, setSearchInput] = useState("");
@@ -52,8 +55,9 @@ function Users() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
-  const { users, isLoadingUsers, isFetchingUsers } =
-    useUsersList(searchPhoneNumber);
+  const { users, pagination, isLoadingUsers, isFetchingUsers } =
+    useUsersList(searchPhoneNumber, page);
+  const totalPages = Number(pagination?.totalPages || 1);
 
   const { createUser, isCreatingUser } = useCreateUser({
     onSuccess: () => {
@@ -106,6 +110,7 @@ function Users() {
       return;
     }
 
+    setPage(1);
     setSearchPhoneNumber(searchInput.trim());
   };
 
@@ -448,6 +453,15 @@ function Users() {
               ))
             )}
           </div>
+
+          {searchPhoneNumber && (
+            <PaginationComponent
+              totalPages={totalPages}
+              currentPage={page}
+              onPageChange={setPage}
+              totalItems={pagination?.totalItems}
+            />
+          )}
         </div>
       </div>
 

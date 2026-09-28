@@ -1,21 +1,23 @@
-import { useMutation } from "@tanstack/react-query";
 import { Edit2, FolderAdd, TickCircle, Trash, User } from "iconsax-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import PaginationComponent from "../components/PaginationComponent";
 import useChannel from "../hooks/channel/useChannel";
+import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import { Button, ConfirmModal } from "../ui";
 import DashboardLayout from "../layouts/DashboardLayout";
-import { getSearch } from "../services/videoApi";
 
 function Channels() {
+  const { page, setPage } = usePaginationParams(1);
   const {
     channels,
+    pagination,
     createChannel,
     updateChannel,
     deleteChannel,
     isLoadingChannels,
     changeChannelImage,
-  } = useChannel();
+  } = useChannel(page);
 
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -23,25 +25,6 @@ function Channels() {
   const [editing, setEditing] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [thumbDrag, setThumbDrag] = useState(false);
-
-  const [searchInput, setSearchInput] = useState("");
-  const [searchChannels, setSearchChannels] = useState(null);
-
-  const searchMutation = useMutation({
-    mutationFn: getSearch,
-    onSuccess: (res) => {
-      const payload = res?.data;
-      let foundChannels = [];
-
-      if (Array.isArray(payload?.channels)) {
-        foundChannels = payload.channels;
-      } else if (Array.isArray(payload)) {
-        foundChannels = payload;
-      }
-
-      setSearchChannels(foundChannels);
-    },
-  });
 
   const handleSubmit = async () => {
     if (!name.trim()) return;
@@ -82,7 +65,7 @@ function Channels() {
       setName("");
       setUsername("");
       setImageFile(null);
-    } catch (err) {
+    } catch {
       toast.error("خطا در انجام عملیات، دوباره تلاش کنید");
     }
   };
@@ -113,20 +96,7 @@ function Channels() {
 
 
 
-  const handleSearch = async () => {
-    if (!searchInput.trim()) {
-      setSearchChannels(null);
-      return;
-    }
-
-    try {
-      await searchMutation.mutateAsync(searchInput.trim());
-    } catch {
-      setSearchChannels([]);
-    }
-  };
-
-  const channelsToRender = searchChannels === null ? channels : searchChannels;
+  const totalPages = Number(pagination?.totalPages || 1);
 
   const handleChangeImage = async (id, file) => {
     try {
@@ -327,7 +297,7 @@ function Channels() {
                 <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
               ))}
             </div>
-          ) : !channelsToRender?.length ? (
+          ) : !channels?.length ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
                 <FolderAdd size={32} className="text-gray-400" />
@@ -336,7 +306,7 @@ function Channels() {
             </div>
           ) : (
             <div className="space-y-3">
-              {(channelsToRender || []).map((c) => (
+              {channels.map((c) => (
                 <div
                   key={c.id}
                   className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
@@ -415,6 +385,13 @@ function Channels() {
               ))}
             </div>
           )}
+
+          <PaginationComponent
+            totalPages={totalPages}
+            currentPage={page}
+            onPageChange={setPage}
+            totalItems={pagination?.totalItems}
+          />
         </div>
       </div>
 

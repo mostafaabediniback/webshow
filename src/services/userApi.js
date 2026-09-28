@@ -1,4 +1,5 @@
 import axiosInstanceNew from '../utils/axiosConfigNew'
+import { normalizePage, normalizePaginatedResponse } from '../utils/pagination'
 
 export const createAttachUser = async (payload) => {
   const res = await axiosInstanceNew.post('/channel/create-attach-user', payload)
@@ -9,14 +10,19 @@ export const createAttachUser = async (payload) => {
 //   const res = await axiosInstanceNew.get(`/user/search/${encodeURIComponent(phoneNumber)}`)
 //   return res.data
 // }
-export const getUsersByPhone = async (phoneNumber = '') => {
-  const url = phoneNumber
-    ? `/user/search/${encodeURIComponent(phoneNumber)}`
-    : `/user/search`
+export const getUsersByPhone = async (phoneNumber, page = 1) => {
+  const normalizedPhoneNumber = String(phoneNumber || '').trim()
 
-  const res = await axiosInstanceNew.get(url)
+  if (!normalizedPhoneNumber) {
+    return normalizePaginatedResponse({ data: [] })
+  }
 
-  return res.data
+  const res = await axiosInstanceNew.get(
+    `/user/search/${encodeURIComponent(normalizedPhoneNumber)}`,
+    { params: { page: normalizePage(page) } },
+  )
+
+  return normalizePaginatedResponse(res.data)
 }
 
 export const searchUserByPhone = getUsersByPhone

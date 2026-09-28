@@ -1,5 +1,6 @@
 import axiosInstanceNew from "../../utils/axiosConfigNew";
 import { QueryKeys } from "../../enums";
+import { normalizePage, normalizePaginatedResponse } from "../../utils/pagination";
 
 /**
  * @typedef {import("../../types/playlist").PlaylistSummary} PlaylistSummary
@@ -49,54 +50,36 @@ const normalizePlaylist = (playlist = {}) => ({
   updated_at: playlist?.updated_at || "",
 });
 
-const extractPagination = (root = {}, fallbackTotal = 0) => {
-  const meta = root?.meta ?? {};
-
-  return {
-    meta,
-    totalPages: Number(meta?.last_page || 1) || 1,
-    totalItems: Number(meta?.total || fallbackTotal) || fallbackTotal,
-    links: root?.links,
-  };
-};
-
 const mapPlaylistListResponse = (payload) => {
-  const root = payload?.data ?? payload ?? {};
-  const rawItems = Array.isArray(root?.data)
-    ? root.data
-    : Array.isArray(root)
-      ? root
-      : [];
-  const items = rawItems.map(normalizePlaylist);
-  const { meta, totalItems, totalPages, links } = extractPagination(root, items.length);
+  const paginated = normalizePaginatedResponse(payload);
+  const items = paginated.items.map(normalizePlaylist);
 
   /** @type {PlaylistListResponse} */
   return {
     items,
-    meta,
-    links,
-    totalItems,
-    totalPages,
+    meta: paginated.meta,
+    links: paginated.links,
+    totalItems: paginated.totalItems,
+    totalPages: paginated.totalPages,
   };
 };
 
 const mapPlaylistDetailResponse = (payload) => {
   const root = payload?.data ?? payload ?? {};
-  const playlist = root?.data?.play_list ?? root?.play_list ?? root?.data?.playlist ?? null;
-  const videos = Array.isArray(root?.data?.videos)
+  const playlist = root?.play_list ?? root?.playlist ?? root?.data?.play_list ?? null;
+  const nestedVideos = Array.isArray(root?.data?.videos)
     ? root.data.videos
     : Array.isArray(root?.videos)
       ? root.videos
-      : [];
-
-  const { meta, totalPages, totalItems } = extractPagination(root, videos.length);
+      : null;
+  const paginated = normalizePaginatedResponse(payload, nestedVideos ?? undefined);
 
   return {
     playlist: playlist ? normalizePlaylist(playlist) : null,
-    items: videos,
-    meta,
-    totalPages,
-    totalItems,
+    items: paginated.items,
+    meta: paginated.meta,
+    totalPages: paginated.totalPages,
+    totalItems: paginated.totalItems,
   };
 };
 
@@ -105,14 +88,11 @@ export const getPlaylists = async (channelId, pagination) => {
     ? `/play-list/index/${channelId}`
     : `/play-list/index`;
 
-  const config = pagination
-    ? {
-        params: {
-          page: pagination.page ?? 1,
-          per_page: pagination.per_page ?? 25,
-        },
-      }
-    : undefined;
+  const config = {
+    params: {
+      page: normalizePage(pagination?.page),
+    },
+  };
 
   const res = await axiosInstanceNew.get(url, config);
 
@@ -143,9 +123,9 @@ export const removeVideoFromPlaylist = async ({ playlistId, videoId }) => {
   }
 };
 
-export const getPlaylistDetail = async (playlistId, { page = 1, per_page = 25 } = {}) => {
+export const getPlaylistDetail = async (playlistId, { page = 1 } = {}) => {
   const res = await axiosInstanceNew.get(`/play-list/show/${playlistId}`, {
-    params: { page, per_page },
+    params: { page: normalizePage(page) },
   });
 
   /** @type {PlaylistDetailResponse} */
