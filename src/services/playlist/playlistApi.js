@@ -1,6 +1,10 @@
 import axiosInstanceNew from "../../utils/axiosConfigNew";
 import { QueryKeys } from "../../enums";
-import { normalizePage, normalizePaginatedResponse } from "../../utils/pagination";
+import {
+  getAllPaginatedItems,
+  normalizePage,
+  normalizePaginatedResponse,
+} from "../../utils/pagination";
 
 /**
  * @typedef {import("../../types/playlist").PlaylistSummary} PlaylistSummary
@@ -98,6 +102,9 @@ export const getPlaylists = async (channelId, pagination) => {
 
   return mapPlaylistListResponse(res.data);
 };
+
+export const getAllPlaylists = (channelId) =>
+  getAllPaginatedItems((page) => getPlaylists(channelId, { page }));
 
 export const createPlaylist = async (payload) => {
   const res = await axiosInstanceNew.post("/play-list/create", payload);

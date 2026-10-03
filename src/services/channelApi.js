@@ -1,6 +1,10 @@
 import axiosInstanceNew from "../utils/axiosConfigNew";
 import { readAuthSession } from "../utils/auth";
-import { normalizePage, normalizePaginatedResponse } from "../utils/pagination";
+import {
+  getAllPaginatedItems,
+  normalizePage,
+  normalizePaginatedResponse,
+} from "../utils/pagination";
 
 export const getChannels = async (pageNumber) => {
   const params =
@@ -14,6 +18,8 @@ export const getChannels = async (pageNumber) => {
 
   return normalizePaginatedResponse(res.data);
 };
+
+export const getAllChannels = () => getAllPaginatedItems(getChannels);
 
 export const createChannel = async (payload) => {
   const { userId } = readAuthSession();

@@ -3,13 +3,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, Link } from 'react-router-dom'
 import { getLocalVideos, updateLocalVideo } from '../services/api'
 import { useMemo, useState } from 'react'
-import useChannel from '../hooks/channel/useChannel'
+import useAllChannels from '../hooks/channel/useAllChannels'
 
 function VideoEdit() {
   const { id } = useParams()
   const qc = useQueryClient()
   const { data: localVideos } = useQuery({ queryKey: ['localVideos'], queryFn: getLocalVideos })
-  const { channels } = useChannel()
+  const { data: channels = [], isLoading: isLoadingChannels } = useAllChannels()
   const item = useMemo(() => (localVideos || []).find((v)=>v.id === id), [localVideos, id])
 
   const [title, setTitle] = useState(item?.title || '')
@@ -33,7 +33,7 @@ function VideoEdit() {
         thumbnailUrl = URL.createObjectURL(thumbFile)
       }
       if (chanId) {
-        channelName = (channels || []).find((c)=>c.id===chanId)?.name || channelName
+        channelName = channels.find((c)=>String(c.id)===String(chanId))?.name || channelName
       }
       return updateLocalVideo(item.id, { title, description, videoUrl, thumbnailUrl, channelName })
     },
@@ -62,7 +62,7 @@ function VideoEdit() {
           <div className="space-y-3">
             <input value={title} onChange={(e)=>setTitle(e.target.value)} placeholder="عنوان" className="h-10 px-3 rounded-lg border border-gray-300 w-full" />
             <textarea value={description} onChange={(e)=>setDescription(e.target.value)} placeholder="توضیحات" className="h-24 px-3 py-2 rounded-lg border border-gray-300 w-full" />
-            <select value={chanId} onChange={(e)=>setChanId(e.target.value)} className="h-10 px-3 rounded-lg border border-gray-300 w-full">
+            <select value={chanId} onChange={(e)=>setChanId(e.target.value)} disabled={isLoadingChannels} className="h-10 px-3 rounded-lg border border-gray-300 w-full">
               <option value="">تغییر کانال (اختیاری)</option>
               {(channels||[]).map((c)=> (
                 <option key={c.id} value={c.id}>{c.name}</option>

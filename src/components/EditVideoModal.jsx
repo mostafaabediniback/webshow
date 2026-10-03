@@ -24,7 +24,10 @@ function EditVideoModal({ videoId, isOpen, onClose, initialVideo }) {
     isLoading: isLoadingPlaylists,
     isError: isPlaylistsError,
     refetch: refetchPlaylists,
-  } = usePlaylists(channelId, { enabled: Boolean(isOpen && channelId) });
+  } = usePlaylists(channelId, {
+    enabled: Boolean(isOpen && channelId),
+    withPagination: false,
+  });
   const playlists = playlistsResponse?.items || [];
 
   const initialCover = useMemo(() => {

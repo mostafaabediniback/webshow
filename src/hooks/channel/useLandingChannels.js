@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getLandingChannels } from "../../services/videoApi";
+import { getAllLandingChannels } from "../../services/videoApi";
 
 export const useLandingChannels = () => {
   return useQuery({
-    queryKey: ["landing-channels"],
-    queryFn: getLandingChannels,
+    queryKey: ["landing-channels", "all"],
+    queryFn: async () => ({ items: await getAllLandingChannels() }),
     keepPreviousData: true,
     staleTime: 5 * 60 * 1000, // 5 دقیقه
     select: (data) => ({

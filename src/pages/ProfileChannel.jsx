@@ -81,7 +81,7 @@ const ProfileChannel = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-6 sm:py-8">
+        <div className="isolate mx-auto max-w-7xl px-3 sm:px-4 md:px-6 py-6 sm:py-8">
           {/* CHANNEL HEADER */}
           {channelLoading ? (
             <div className="mb-8">
@@ -98,7 +98,7 @@ const ProfileChannel = () => {
               </div>
             </div>
           ) : (
-            <div className="overflow-hidden mb-8">
+            <div className="relative z-10 mb-8">
               {/* COVER */}
               <div className="hidden sm:block relative w-full aspect-[7/1] overflow-hidden rounded-[10px] border border-gray-200">
                 <img

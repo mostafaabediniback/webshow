@@ -1,4 +1,5 @@
 import axiosInstanceNew from "../utils/axiosConfigNew";
+import { getAllPaginatedItems, normalizePage } from "../utils/pagination";
 
 const mapPaginatedResponse = (data) => {
   const items =
@@ -133,10 +134,14 @@ export const getAllVideos = async (page = 1, per_page = 25, video_type = "all") 
   return mapPaginatedResponse(res.data);
 };
 
-export const getLandingChannels = async () => {
-  const res = await axiosInstanceNew.get('/landing/channels');
+export const getLandingChannels = async (page = 1) => {
+  const res = await axiosInstanceNew.get('/landing/channels', {
+    params: { page: normalizePage(page) },
+  });
   return mapPaginatedResponse(res.data);
 };
+
+export const getAllLandingChannels = () => getAllPaginatedItems(getLandingChannels);
 
 export const getLandingVideos = async ({
   channelId,
@@ -202,5 +207,6 @@ export default {
   deleteVideo,
   updateVideo,
   getLandingVideos,
-  getLandingChannels
+  getLandingChannels,
+  getAllLandingChannels
 };

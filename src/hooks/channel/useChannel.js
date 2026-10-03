@@ -28,6 +28,7 @@ function useChannel(pageNumber, pageSize = 10, filters = {}, options = {}) {
   const invalidateChannelQueries = async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: [QueryKeys.channel] }),
+      queryClient.invalidateQueries({ queryKey: ["landing-channels"] }),
       queryClient.invalidateQueries({ queryKey: [QueryKeys.channelDetail] }),
       queryClient.invalidateQueries({ queryKey: [QueryKeys.dashboard] }),
     ])

@@ -1,17 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "../../services/category/categoryApi";
+import { getAllCategories, getCategories } from "../../services/category/categoryApi";
 
-const useCategories = ({ page = 1, ...options } = {}) => {
+const useCategories = ({ page = 1, withPagination = true, ...options } = {}) => {
   const query = useQuery({
-    queryKey: ["categories", page],
-    queryFn: () => getCategories(page),
+    queryKey: ["categories", withPagination ? page : "all"],
+    queryFn: async () =>
+      withPagination ? getCategories(page) : { items: await getAllCategories() },
     ...options,
   });
 
   return {
     ...query,
     data: query.data?.items || [],
-    pagination: query.data,
+    pagination: withPagination ? query.data : undefined,
   };
 };
 

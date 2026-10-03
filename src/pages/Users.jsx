@@ -10,7 +10,7 @@ import {
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import PaginationComponent from "../components/PaginationComponent";
-import useChannel from "../hooks/channel/useChannel";
+import useAllChannels from "../hooks/channel/useAllChannels";
 import {
   useCreateUser,
   useDeleteUser,
@@ -44,7 +44,12 @@ const INITIAL_PASSWORD_FORM = {
 
 function Users() {
   const { page, setPage } = usePaginationParams(1);
-  const { channels, isLoadingChannels } = useChannel();
+  const {
+    data: channels = [],
+    isLoading: isLoadingChannels,
+    isError: isErrorChannels,
+    refetch: refetchChannels,
+  } = useAllChannels();
   const [form, setForm] = useState(INITIAL_FORM);
   const [searchInput, setSearchInput] = useState("");
   const [searchPhoneNumber, setSearchPhoneNumber] = useState("");
@@ -284,22 +289,44 @@ function Users() {
               </div>
             </label>
 
-            <label className="space-y-2">
-              <span className="text-sm font-semibold text-gray-900">کانال</span>
+            <div className="space-y-2">
+              <label htmlFor="user-channel" className="block text-sm font-semibold text-gray-900">
+                کانال
+              </label>
               <select
+                id="user-channel"
                 value={form.channel_id}
                 onChange={(e) => handleFormChange("channel_id", e.target.value)}
                 disabled={isLoadingChannels}
                 className="h-11 px-4 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">انتخاب کانال</option>
-                {(channels || []).map((channel) => (
+                <option value="">
+                  {isLoadingChannels ? "در حال دریافت کانال‌ها..." : "انتخاب کانال"}
+                </option>
+                {channels.map((channel) => (
                   <option key={channel.id} value={channel.id}>
                     {channel.name}
                   </option>
                 ))}
               </select>
-            </label>
+              {isErrorChannels && (
+                <span role="alert" className="block text-xs text-red-600">
+                  دریافت فهرست کانال‌ها ناموفق بود.
+                  <button
+                    type="button"
+                    onClick={() => refetchChannels()}
+                    className="mr-2 underline"
+                  >
+                    تلاش دوباره
+                  </button>
+                </span>
+              )}
+              {!isLoadingChannels && !isErrorChannels && channels.length === 0 && (
+                <span className="block text-xs text-gray-500">
+                  هنوز کانالی ثبت نشده است.
+                </span>
+              )}
+            </div>
           </div>
 
           <Button

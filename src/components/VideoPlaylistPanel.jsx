@@ -137,7 +137,7 @@ function VideoPlaylistPanel({
       <section className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
         <ErrorMessage
           title="خطا در دریافت پلی‌لیست‌ها"
-          message="فهرست پلی‌لیست‌های این کانال بارگذاری نشد."
+          message="پلی‌لیست‌های این ویدیو بارگذاری نشد."
           onRetry={onRetryPlaylists}
           className="py-10"
         />
@@ -149,7 +149,7 @@ function VideoPlaylistPanel({
     return (
       <section className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
         <EmptyState
-          title="پلی‌لیستی برای این کانال ثبت نشده"
+          title="پلی‌لیستی برای این ویدیو ثبت نشده"
           message="بعد از ساخت پلی‌لیست، ویدیوهای آن در همین بخش نمایش داده می‌شوند."
           className="py-10"
         />

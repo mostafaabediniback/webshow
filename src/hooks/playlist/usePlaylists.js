@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPlaylists, playlistQueryKeys } from "../../services/playlist/playlistApi";
+import {
+  getAllPlaylists,
+  getPlaylists,
+  playlistQueryKeys,
+} from "../../services/playlist/playlistApi";
 
 const usePlaylists = (channelId, options = {}) => {
   const {
@@ -16,11 +20,10 @@ const usePlaylists = (channelId, options = {}) => {
       withPagination ? page : "all",
       withPagination ? perPage : "all",
     ],
-    queryFn: () =>
-      getPlaylists(
-        channelId,
-        withPagination ? { page, per_page: perPage } : undefined,
-      ),
+    queryFn: async () =>
+      withPagination
+        ? getPlaylists(channelId, { page, per_page: perPage })
+        : { items: await getAllPlaylists(channelId) },
     enabled,
     ...queryOptions,
   });

@@ -7,7 +7,7 @@ import MultiSelect from "../components/Upload/MultiSelect";
 import PlaylistModal from "../components/Upload/PlaylistModal";
 import VideoDropzone from "../components/VideoDropzone";
 import useCategories from "../hooks/category/useCategories";
-import useChannel from "../hooks/channel/useChannel";
+import useAllChannels from "../hooks/channel/useAllChannels";
 import useCreatePlaylist from "../hooks/playlist/useCreatePlaylist";
 import usePlaylists from "../hooks/playlist/usePlaylists";
 import useVideoUpload from "../hooks/video/useVideoUpload";
@@ -16,7 +16,7 @@ import { Button } from "../ui";
 import UplodLayout from "../layouts/UplodLayout";
 
 function Upload() {
-  const { channels: chans, isLoadingChannels } = useChannel();
+  const { data: chans = [], isLoading: isLoadingChannels } = useAllChannels();
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [videoFile, setVideoFile] = useState(null);
@@ -38,12 +38,15 @@ function Upload() {
     data: categories = [],
     isLoading: isLoadingCategories,
     isError: isCategoriesError,
-  } = useCategories();
+  } = useCategories({ withPagination: false });
   const {
     data: playlistsResponse,
     isLoading: isLoadingPlaylists,
     isError: isPlaylistsError,
-  } = usePlaylists(chanId);
+  } = usePlaylists(chanId, {
+    enabled: Boolean(chanId),
+    withPagination: false,
+  });
   const playlists = playlistsResponse?.items || [];
   const createPlaylistMutation = useCreatePlaylist();
 

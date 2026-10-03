@@ -1,13 +1,11 @@
 import axios from "axios";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { Share } from "iconsax-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import VideoPlaylistPanel from "../components/VideoPlaylistPanel";
 import useChannelVideos from "../hooks/channel/useChannelVideos";
-import usePlaylistDetail from "../hooks/playlist/usePlaylistDetail";
-import usePlaylists from "../hooks/playlist/usePlaylists";
 import { useVideo } from "../hooks/video/useVideo";
 import Layout from "../layouts/Layout";
 import {
@@ -52,7 +50,6 @@ const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
 
 function Video() {
   const { id } = useParams();
-  const queryClient = useQueryClient();
   const { data, isLoading } = useVideo(id);
   const currentVideo = data?.data;
   const currentChannelId = currentVideo?.channel_id || currentVideo?.channelId;
@@ -74,24 +71,36 @@ function Video() {
     },
   );
 
-  const {
-    data: playlistsResponse,
-    isLoading: isPlaylistsLoading,
-    isError: isPlaylistsError,
-    refetch: refetchPlaylists,
-  } = usePlaylists(currentChannelId, { enabled: !!currentChannelId });
+  const playlistIds = useMemo(
+    () => [...new Set(getVideoPlaylistIds({ playlists: currentVideo?.playlists }))],
+    [currentVideo?.playlists],
+  );
+  const playlistQueries = useQueries({
+    queries: playlistIds.map((playlistId) => ({
+      queryKey: playlistQueryKeys.detail(playlistId, 1, 100),
+      queryFn: () => getPlaylistDetail(playlistId, { page: 1, per_page: 100 }),
+    })),
+  });
+  const playlists = playlistIds.map((playlistId, index) => ({
+    ...playlistQueries[index].data?.playlist,
+    id: playlistId,
+    total_videos: playlistQueries[index].data?.totalItems,
+  }));
+  const isPlaylistsLoading =
+    playlistQueries.length > 0 && playlistQueries.every((query) => query.isLoading);
+  const isPlaylistsError =
+    playlistQueries.length > 0 && playlistQueries.every((query) => query.isError);
+  const refetchPlaylists = () =>
+    Promise.all(playlistQueries.map((query) => query.refetch()));
 
-  // console.log(playlistsResponse);
-  const playlists = playlistsResponse?.items || [];
-  console.log(playlists);
-
-  const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
+  const [preferredPlaylistId, setSelectedPlaylistId] = useState(null);
+  const selectedPlaylistId = playlistIds.includes(preferredPlaylistId)
+    ? preferredPlaylistId
+    : playlistIds[0] ?? null;
+  const selectedPlaylistQuery =
+    playlistQueries[playlistIds.indexOf(selectedPlaylistId)];
   const [isDownloading, setIsDownloading] = useState(false);
   const [videoSource, setVideoSource] = useState("");
-  const [hasResolvedInitialPlaylist, setHasResolvedInitialPlaylist] =
-    useState(false);
-  const [isResolvingInitialPlaylist, setIsResolvingInitialPlaylist] =
-    useState(false);
 
   const videoRef = useRef(null);
   const downloadMenuRef = useRef(null);
@@ -104,11 +113,7 @@ function Video() {
     isFetching: isPlaylistDetailFetching,
     isError: isPlaylistDetailError,
     refetch: refetchPlaylistDetail,
-  } = usePlaylistDetail(selectedPlaylistId, {
-    page: 1,
-    perPage: 100,
-    enabled: !!selectedPlaylistId,
-  });
+  } = selectedPlaylistQuery || {};
 
   const availableQualities = useMemo(() => {
     const links = currentVideo?.video_links;
@@ -248,95 +253,12 @@ function Video() {
       connection.removeEventListener("change", handleConnectionChange);
   }, [isAutoQuality]);
 
-useEffect(() => {
-  setSelectedPlaylistId(null);
-  setHasResolvedInitialPlaylist(false);
-  setIsResolvingInitialPlaylist(false);
-
-  setIsAutoQuality(false);
-  setSelectedQuality(null);
-
-  setShowQualityMenu(false);
-}, [id]);
-
   useEffect(() => {
-    if (!playlists.length) {
-      setHasResolvedInitialPlaylist(true);
-      return;
-    }
-
-    if (hasResolvedInitialPlaylist || isPlaylistsLoading || !id) return;
-
-    let isMounted = true;
-
-    const resolveInitialPlaylist = async () => {
-      const possiblePlaylistIds = getVideoPlaylistIds(currentVideo);
-      const matchingPlaylist = playlists.find((playlist) =>
-        possiblePlaylistIds.some(
-          (playlistId) => String(playlist.id) === String(playlistId),
-        ),
-      );
-
-      if (matchingPlaylist) {
-        if (isMounted) {
-          setSelectedPlaylistId(matchingPlaylist.id);
-          setHasResolvedInitialPlaylist(true);
-        }
-        return;
-      }
-
-      setIsResolvingInitialPlaylist(true);
-
-      try {
-        for (const playlist of playlists) {
-          const detail = await queryClient.fetchQuery({
-            queryKey: playlistQueryKeys.detail(playlist.id, 1, 100),
-            queryFn: () =>
-              getPlaylistDetail(playlist.id, { page: 1, per_page: 100 }),
-          });
-
-          const containsCurrentVideo = Array.isArray(detail?.items)
-            ? detail.items.some((item) => String(item?.id) === String(id))
-            : false;
-
-          if (containsCurrentVideo) {
-            if (isMounted) {
-              setSelectedPlaylistId(playlist.id);
-              setHasResolvedInitialPlaylist(true);
-            }
-            return;
-          }
-        }
-
-        if (isMounted) {
-          setSelectedPlaylistId(playlists[0]?.id ?? null);
-          setHasResolvedInitialPlaylist(true);
-        }
-      } catch {
-        if (isMounted) {
-          setSelectedPlaylistId(playlists[0]?.id ?? null);
-          setHasResolvedInitialPlaylist(true);
-        }
-      } finally {
-        if (isMounted) {
-          setIsResolvingInitialPlaylist(false);
-        }
-      }
-    };
-
-    resolveInitialPlaylist();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [
-    currentVideo,
-    hasResolvedInitialPlaylist,
-    id,
-    isPlaylistsLoading,
-    playlists,
-    queryClient,
-  ]);
+    setSelectedPlaylistId(null);
+    setIsAutoQuality(false);
+    setSelectedQuality(null);
+    setShowQualityMenu(false);
+  }, [id]);
 
   useEffect(() => {
     window.scrollTo({
@@ -801,9 +723,7 @@ useEffect(() => {
               {playlists.length > 0 && (
                 <VideoPlaylistPanel
                   playlists={playlists}
-                  isPlaylistsLoading={
-                    isPlaylistsLoading || isResolvingInitialPlaylist
-                  }
+                  isPlaylistsLoading={isPlaylistsLoading}
                   isPlaylistsError={isPlaylistsError}
                   onRetryPlaylists={refetchPlaylists}
                   selectedPlaylistId={selectedPlaylistId}

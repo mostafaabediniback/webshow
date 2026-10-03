@@ -1,5 +1,9 @@
 import axiosInstanceNew from "../../utils/axiosConfigNew";
-import { normalizePage, normalizePaginatedResponse } from "../../utils/pagination";
+import {
+  getAllPaginatedItems,
+  normalizePage,
+  normalizePaginatedResponse,
+} from "../../utils/pagination";
 
 export const getCategories = async (page = 1) => {
   const res = await axiosInstanceNew.get("/categories", {
@@ -7,6 +11,8 @@ export const getCategories = async (page = 1) => {
   });
   return normalizePaginatedResponse(res.data);
 };
+
+export const getAllCategories = () => getAllPaginatedItems(getCategories);
 
 export const createCategory = async (payload) => {
   const res = await axiosInstanceNew.post("/categories", payload);

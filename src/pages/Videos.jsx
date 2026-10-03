@@ -8,7 +8,7 @@ import {
 import EditVideoModal from "../components/EditVideoModal";
 import PaginationComponent from "../components/PaginationComponent";
 import VideoRow from "../components/VideoRow";
-import useChannel from "../hooks/channel/useChannel";
+import useAllChannels from "../hooks/channel/useAllChannels";
 import useChannelVideos from "../hooks/channel/useChannelVideos";
 import { usePaginationParams } from "../hooks/ui/usePaginationParams";
 import useDeleteVideo from "../hooks/video/useDeleteVideo";
@@ -20,7 +20,7 @@ import PlaylistCard from "./PlaylistCard";
 function Videos() {
   const navigate = useNavigate();
 
-  const { channels: chans, isLoadingChannels } = useChannel();
+  const { data: chans = [], isLoading: isLoadingChannels } = useAllChannels();
   const [chanId, setChanId] = useState("");
   const [videoType, setVideoType] = useState(DEFAULT_VIDEO_TYPE);
   const { page, setPage } = usePaginationParams(1);

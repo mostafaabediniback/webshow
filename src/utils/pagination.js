@@ -43,3 +43,25 @@ export const normalizePaginatedResponse = (payload, explicitItems) => {
 };
 
 export const normalizePage = (page) => asPositiveInteger(page, 1);
+
+/** Fetches every page of a normalized list for selectors without pagination. */
+export const getAllPaginatedItems = async (fetchPage) => {
+  const firstPage = await fetchPage(1);
+  const items = [...firstPage.items];
+
+  for (let page = 2; page <= firstPage.totalPages; page += 1) {
+    const nextPage = await fetchPage(page);
+    items.push(...nextPage.items);
+  }
+
+  const seenIds = new Set();
+  return items.filter((item) => {
+    if (item?.id === undefined || item?.id === null) return true;
+
+    const id = String(item.id);
+    if (seenIds.has(id)) return false;
+
+    seenIds.add(id);
+    return true;
+  });
+};

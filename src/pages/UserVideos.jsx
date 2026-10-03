@@ -39,7 +39,7 @@ function UserVideos() {
     data: categories = [],
     isLoading: isLoadingCategories,
     isError: isCategoriesError,
-  } = useCategories();
+  } = useCategories({ withPagination: false });
   const {
     data: playlistsResponse,
     isLoading: isLoadingPlaylists,
