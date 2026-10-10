@@ -1,0 +1,238 @@
+@import "tailwindcss";
+
+/* Keep the frame preview unobstructed; playback has a button below it. */
+.frame-picker-video::-webkit-media-controls-overlay-play-button {
+  display: none;
+}
+
+@font-face {
+  font-family: Vazir;
+  src: url('./assets/fonts/vazir/Vazir-Thin-FD.woff2') format('woff2'),
+    url('./assets/fonts/vazir/Vazir-Thin-FD.woff') format('woff'),
+    url('./assets/fonts/vazir/Vazir-Thin-FD.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Vazir;
+  src: url('./assets/fonts/vazir/Vazir-Light-FD.woff2') format('woff2'),
+    url('./assets/fonts/vazir/Vazir-Light-FD.woff') format('woff'),
+    url('./assets/fonts/vazir/Vazir-Light-FD.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Vazir;
+  src: url('./assets/fonts/vazir/Vazir-Regular-FD.woff2') format('woff2'),
+    url('./assets/fonts/vazir/Vazir-Regular-FD.woff') format('woff'),
+    url('./assets/fonts/vazir/Vazir-Regular-FD.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Vazir;
+  src: url('./assets/fonts/vazir/Vazir-Medium-FD.woff2') format('woff2'),
+    url('./assets/fonts/vazir/Vazir-Medium-FD.woff') format('woff'),
+    url('./assets/fonts/vazir/Vazir-Medium-FD.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Vazir;
+  src: url('./assets/fonts/vazir/Vazir-Bold-FD.woff2') format('woff2'),
+    url('./assets/fonts/vazir/Vazir-Bold-FD.woff') format('woff'),
+    url('./assets/fonts/vazir/Vazir-Bold-FD.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Vazir;
+  src: url('./assets/fonts/vazir/Vazir-Black-FD.woff2') format('woff2'),
+    url('./assets/fonts/vazir/Vazir-Black-FD.woff') format('woff'),
+    url('./assets/fonts/vazir/Vazir-Black-FD.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Vazir, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* Interactive cursor consistency */
+button:not(:disabled):not([aria-disabled="true"]),
+a[href]:not([aria-disabled="true"]),
+summary:not([aria-disabled="true"]),
+label:has(input[type="checkbox"]):not([aria-disabled="true"]),
+label:has(input[type="radio"]):not([aria-disabled="true"]),
+input[type="checkbox"]:not(:disabled):not([aria-disabled="true"]),
+input[type="radio"]:not(:disabled):not([aria-disabled="true"]),
+[role="button"]:not([aria-disabled="true"]),
+[role="tab"]:not([aria-disabled="true"]),
+[role="menuitem"]:not([aria-disabled="true"]),
+[role="option"]:not([aria-disabled="true"]),
+[role="link"]:not([aria-disabled="true"]),
+[tabindex]:not([tabindex="-1"]):not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+/* Custom React Toastify Styling */
+:root {
+  --toastify-font-family: Vazir, sans-serif;
+  --toastify-border-radius: 16px;
+  --toastify-toast-min-height: 64px;
+  --toastify-toast-width: 360px;
+}
+
+.Toastify__toast {
+  padding: 12px 16px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--success {
+  background: linear-gradient(to right, #10b981, #059669) !important;
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--error {
+  background: linear-gradient(to right, #ef4444, #dc2626) !important;
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--warning {
+  background: linear-gradient(to right, #f59e0b, #d97706) !important;
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--info {
+  background: linear-gradient(to right, #3b82f6, #2563eb) !important;
+}
+
+.Toastify__toast--rtl {
+  direction: rtl;
+  font-family: Vazir, sans-serif;
+}
+
+.Toastify__progress-bar {
+  height: 4px;
+  opacity: 0.8;
+}
+
+.Toastify__close-button {
+  align-self: center;
+  opacity: 0.7;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+@media only screen and (max-width : 480px) {
+  .Toastify__toast-container {
+    padding: 12px;
+  }
+  .Toastify__toast {
+    margin-bottom: 12px;
+    border-radius: 12px;
+  }
+}
+
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better focus styles */
+/* *:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+} */
+.no-focus-visible:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+
+  /* Better touch targets */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent text size adjustment on iOS */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* Touch manipulation for better mobile performance */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+.touch-pan-x {
+  touch-action: pan-x;
+}
+

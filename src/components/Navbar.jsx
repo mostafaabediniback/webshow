@@ -1,0 +1,223 @@
+import { CloseCircle, Logout, Menu, SearchNormal1, User } from "iconsax-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import logo from "../assets/logo/logo-01-01.png";
+import useLogin from "../hooks/auth/useLogin";
+import useAuthStore from "../store/useAuthStore";
+import SearchInput from "./SearchInput";
+
+function Navbar() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { LogOut, isLoggingOut } = useLogin();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const defaultDashboardRoute = useAuthStore(
+    (state) => state.defaultDashboardRoute,
+  );
+
+  const role = sessionStorage.getItem("role");
+  const isSuperAdmin = role === "super_admin";
+  const isAdmin = role === "admin";
+  const isUser = role === "user";
+
+  const closeSidebar = () => setIsSidebarOpen(false);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
+
+  const handleLogout = async () => {
+    try {
+      await LogOut();
+      closeSidebar();
+    } catch (error) {
+      void error;
+    }
+  };
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
+
+  return (
+    <>
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl w-full mx-auto flex justify-center items-center">
+          <div className="w-full justify-between px-3 sm:px-4 md:px-6 py-2.5 md:py-3 flex items-center gap-2 sm:gap-3 md:gap-4">
+            <button
+              onClick={toggleSidebar}
+              className="md:hidden p-2 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-slate-900 touch-manipulation"
+              aria-label="منو"
+            >
+              <Menu size={20} color="currentColor" />
+            </button>
+            <Link
+              to="/"
+              onClick={closeSidebar}
+              className="flex items-center gap-2"
+            >
+              <img
+                src={logo}
+                alt="اربعین تی وی"
+                className="h-8 sm:h-9 md:h-10 w-auto"
+              />
+            </Link>
+            <div className="hidden md:block flex-1 max-w-2xl mx-8">
+              <SearchInput className="no-focus-visible md:hidden p-2 rounded-[10px] hover:bg-gray-100 text-slate-900 touch-manipulation" />
+            </div>
+            <button
+              onClick={toggleSearch}
+              className="no-focus-visible md:hidden p-2 rounded-[10px] hover:bg-gray-100 text-slate-900 touch-manipulation"
+              aria-label="جستجو"
+            >
+              <SearchNormal1 size={20} color="currentColor" />
+            </button>
+            <div className="hidden md:flex items-center gap-3 ">
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to={
+                      isSuperAdmin
+                        ? "/dashboard/upload"
+                        : isUser
+                          ? "/user-dashboard?action=create-channel"
+                          : "/dashboard/user-upload"
+                    }
+                    className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                  >
+                    بارگذاری ویدیو
+                  </Link>
+
+                  <Link
+                    to={defaultDashboardRoute}
+                    className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                  >
+                    مدیریت کانال‌ها
+                  </Link>
+
+                  {/* <button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="h-10 px-4 rounded-[10px] border border-red-300 bg-white hover:bg-red-50 active:bg-red-100 text-sm font-medium flex items-center gap-2 text-red-600 transition-colors shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Logout size={18} color="currentColor" />
+                    {isLoggingOut ? "در حال خروج..." : "خروج"}
+                  </button> */}
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  className="h-10 px-4 rounded-[10px] border border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 text-sm font-medium flex items-center gap-2 text-slate-900 transition-colors shadow-sm hover:shadow"
+                >
+                  <User size={18} color="currentColor" />
+                  <span className="text-[16px]">ورود</span>
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {isSearchOpen && (
+          <div className="md:hidden px-3 sm:px-4 pb-3">
+            <SearchInput />
+          </div>
+        )}
+      </header>
+
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-[60] md:hidden animate-in fade-in duration-300"
+          onClick={closeSidebar}
+        />
+      )}
+
+      <aside
+        className={`fixed top-0 right-0 h-dvh w-80 max-w-[85vw] bg-white shadow-2xl z-[70] transform transition-transform duration-300 ease-in-out md:hidden ${
+          isSidebarOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          <div className="flex shrink-0 items-center justify-between p-4 border-b border-gray-200">
+            <h2 className="text-xl font-extrabold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+              منو
+            </h2>
+            <button
+              onClick={closeSidebar}
+              className="p-2 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
+              aria-label="بستن منو"
+            >
+              <CloseCircle size={24} color="currentColor" />
+            </button>
+          </div>
+
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <nav className="p-4 space-y-2">
+              <Link
+                to="/"
+                onClick={closeSidebar}
+                className="flex items-center gap-3 p-3 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+              >
+                <span>خانه</span>
+              </Link>
+              {isAuthenticated && (
+                <Link
+                  to={defaultDashboardRoute}
+                  onClick={closeSidebar}
+                  className="flex items-center gap-3 p-3 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+                >
+                  <span>مدیریت کانال‌ها</span>
+                </Link>
+              )}
+              {isAuthenticated && (
+                <Link
+                  to={
+                    isSuperAdmin
+                      ? "/dashboard/upload"
+                      : isUser
+                        ? "/user-dashboard?action=create-channel"
+                        : "/dashboard/user-upload"
+                  }
+                  onClick={closeSidebar}
+                  className="flex items-center gap-3 p-3 rounded-[10px] hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-900 font-medium"
+                >
+                  <span>بارگذاری ویدیو</span>
+                </Link>
+              )}
+            </nav>
+
+            <div className="border-t border-gray-200 p-4 space-y-2" />
+          </div>
+
+          <div className="shrink-0 border-t border-gray-200 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="w-full h-12 rounded-[10px] bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Logout size={20} color="#ffffff" />
+                {isLoggingOut ? "در حال خروج..." : "خروج از حساب کاربری"}
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={closeSidebar}
+                className="w-full h-12 rounded-[10px] bg-gradient-to-r from-orange-500 to-orange-600 hover:from-blue-700 hover:to-purple-700 active:scale-[0.98] text-white font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
+              >
+                <User size={20} color="#ffffff" />
+                ورود به حساب کاربری
+              </Link>
+            )}
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+export default Navbar;
