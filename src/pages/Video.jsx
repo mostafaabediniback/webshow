@@ -52,6 +52,12 @@ function Video() {
   const { id } = useParams();
   const { data, isLoading } = useVideo(id);
   const currentVideo = data?.data;
+  const videoCategories = Array.isArray(currentVideo?.categories)
+    ? currentVideo.categories.filter(
+        (category) =>
+          typeof category?.title === "string" && category.title.trim(),
+      )
+    : [];
   const currentChannelId = currentVideo?.channel_id || currentVideo?.channelId;
 
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
@@ -103,9 +109,29 @@ function Video() {
   const [videoSource, setVideoSource] = useState("");
 
   const videoRef = useRef(null);
+  const videoGridRef = useRef(null);
+  const playerContainerRef = useRef(null);
   const downloadMenuRef = useRef(null);
   const qualityMenuRef = useRef(null);
   const isMobile = window.innerWidth < 768;
+
+  useEffect(() => {
+    const player = playerContainerRef.current;
+    const grid = videoGridRef.current;
+    if (!player || !grid) return;
+
+    const updatePlaylistHeight = () => {
+      grid.style.setProperty(
+        "--video-player-height",
+        `${player.getBoundingClientRect().height}px`,
+      );
+    };
+
+    updatePlaylistHeight();
+    const observer = new ResizeObserver(updatePlaylistHeight);
+    observer.observe(player);
+    return () => observer.disconnect();
+  }, [isLoading, currentVideo?.id]);
 
   const {
     data: playlistDetail,
@@ -448,9 +474,15 @@ function Video() {
   return (
     <Layout>
       <div className="mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6">
-        <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
+        <div
+          ref={videoGridRef}
+          className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_400px]"
+        >
           <div>
-            <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black shadow-lg sm:rounded-xl">
+            <div
+              ref={playerContainerRef}
+              className="relative aspect-video w-full overflow-hidden rounded-lg bg-black shadow-lg sm:rounded-xl"
+            >
               <video
                 ref={videoRef}
                 controls
@@ -588,6 +620,25 @@ function Video() {
               {currentVideo?.title}
             </h1>
 
+            {videoCategories.length > 0 && (
+              <div className="mt-3 flex flex-wrap items-center gap-2 px-1 text-xs sm:text-sm">
+                <span className="text-gray-500">دسته‌بندی:</span>
+                <ul
+                  aria-label="دسته‌بندی‌های ویدیو"
+                  className="flex min-w-0 max-w-full flex-wrap gap-2"
+                >
+                  {videoCategories.map((category) => (
+                    <li
+                      key={category.id ?? category.title}
+                      className="max-w-full rounded-full bg-slate-100 px-3 py-1 font-medium break-words text-slate-700"
+                    >
+                      {category.title.trim()}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className="mt-3 flex flex-col gap-3 border-b border-gray-200 pb-4 sm:mt-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <Link
@@ -721,23 +772,25 @@ function Video() {
           <aside className="lg:block">
             <div className="sticky top-24 space-y-4">
               {playlists.length > 0 && (
-                <VideoPlaylistPanel
-                  playlists={playlists}
-                  isPlaylistsLoading={isPlaylistsLoading}
-                  isPlaylistsError={isPlaylistsError}
-                  onRetryPlaylists={refetchPlaylists}
-                  selectedPlaylistId={selectedPlaylistId}
-                  onSelectPlaylist={setSelectedPlaylistId}
-                  playlistDetail={playlistDetail}
-                  isPlaylistDetailLoading={
-                    !!selectedPlaylistId &&
-                    (isPlaylistDetailLoading ||
-                      (isPlaylistDetailFetching && !playlistDetail))
-                  }
-                  isPlaylistDetailError={isPlaylistDetailError}
-                  onRetryPlaylistDetail={refetchPlaylistDetail}
-                  currentVideoId={id}
-                />
+                <div className="h-[420px] lg:h-[var(--video-player-height,420px)]">
+                  <VideoPlaylistPanel
+                    playlists={playlists}
+                    isPlaylistsLoading={isPlaylistsLoading}
+                    isPlaylistsError={isPlaylistsError}
+                    onRetryPlaylists={refetchPlaylists}
+                    selectedPlaylistId={selectedPlaylistId}
+                    onSelectPlaylist={setSelectedPlaylistId}
+                    playlistDetail={playlistDetail}
+                    isPlaylistDetailLoading={
+                      !!selectedPlaylistId &&
+                      (isPlaylistDetailLoading ||
+                        (isPlaylistDetailFetching && !playlistDetail))
+                    }
+                    isPlaylistDetailError={isPlaylistDetailError}
+                    onRetryPlaylistDetail={refetchPlaylistDetail}
+                    currentVideoId={id}
+                  />
+                </div>
               )}
               <div>
                 <h3 className="mb-4 text-lg font-bold text-gray-900">

@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
-/* Keep the frame preview unobstructed; playback has a button below it. */
-.frame-picker-video::-webkit-media-controls-overlay-play-button {
-  display: none;
+/* Keep video images unobstructed; the bottom playback controls stay available. */
+video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+/* Mobile browsers can hide this when they use the center overlay instead. */
+video::-webkit-media-controls-play-button {
+  display: flex !important;
 }
 
 @font-face {

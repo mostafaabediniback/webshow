@@ -45,6 +45,7 @@ function VideoModal({ videoId, isOpen, onClose }) {
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
             <video
               controls
+              playsInline
               className="w-full h-full"
               poster={videoData.cover_link || videoData.cover_url}
               src={videoData.video_link || videoData.path || videoData.video_url || videoData.videoUrl}

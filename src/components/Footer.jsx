@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Modal } from '../ui'
 
 const TERMS_OF_USE = [
@@ -59,7 +58,7 @@ function Footer() {
             © {new Date().getFullYear()} اربعین تی وی. تمامی حقوق محفوظ است.
           </p>
           <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm text-gray-600">
-            <Link to="/" className="hover:text-blue-600 transition-colors">حریم خصوصی</Link>
+            <a href="https://blog.arbaeentv.com/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors">بلاگ</a>
             <button
               type="button"
               onClick={() => setIsTermsModalOpen(true)}

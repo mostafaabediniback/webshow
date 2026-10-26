@@ -326,6 +326,7 @@ function VideoDropzone({
                     <video
                       src={previewUrl}
                       controls
+                      playsInline
                       className="mx-auto rounded-lg bg-black max-h-[420px] w-full object-contain"
                     />
                     <p className="text-xs text-gray-700 mt-2 bg-white border border-gray-200 rounded-full px-3 py-1 inline-flex items-center gap-1 mx-auto max-w-[220px]">

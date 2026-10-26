@@ -78,7 +78,7 @@ function VideoEdit() {
               >
                 <input id="edit-video-input" type="file" accept="video/*" className="sr-only" onChange={(e)=>setVideoFile(e.target.files?.[0]||null)} />
                 <div className="w-full">
-                  <video controls className="w-full rounded-md bg-black" src={videoFile ? URL.createObjectURL(videoFile) : item.videoUrl} />
+                  <video controls playsInline className="w-full rounded-md bg-black" src={videoFile ? URL.createObjectURL(videoFile) : item.videoUrl} />
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * Reusable hook for infinite scrolling using Intersection Observer
@@ -8,7 +8,7 @@ import { useEffect, useRef } from 'react';
  * @param {Function} options.fetchNextPage - Function to fetch the next page
  * @param {string} options.rootMargin - Margin around the root (default: '300px')
  * @param {number} options.threshold - Threshold for intersection (default: 0.1)
- * @returns {React.RefObject} - Ref to be attached to the sentinel element
+ * @returns {Function} - Callback ref to be attached to the sentinel element
  */
 export const useInfiniteScroll = ({
   hasNextPage,
@@ -17,11 +17,11 @@ export const useInfiniteScroll = ({
   rootMargin = '300px 0px',
   threshold = 0.1,
 }) => {
-  const sentinelRef = useRef(null);
+  // The sentinel can mount after the initial loading screen. Track the node so
+  // observation starts whenever it mounts or is replaced.
+  const [sentinel, setSentinel] = useState(null);
 
   useEffect(() => {
-    const sentinel = sentinelRef.current;
-
     if (!sentinel || !hasNextPage) {
       return undefined;
     }
@@ -46,9 +46,9 @@ export const useInfiniteScroll = ({
     return () => {
       observer.disconnect();
     };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, rootMargin, threshold]);
+  }, [sentinel, fetchNextPage, hasNextPage, isFetchingNextPage, rootMargin, threshold]);
 
-  return sentinelRef;
+  return setSentinel;
 };
 
 export default useInfiniteScroll;
