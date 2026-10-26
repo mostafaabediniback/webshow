@@ -1,0 +1,154 @@
+{
+  "base": "http://localhost:3000",
+  "checks": [
+    {
+      "name": "home shows real video cards",
+      "ok": true
+    },
+    {
+      "name": "no nested anchors",
+      "ok": true
+    },
+    {
+      "name": "RTL and Vazir font",
+      "ok": true
+    },
+    {
+      "name": "terms modal opens",
+      "ok": true
+    },
+    {
+      "name": "terms modal closes with Escape",
+      "ok": true
+    },
+    {
+      "name": "channel filter shows selected banner",
+      "ok": true
+    },
+    {
+      "name": "video heading and native player",
+      "ok": true
+    },
+    {
+      "name": "video source is populated",
+      "ok": true
+    },
+    {
+      "name": "channel opens by direct URL",
+      "ok": true
+    },
+    {
+      "name": "channel survives reload without navigation state",
+      "ok": true
+    },
+    {
+      "name": "search direct URL preserves parameter",
+      "ok": true,
+      "detail": "نتایج جستجو: مقاومت"
+    },
+    {
+      "name": "login renders form",
+      "ok": true
+    },
+    {
+      "name": "login validation rejects empty input",
+      "ok": true
+    },
+    {
+      "name": "registration phone form renders",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/channels",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/upload",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/playlists/:playlistId",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/videos",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/videos/:id",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/users",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/categories",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/user-upload",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/user-videos",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /dashboard/settings",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /user-dashboard",
+      "ok": true
+    },
+    {
+      "name": "guest redirect /user-dashboard/create-channel",
+      "ok": true
+    },
+    {
+      "name": "mobile has no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "mobile search opens",
+      "ok": true
+    },
+    {
+      "name": "mobile video has no horizontal overflow",
+      "ok": true
+    },
+    {
+      "name": "crawlable without JavaScript /",
+      "ok": true
+    },
+    {
+      "name": "crawlable without JavaScript /v/915",
+      "ok": true
+    },
+    {
+      "name": "crawlable without JavaScript /shidtv",
+      "ok": true
+    },
+    {
+      "name": "crawlable without JavaScript /playlists/15",
+      "ok": true
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "screenshots": [
+    "next-home-desktop.png",
+    "next-video-desktop.png",
+    "next-channel-desktop.png",
+    "next-register-desktop.png",
+    "next-home-mobile.png",
+    "next-video-mobile.png",
+    "original-home-desktop.png",
+    "original-home-mobile.png"
+  ]
+}

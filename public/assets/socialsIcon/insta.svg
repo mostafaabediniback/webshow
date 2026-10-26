@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29.5 29.2">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: #adadad;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <rect id="Rectangle_5_copy" data-name="Rectangle 5 copy" class="cls-1" width="29.5" height="29.2" rx="11" ry="11"/>
+      <path id="icons8_instagram_1" data-name="icons8 instagram 1" class="cls-2" d="m11.83,8c-2.11,0-3.83,1.71-3.83,3.83h0v6.12c0,2.11,1.71,3.83,3.83,3.83h6.12c2.11,0,3.83-1.71,3.83-3.83h0v-6.12c0-2.11-1.71-3.83-3.83-3.83h-6.12Zm7.66,1.53c.42,0,.77.34.77.77s-.34.77-.77.77-.77-.34-.77-.77h0c0-.42.34-.77.77-.77Zm-4.59,1.53c2.11,0,3.83,1.71,3.83,3.83s-1.71,3.83-3.83,3.83-3.83-1.71-3.83-3.83c0-2.11,1.71-3.83,3.83-3.83h0Zm0,1.53c-1.27,0-2.3,1.03-2.3,2.3s1.03,2.3,2.3,2.3,2.3-1.03,2.3-2.3h0c0-1.27-1.03-2.3-2.3-2.3h0Z"/>
+    </g>
+  </g>
+</svg>

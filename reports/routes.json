@@ -1,0 +1,97 @@
+[
+  [
+    "/",
+    "app/(public)/page.jsx",
+    "public SSR"
+  ],
+  [
+    "/:username?",
+    "app/(public)/[username]/page.jsx",
+    "public SSR; / remains Home"
+  ],
+  [
+    "/search/:q",
+    "app/(public)/search/[q]/page.jsx",
+    "public SSR; noindex"
+  ],
+  [
+    "/v/:id",
+    "app/(public)/v/[id]/page.jsx",
+    "public SSR"
+  ],
+  [
+    "/playlists/:playlistId",
+    "app/playlists/[playlistId]/page.jsx",
+    "public SSR"
+  ],
+  [
+    "/login",
+    "app/(public)/login/page.jsx",
+    "public-only; noindex"
+  ],
+  [
+    "/dashboard",
+    "app/(private)/dashboard/page.jsx",
+    "authenticated"
+  ],
+  [
+    "/dashboard/channels",
+    "app/(private)/dashboard/channels/page.jsx",
+    "platform"
+  ],
+  [
+    "/dashboard/upload",
+    "app/(private)/dashboard/upload/page.jsx",
+    "platform"
+  ],
+  [
+    "/dashboard/playlists/:playlistId",
+    "app/(private)/dashboard/playlists/[playlistId]/page.jsx",
+    "authenticated"
+  ],
+  [
+    "/dashboard/videos",
+    "app/(private)/dashboard/videos/page.jsx",
+    "platform"
+  ],
+  [
+    "/dashboard/videos/:id",
+    "app/(private)/dashboard/videos/[id]/page.jsx",
+    "platform"
+  ],
+  [
+    "/dashboard/users",
+    "app/(private)/dashboard/users/page.jsx",
+    "platform"
+  ],
+  [
+    "/dashboard/categories",
+    "app/(private)/dashboard/categories/page.jsx",
+    "platform"
+  ],
+  [
+    "/dashboard/user-upload",
+    "app/(private)/dashboard/user-upload/page.jsx",
+    "channel"
+  ],
+  [
+    "/dashboard/user-videos",
+    "app/(private)/dashboard/user-videos/page.jsx",
+    "channel"
+  ],
+  [
+    "/dashboard/settings",
+    "app/(private)/dashboard/settings/page.jsx",
+    "channel"
+  ],
+  [
+    "/user-dashboard",
+    "app/(private)/user-dashboard/page.jsx",
+    "user"
+  ],
+  [
+    "/user-dashboard/create-channel",
+    "app/(private)/user-dashboard/create-channel/page.jsx",
+    "user"
+  ]
+]

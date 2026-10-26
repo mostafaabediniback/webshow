@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29.5 29.2">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: #adadad;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <rect id="Rectangle_5_copy_2" data-name="Rectangle 5 copy 2" class="cls-1" width="29.5" height="29.2" rx="11" ry="11"/>
+      <path id="icons8_mail" data-name="icons8 mail" class="cls-2" d="m9.02,8.87c-.46,0-.89.22-1.16.59-.16.24-.11.56.13.73,0,0,.02.01.02.02l6.29,3.92c.27.17.61.17.88,0l6.26-3.95c.25-.15.32-.48.17-.73,0-.01-.02-.03-.03-.04-.27-.34-.68-.53-1.11-.53h-11.46Zm12.54,2.93c-.06,0-.12.02-.18.05l-6.19,3.91c-.27.17-.61.17-.88,0l-6.2-3.86c-.16-.1-.37-.04-.47.12-.03.05-.05.11-.05.17v6.71c0,.79.64,1.43,1.43,1.43h11.46c.79,0,1.43-.64,1.43-1.43h0v-6.76c0-.19-.15-.34-.34-.34,0,0,0,0,0,0Z"/>
+    </g>
+  </g>
+</svg>

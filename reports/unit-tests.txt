@@ -1,0 +1,17 @@
+
+> arbaeentv-next@1.0.0 test
+> node --test tests/*.test.mjs
+
+✔ the original three role guards preserve the routing matrix (2.131ms)
+✔ Laravel pagination preserves metadata and deduplicates selector results (1.7066ms)
+✔ SEO canonicals exclude incidental query parameters and JSON-LD is script-safe (0.6385ms)
+✔ page URL parameters preserve Persian text and literal percent sequences (0.3398ms)
+✔ every active original route has an independent App Router page (64.7376ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 298.6041

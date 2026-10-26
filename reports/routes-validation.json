@@ -1,0 +1,231 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "serverContent": true,
+      "canonical": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/v/915",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "serverContent": true,
+      "canonical": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/namahang",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "serverContent": true,
+      "canonical": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/playlists/15",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "serverContent": true,
+      "canonical": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/search/%E2%9A%A1%EF%B8%8F**%D8%AA%D8%AD%D9%84%DB%8C%D9%84%DA%AF%D8%B1",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/login",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/channels",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/upload",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/playlists/1",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/videos",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/videos/915",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/users",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/categories",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/user-upload",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/user-videos",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/dashboard/settings",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/user-dashboard",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/user-dashboard/create-channel",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/v/999999999999",
+    "status": 404,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/migration-missing-channel-019292",
+    "status": 404,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/missing/nested/path",
+    "status": 404,
+    "checks": {
+      "status": true,
+      "noindex": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/robots.txt",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "serverContent": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/manifest.webmanifest",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "serverContent": true,
+      "noServerError": true
+    }
+  },
+  {
+    "path": "/sitemap.xml",
+    "status": 200,
+    "checks": {
+      "status": true,
+      "serverContent": true,
+      "noServerError": true
+    }
+  }
+]

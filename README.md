@@ -1,65 +1,69 @@
-<div align="center">
+# نسخهٔ Next.js اربعین تی وی
 
-# 🎬 WebShow
+این پوشه یک برنامهٔ مستقل با Next.js 16.4.2 و App Router است. فایل‌ها و تغییرات موجود در برنامهٔ React خارج از این پوشه دست‌نخورده مانده‌اند. گزارش کامل مسیرها، معماری و محدودیت‌های آزمون در [MIGRATION_REPORT.md](MIGRATION_REPORT.md) قرار دارد.
 
-Modern media-oriented frontend built with React and a scalable component-driven architecture.
+## اجرا
 
-![React](https://img.shields.io/badge/React-19-20232A?style=flat-square&logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)
-![MUI](https://img.shields.io/badge/MUI-7-007FFF?style=flat-square&logo=mui&logoColor=white)
-![Tailwind](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
-![React Query](https://img.shields.io/badge/TanStack_Query-5-FF4154?style=flat-square&logo=reactquery&logoColor=white)
+Node.js نسخهٔ 20.9 یا جدیدتر لازم است؛ بررسی این مهاجرت با Node.js 24.21.0 و npm 11.19.0 انجام شده است.
 
-</div>
-
-## Overview
-
-WebShow is a modern frontend project for media and video-oriented experiences. The repository includes an evolving React architecture with work toward a Next.js-based version in dedicated branches.
-
-The project focuses on reusable UI, API-driven data flows, maintainable form handling, responsive layouts and scalable frontend structure.
-
-## Tech Stack
-
-- React 19
-- Vite
-- Material UI
-- Tailwind CSS
-- TanStack React Query
-- Axios
-- Formik
-- Yup
-- React Router
-- React Toastify
-
-## Key Engineering Areas
-
-- Component-driven UI architecture
-- API integration and server-state management
-- Form validation and user input workflows
-- Responsive layouts
-- Reusable media-oriented interfaces
-- Progressive migration experiments toward Next.js
-
-## Development
-
-```bash
-pnpm install
-pnpm dev
+```powershell
+cd F:\gitLab\arbaeentv-frontend\next
+npm ci
+Copy-Item .env.example .env.local
 ```
 
-Build for production:
+فایل `.env.local` را با آدرس API قبلی و دامنهٔ همین استقرار تنظیم کنید. فایل نمونه حاوی آدرس آزمایشی است و نباید بدون تنظیم استفاده شود. در محیط فعلی، یک `.env.local` نادیده‌گرفته‌شده توسط Git با آدرس عمومی API پروژهٔ موجود آماده شده است؛ برای استفاده از همین تنظیمات محلی، دستور کپی نمونه را اجرا نکنید.
 
-```bash
-pnpm build
+| متغیر | کاربرد |
+| --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | آدرس عمومی بک‌اند، شامل مسیر API و ترجیحاً `/` انتهایی؛ در مرورگر قابل مشاهده است. |
+| `API_BASE_URL` | اختیاری؛ آدرس داخلی همان بک‌اند برای درخواست‌های سرور. قرارداد و داده باید با آدرس عمومی یکسان باشد. |
+| `NEXT_PUBLIC_SITE_URL` | مبدأ کامل این سایت، برای canonical و sitemap؛ در production الزامی است. مقدار محلی فعلی `http://localhost:3000` است. |
+
+```powershell
+npm run dev
 ```
 
-## Branches
+برنامه در `http://localhost:3000` اجرا می‌شود. برای اجرای هم‌زمان با برنامهٔ اصلی:
 
-This repository contains multiple development and migration branches, including work around refactoring, dashboard services, landing pages, upload flows and Next.js migration.
+```powershell
+npm run dev -- --port 3011
+```
 
-## Author
+## بیلد و استقرار
 
-**Mostafa Abedini**  
-Frontend Developer — React / Next.js
+```powershell
+npm ci
+npm run build
+npm run start
+```
 
-[GitHub Profile](https://github.com/mostafaabediniback)
+برای استقرار، **همین پوشهٔ `next` را Project Root** قرار دهید. روی Vercel پیش‌تنظیم Next.js را انتخاب و متغیرها را تنظیم کنید. روی سرور Node، سورس این پوشه و وابستگی‌ها را نصب کرده، `npm run build` و سپس `npm run start` را با مدیر پردازش اجرا کنید. پورت پیش‌فرض 3000 است؛ متغیر `PORT` قابل تنظیم است. پوشه‌های `.next`، `public` و وابستگی‌های production باید در دسترس پردازش باشند. این برنامه به سرور Next.js نیاز دارد و static export مناسب آن نیست.
+
+HTTPS برای نصب PWA و APIهای اشتراک‌گذاری مرورگر لازم است. بک‌اند باید از سرور Next قابل دسترس باشد و origin دامنهٔ نهایی را برای درخواست‌های فعلی مرورگر بپذیرد. توکن فعلی همچنان در `sessionStorage` است؛ سرور Next از آن استفاده نمی‌کند و کنترل نهایی مجوزها همچنان بر عهدهٔ بک‌اند است.
+
+برای canonical صحیح، متغیر دامنه را **پیش از build** تنظیم کنید. فایل‌های محیطی واقعی را در Git قرار ندهید. هیچ متغیر محرمانه‌ای را با پیشوند `NEXT_PUBLIC_` تعریف نکنید.
+
+## بررسی
+
+```powershell
+npm run lint
+npm test
+npm run verify:original
+```
+
+پس از اجرای سرور تولید در یک ترمینال دیگر:
+
+```powershell
+npm run test:routes
+node scripts/browser-check.mjs
+```
+
+`test:routes` داده‌های **واقعی و فقط خواندنی** را از بک‌اند می‌گیرد. `TEST_BASE_URL` امکان آزمون پورت دیگری را می‌دهد. آزمون مرورگر از Chrome نصب‌شده و Playwright استفاده می‌کند و برای مقایسهٔ تصویر، نسخهٔ اصلی را در `http://127.0.0.1:4173` انتظار دارد. تصویرهای جدید در `reports/browser/` و گزارش‌های JSON در `reports/` نوشته می‌شوند. برای مقایسهٔ نسخهٔ اصلی، از ریشهٔ پروژه آن را در ترمینال جداگانه اجرا کنید؛ فایل خروجی دلخواه را داخل `next/` نگه دارید:
+
+```powershell
+node node_modules/vite/bin/vite.js build --outDir next/reports/baseline-dist
+node node_modules/vite/bin/vite.js preview --outDir next/reports/baseline-dist --port 4173 --host 127.0.0.1
+```
+
+آزمون‌ها ورود واقعی، ارسال OTP یا عملیات تغییردهندهٔ محتوای production را اجرا نمی‌کنند. برای پذیرش نهایی این جریان‌ها، حساب‌های آزمایشی هر سه نقش و محیط staging لازم است. هشدارهای lint و جزئیات اعتبارسنجی در گزارش مهاجرت آمده‌اند.

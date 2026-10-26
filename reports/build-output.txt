@@ -1,0 +1,49 @@
+
+> arbaeentv-next@1.0.0 build
+> next build
+
+▲ Next.js 16.4.2 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.mjs took 29ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 2.1s
+  Running TypeScript ...
+  Finished TypeScript in 4ms ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/16) ...
+  Generating static pages using 7 workers (4/16) 
+  Generating static pages using 7 workers (8/16) 
+  Generating static pages using 7 workers (12/16) 
+✓ Generating static pages using 7 workers (16/16) in 875ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /[username]
+├ ○ /dashboard
+├ ○ /dashboard/categories
+├ ○ /dashboard/channels
+├ ƒ /dashboard/playlists/[playlistId]
+├ ○ /dashboard/settings
+├ ○ /dashboard/upload
+├ ○ /dashboard/user-upload
+├ ○ /dashboard/user-videos
+├ ○ /dashboard/users
+├ ○ /dashboard/videos
+├ ƒ /dashboard/videos/[id]
+├ ○ /login
+├ ○ /manifest.webmanifest
+├ ƒ /playlists/[playlistId]
+├ ○ /robots.txt
+├ ƒ /search/[q]
+├ ƒ /sitemap.xml
+├ ○ /user-dashboard
+├ ○ /user-dashboard/create-channel
+└ ƒ /v/[id]
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
