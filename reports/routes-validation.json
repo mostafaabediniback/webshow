@@ -10,7 +10,7 @@
     }
   },
   {
-    "path": "/v/915",
+    "path": "/v/1114",
     "status": 200,
     "checks": {
       "status": true,
@@ -30,7 +30,7 @@
     }
   },
   {
-    "path": "/playlists/15",
+    "path": "/playlists/20",
     "status": 200,
     "checks": {
       "status": true,
@@ -40,7 +40,7 @@
     }
   },
   {
-    "path": "/search/%E2%9A%A1%EF%B8%8F**%D8%AA%D8%AD%D9%84%DB%8C%D9%84%DA%AF%D8%B1",
+    "path": "/search/**%E2%9A%A1%EF%B8%8F****%D9%85%D9%88%D9%82%D8%B9%DB%8C%D8%AA",
     "status": 200,
     "checks": {
       "status": true,
@@ -103,7 +103,7 @@
     }
   },
   {
-    "path": "/dashboard/videos/915",
+    "path": "/dashboard/videos/1114",
     "status": 200,
     "checks": {
       "status": true,

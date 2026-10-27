@@ -1,0 +1,218 @@
+{
+  "checks": [
+    {
+      "name": "react: desktop channel arrows, wheel, edges and keyboard",
+      "ok": true
+    },
+    {
+      "name": "react: channel image filter and reset",
+      "ok": true
+    },
+    {
+      "name": "react: home loads the next page on scroll",
+      "ok": true
+    },
+    {
+      "name": "react: related starts at five, expands by five and resets on navigation",
+      "ok": true
+    },
+    {
+      "name": "react: player quality and download menus",
+      "ok": true
+    },
+    {
+      "name": "react: terms modal opens and closes",
+      "ok": true
+    },
+    {
+      "name": "react: login and registration validation",
+      "ok": true
+    },
+    {
+      "name": "react: mobile overflow, channel scroll and search",
+      "ok": true
+    },
+    {
+      "name": "next: desktop channel arrows, wheel, edges and keyboard",
+      "ok": true
+    },
+    {
+      "name": "next: channel image filter and reset",
+      "ok": true
+    },
+    {
+      "name": "next: home loads the next page on scroll",
+      "ok": true
+    },
+    {
+      "name": "next: related starts at five, expands by five and resets on navigation",
+      "ok": true
+    },
+    {
+      "name": "next: player quality and download menus",
+      "ok": true
+    },
+    {
+      "name": "next: channel direct URL and reload",
+      "ok": true
+    },
+    {
+      "name": "next: search parameter preserved مقاومت",
+      "ok": true
+    },
+    {
+      "name": "next: search parameter preserved کد%20",
+      "ok": true
+    },
+    {
+      "name": "next: search parameter preserved 50% تخفیف",
+      "ok": true
+    },
+    {
+      "name": "next: search parameter preserved a/b?x=1",
+      "ok": true
+    },
+    {
+      "name": "next: terms modal opens and closes",
+      "ok": true
+    },
+    {
+      "name": "next: login and registration validation",
+      "ok": true
+    },
+    {
+      "name": "next: mobile overflow, channel scroll and search",
+      "ok": true
+    },
+    {
+      "name": "next: infinite scroll reconnects after a loading filter replaces the list",
+      "ok": true
+    },
+    {
+      "name": "next: related deduplicates, expands cached items, retries pagination and stops at the end",
+      "ok": true
+    },
+    {
+      "name": "next: mobile channel swipe uses native touch scrolling",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/channels",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/upload",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/playlists/:playlistId",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/videos",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/videos/:id",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/users",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/categories",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/user-upload",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/user-videos",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /dashboard/settings",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /user-dashboard",
+      "ok": true
+    },
+    {
+      "name": "next: guest guard /user-dashboard/create-channel",
+      "ok": true
+    },
+    {
+      "name": "next: super_admin renders /dashboard with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: super_admin renders /dashboard/channels with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: super_admin renders /dashboard/videos with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: super_admin renders /dashboard/users with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: super_admin renders /dashboard/categories with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: super_admin renders /dashboard/upload with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: super_admin renders /dashboard/videos/1 with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: super_admin renders /dashboard/playlists/1 with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: super_admin restricted route redirects",
+      "ok": true
+    },
+    {
+      "name": "next: admin renders /dashboard/user-videos with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: admin renders /dashboard/user-upload with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: admin renders /dashboard/settings with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: admin restricted route redirects",
+      "ok": true
+    },
+    {
+      "name": "next: user renders /user-dashboard with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: user renders /user-dashboard/create-channel with API fixtures",
+      "ok": true
+    },
+    {
+      "name": "next: user restricted route redirects",
+      "ok": true
+    }
+  ],
+  "pageErrors": [],
+  "scope": "Public live API reads; pagination failures and role checks use intercepted API fixtures."
+}

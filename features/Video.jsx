@@ -1,19 +1,22 @@
 "use client";
 
 import axios from "axios";
-import { useInfiniteQuery, useQueries } from "@tanstack/react-query";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { Share } from "iconsax-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "@/lib/navigation";
 import { toast } from "react-toastify";
 import VideoPlaylistPanel from "../components/VideoPlaylistPanel";
+import useInfiniteChannelVideos from "../hooks/channel/useInfiniteChannelVideos";
 import { useVideo } from "../hooks/video/useVideo";
 import {
   getPlaylistDetail,
   playlistQueryKeys,
 } from "../services/playlist/playlistApi";
-import { getVideoPlaylistIds, getVideosByChannel } from "../services/videoApi";
+import { getVideoPlaylistIds } from "../services/videoApi";
 import { readAuthSession } from "../utils/auth";
+
+const RELATED_VIDEOS_BATCH_SIZE = 5;
 
 const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
   <svg
@@ -50,6 +53,7 @@ const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
 
 function Video({ initialVideo }) {
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const { data, isLoading } = useVideo(id);
   const currentVideo = data?.data;
   const videoCategories = Array.isArray(currentVideo?.categories)
@@ -73,19 +77,22 @@ function Video({ initialVideo }) {
     isLoading: isRelatedLoading,
     isError: isRelatedError,
     isFetchNextPageError: isRelatedNextPageError,
+    isFetching: isRelatedFetching,
     isFetchingNextPage: isRelatedFetchingNextPage,
     hasNextPage: hasMoreRelatedVideos,
     fetchNextPage: fetchMoreRelatedVideos,
     refetch: refetchRelatedVideos,
-  } = useInfiniteQuery({
-    queryKey: ["channelVideos", "related", currentChannelId, 10],
-    queryFn: ({ pageParam }) =>
-      getVideosByChannel(currentChannelId, pageParam, 10),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, _pages, lastPageParam) =>
-      lastPageParam < lastPage.totalPages ? lastPageParam + 1 : undefined,
-    enabled: !!currentChannelId,
-  });
+  } = useInfiniteChannelVideos(currentChannelId, RELATED_VIDEOS_BATCH_SIZE);
+
+  // App Router may remount the page when returning from another video.
+  // Keep its expanded list in the same session-scoped cache as the video data.
+  const [relatedVideoDisplay, setRelatedVideoDisplay] = useState(() => ({
+    videoId: id,
+    count: queryClient.getQueryData(['related-video-display', id]) ?? RELATED_VIDEOS_BATCH_SIZE,
+  }));
+  const relatedVisibleCount = relatedVideoDisplay.videoId === id
+    ? relatedVideoDisplay.count
+    : queryClient.getQueryData(['related-video-display', id]) ?? RELATED_VIDEOS_BATCH_SIZE;
 
   const playlistIds = useMemo(
     () => [...new Set(getVideoPlaylistIds({ playlists: currentVideo?.playlists }))],
@@ -827,7 +834,7 @@ function Video({ initialVideo }) {
                 <div
                   id="related-videos-list"
                   className="space-y-1"
-                  aria-busy={isRelatedLoading || isRelatedFetchingNextPage}
+                  aria-busy={isRelatedFetching}
                 >
                   {isRelatedLoading
                     ? Array.from({ length: 5 }).map((_, index) => (
@@ -839,7 +846,7 @@ function Video({ initialVideo }) {
                           </div>
                         </div>
                       ))
-                    : relatedItems.map((video) => (
+                    : relatedItems.slice(0, relatedVisibleCount).map((video) => (
                         <Link
                           to={`/v/${video.id}`}
                           key={video.id}
@@ -879,25 +886,29 @@ function Video({ initialVideo }) {
                         ? "دریافت ویدیوهای بیشتر انجام نشد. دوباره تلاش کنید."
                         : "دریافت ویدیوهای مرتبط انجام نشد."}
                     </p>
-                    {!isRelatedNextPageError && (
-                      <button
-                        type="button"
-                        onClick={() => refetchRelatedVideos()}
-                        className="mt-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                      >
-                        تلاش دوباره
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      disabled={isRelatedFetching}
+                      onClick={() => isRelatedNextPageError
+                        ? fetchMoreRelatedVideos({ cancelRefetch: false })
+                        : refetchRelatedVideos()}
+                      className="mt-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                    >
+                      تلاش دوباره
+                    </button>
                   </div>
                 )}
 
-                {hasMoreRelatedVideos && (
+                {!isRelatedError && (relatedItems.length > relatedVisibleCount || hasMoreRelatedVideos) && (
                   <button
                     type="button"
                     aria-controls="related-videos-list"
-                    disabled={isRelatedFetchingNextPage}
+                    disabled={isRelatedFetching}
                     onClick={() => {
-                      if (!isRelatedFetchingNextPage) {
+                      const nextCount = relatedVisibleCount + RELATED_VIDEOS_BATCH_SIZE;
+                      queryClient.setQueryData(['related-video-display', id], nextCount);
+                      setRelatedVideoDisplay({ videoId: id, count: nextCount });
+                      if (relatedItems.length < nextCount && hasMoreRelatedVideos) {
                         fetchMoreRelatedVideos({ cancelRefetch: false });
                       }
                     }}
@@ -911,9 +922,7 @@ function Video({ initialVideo }) {
                     )}
                     {isRelatedFetchingNextPage
                       ? "در حال بارگذاری..."
-                      : isRelatedNextPageError
-                        ? "تلاش دوباره"
-                        : "نمایش بیشتر"}
+                      : "نمایش بیشتر"}
                   </button>
                 )}
 

@@ -129,12 +129,13 @@ NEXT_PUBLIC_SITE_URL=https://video.example.com
 | دستور | کاربرد |
 | --- | --- |
 | `npm ci` | نصب مطابق lockfile؛ مناسب کلون تازه و فرایند build. |
-| `npm run dev` | اجرای سرور توسعه Next.js. |
+| `npm run dev` | اجرای سرور توسعه Next.js با Webpack. |
 | `npm run build` | ساخت نسخه production در `.next/`. |
 | `npm run start` | اجرای خروجی production؛ ابتدا build لازم است. |
 | `npm run lint` | بررسی ESLint؛ هشدارهای موجود ممکن است گزارش شوند. |
 | `npm test` | آزمون واحد نقش‌ها، pagination، SEO، پارامتر URL و پوشش مسیرها. |
 | `npm run test:routes` | بررسی HTTP/SSR روی سرور در حال اجرا با داده واقعی بک‌اند. |
+| `npm run test:parity` | تست رفتار صفحه اول، کانال‌ها، ویدیوهای مرتبط، موبایل و نقش‌ها با Chrome؛ سرور Next باید در حال اجرا باشد. برای مقایسه هم‌زمان با React، `REACT_BASE_URL` را به آدرس اجرای مرجع تنظیم کنید. |
 | `npm run verify:original` | بررسی تاریخی فایل‌های پروژه Vite؛ به ساختار پروژه قدیمی خارج از مخزن مستقل وابسته است. |
 | `node scripts/browser-check.mjs` | بررسی مرورگر با Playwright و Chrome؛ مقایسه تصویری به اجرای نسخه Vite هم نیاز دارد. |
 | `node scripts/probe-api.mjs` | بررسی فقط خواندنی پاسخ چند endpoint؛ به `.env.local` با مقدار ساده آدرس API نیاز دارد. |

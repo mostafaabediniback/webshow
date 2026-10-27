@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
 export default async function VideoPage({ params }) {
   const { id } = await params;
   const payload = await videoDetail(id);
-  if (!payload) return <AuthGuard><Video key={id} /></AuthGuard>;
+  if (!payload) return <AuthGuard><Video /></AuthGuard>;
   const video = payload.data;
   const uploadDate = video.created_at && !Number.isNaN(Date.parse(video.created_at)) ? new Date(video.created_at).toISOString() : null;
   const thumbnail = video.cover_link || video.cover;
@@ -26,6 +26,6 @@ export default async function VideoPage({ params }) {
   } : null;
   return <QueryHydration entries={[[['video', id], payload]]}>
     {schema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />}
-    <Video key={id} initialVideo={video} />
+    <Video initialVideo={video} />
   </QueryHydration>;
 }

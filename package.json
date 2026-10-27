@@ -7,12 +7,13 @@
     "node": ">=20.9.0"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "test": "node --test tests/*.test.mjs",
     "test:routes": "node scripts/check-routes.mjs",
+    "test:parity": "node scripts/parity-check.mjs",
     "verify:original": "node scripts/verify-original.mjs"
   },
   "dependencies": {

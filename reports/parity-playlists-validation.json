@@ -1,0 +1,26 @@
+{
+  "checks": [
+    {
+      "name": "next: attached playlist loads, scrolls separately and opens another video",
+      "ok": true
+    },
+    {
+      "name": "next: native player plays, pauses and seeks",
+      "ok": true
+    },
+    {
+      "name": "react: attached playlist loads, scrolls separately and opens another video",
+      "ok": true
+    },
+    {
+      "name": "react: native player plays, pauses and seeks",
+      "ok": true
+    },
+    {
+      "name": "next: public playlist direct URL and reload",
+      "ok": true
+    }
+  ],
+  "pageErrors": [],
+  "scope": "Public live API reads; pagination failures and role checks use intercepted API fixtures."
+}
