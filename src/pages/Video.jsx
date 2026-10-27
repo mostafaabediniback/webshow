@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import VideoPlaylistPanel from "../components/VideoPlaylistPanel";
-import useChannelVideos from "../hooks/channel/useChannelVideos";
+import useInfiniteChannelVideos from "../hooks/channel/useInfiniteChannelVideos";
 import { useVideo } from "../hooks/video/useVideo";
 import Layout from "../layouts/Layout";
 import {
@@ -13,6 +13,7 @@ import {
   playlistQueryKeys,
 } from "../services/playlist/playlistApi";
 import { getVideoPlaylistIds } from "../services/videoApi";
+import { Button } from "../ui";
 import { readAuthSession } from "../utils/auth";
 
 const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
@@ -68,14 +69,17 @@ function Video() {
   const [selectedQuality, setSelectedQuality] = useState(null);
   const [isSwitchingQuality, setIsSwitchingQuality] = useState(false);
 
-  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos(
-    {
-      channelId: currentChannelId,
-      pageNumber: 1,
-      pageSize: 25,
-      enabled: !!currentChannelId,
-    },
-  );
+  const {
+    data: relatedVideos,
+    isLoading: isRelatedLoading,
+    isError: isRelatedError,
+    isFetchNextPageError: isRelatedNextPageError,
+    isFetching: isRelatedFetching,
+    isFetchingNextPage: isRelatedFetchingNextPage,
+    hasNextPage: hasMoreRelatedVideos,
+    fetchNextPage: fetchMoreRelatedVideos,
+    refetch: refetchRelatedVideos,
+  } = useInfiniteChannelVideos(currentChannelId);
 
   const playlistIds = useMemo(
     () => [...new Set(getVideoPlaylistIds({ playlists: currentVideo?.playlists }))],
@@ -293,13 +297,17 @@ function Video() {
     });
   }, [id]);
 
-  const relatedItems = useMemo(
-    () =>
-      (relatedVideos?.items || [])
-        .filter((video) => String(video.id) !== String(id))
-        .slice(0, 10),
-    [relatedVideos?.items, id],
-  );
+  const relatedItems = useMemo(() => {
+    const seenIds = new Set([String(id)]);
+    return (relatedVideos?.pages || [])
+      .flatMap((page) => page.items || [])
+      .filter((video) => {
+        const videoId = String(video.id);
+        if (seenIds.has(videoId)) return false;
+        seenIds.add(videoId);
+        return true;
+      });
+  }, [relatedVideos?.pages, id]);
 
   const extractFilenameFromContentDisposition = (cd) => {
     if (!cd) return null;
@@ -792,12 +800,16 @@ function Video() {
                   />
                 </div>
               )}
-              <div>
+              <div className="mb-24 sm:mb-0">
                 <h3 className="mb-4 text-lg font-bold text-gray-900">
                   ویدیوهای مرتبط
                 </h3>
 
-                <div className="space-y-1 mb-24 sm:mb-0">
+                <div
+                  id="related-videos"
+                  className="space-y-1"
+                  aria-busy={isRelatedFetching}
+                >
                   {isRelatedLoading
                     ? Array.from({ length: 5 }).map((_, index) => (
                         <div key={index} className="flex gap-3 rounded-lg p-2">
@@ -841,11 +853,54 @@ function Video() {
                       ))}
                 </div>
 
-                {!isRelatedLoading && !relatedItems.length && (
-                  <p className="text-sm text-gray-500">
-                    ویدیوی مرتبطی یافت نشد
-                  </p>
+                {isRelatedError && (
+                  <div className="mt-3 text-center" role="status">
+                    <p className="mb-2 text-sm text-red-600">
+                      دریافت ویدیوهای مرتبط ناموفق بود.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={isRelatedFetching}
+                      onClick={() => {
+                        if (isRelatedNextPageError) {
+                          fetchMoreRelatedVideos({ cancelRefetch: false });
+                        } else {
+                          refetchRelatedVideos();
+                        }
+                      }}
+                    >
+                      تلاش مجدد
+                    </Button>
+                  </div>
                 )}
+
+                {!isRelatedError && hasMoreRelatedVideos && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="mt-4 w-full"
+                    aria-controls="related-videos"
+                    isLoading={isRelatedFetchingNextPage}
+                    disabled={isRelatedFetching}
+                    onClick={() =>
+                      fetchMoreRelatedVideos({ cancelRefetch: false })
+                    }
+                  >
+                    {isRelatedFetchingNextPage
+                      ? "در حال بارگذاری…"
+                      : "نمایش بیشتر"}
+                  </Button>
+                )}
+
+                {!isRelatedLoading &&
+                  !isRelatedError &&
+                  !hasMoreRelatedVideos &&
+                  !relatedItems.length && (
+                    <p className="text-sm text-gray-500">
+                      ویدیوی مرتبطی یافت نشد
+                    </p>
+                  )}
               </div>
             </div>
           </aside>
