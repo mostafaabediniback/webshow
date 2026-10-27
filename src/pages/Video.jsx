@@ -16,6 +16,8 @@ import { getVideoPlaylistIds } from "../services/videoApi";
 import { Button } from "../ui";
 import { readAuthSession } from "../utils/auth";
 
+const RELATED_VIDEOS_BATCH_SIZE = 5;
+
 const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
   <svg
     className={className}
@@ -79,7 +81,16 @@ function Video() {
     hasNextPage: hasMoreRelatedVideos,
     fetchNextPage: fetchMoreRelatedVideos,
     refetch: refetchRelatedVideos,
-  } = useInfiniteChannelVideos(currentChannelId);
+  } = useInfiniteChannelVideos(currentChannelId, RELATED_VIDEOS_BATCH_SIZE);
+
+  const [relatedVideoDisplay, setRelatedVideoDisplay] = useState({
+    videoId: id,
+    count: RELATED_VIDEOS_BATCH_SIZE,
+  });
+  const relatedVisibleCount =
+    relatedVideoDisplay.videoId === id
+      ? relatedVideoDisplay.count
+      : RELATED_VIDEOS_BATCH_SIZE;
 
   const playlistIds = useMemo(
     () => [...new Set(getVideoPlaylistIds({ playlists: currentVideo?.playlists }))],
@@ -446,7 +457,7 @@ function Video() {
 
   if (isLoading) {
     return (
-      <Layout>
+      <Layout showFooter={false}>
         <div className="mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6">
           <div className="animate-pulse">
             <div className="aspect-video rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 sm:rounded-xl" />
@@ -468,7 +479,7 @@ function Video() {
 
   if (!data) {
     return (
-      <Layout>
+      <Layout showFooter={false}>
         <div className="mx-auto max-w-7xl px-4 py-6 md:px-6">
           <div className="py-12 text-center">
             <p className="text-lg font-medium text-red-600">ویدیو یافت نشد</p>
@@ -480,7 +491,7 @@ function Video() {
   }
 
   return (
-    <Layout>
+    <Layout showFooter={false}>
       <div className="mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6">
         <div
           ref={videoGridRef}
@@ -800,7 +811,7 @@ function Video() {
                   />
                 </div>
               )}
-              <div className="mb-24 sm:mb-0">
+              <div>
                 <h3 className="mb-4 text-lg font-bold text-gray-900">
                   ویدیوهای مرتبط
                 </h3>
@@ -811,7 +822,7 @@ function Video() {
                   aria-busy={isRelatedFetching}
                 >
                   {isRelatedLoading
-                    ? Array.from({ length: 5 }).map((_, index) => (
+                    ? Array.from({ length: RELATED_VIDEOS_BATCH_SIZE }).map((_, index) => (
                         <div key={index} className="flex gap-3 rounded-lg p-2">
                           <div className="h-24 w-40 flex-shrink-0 rounded-lg bg-gray-200 animate-pulse" />
                           <div className="flex-1 space-y-2 py-1">
@@ -820,7 +831,7 @@ function Video() {
                           </div>
                         </div>
                       ))
-                    : relatedItems.map((video) => (
+                    : relatedItems.slice(0, relatedVisibleCount).map((video) => (
                         <Link
                           to={`/v/${video.id}`}
                           key={video.id}
@@ -875,7 +886,8 @@ function Video() {
                   </div>
                 )}
 
-                {!isRelatedError && hasMoreRelatedVideos && (
+                {!isRelatedError &&
+                  (relatedItems.length > relatedVisibleCount || hasMoreRelatedVideos) && (
                   <Button
                     type="button"
                     variant="outline"
@@ -883,9 +895,13 @@ function Video() {
                     aria-controls="related-videos"
                     isLoading={isRelatedFetchingNextPage}
                     disabled={isRelatedFetching}
-                    onClick={() =>
-                      fetchMoreRelatedVideos({ cancelRefetch: false })
-                    }
+                    onClick={() => {
+                      const nextCount = relatedVisibleCount + RELATED_VIDEOS_BATCH_SIZE;
+                      setRelatedVideoDisplay({ videoId: id, count: nextCount });
+                      if (relatedItems.length < nextCount && hasMoreRelatedVideos) {
+                        fetchMoreRelatedVideos({ cancelRefetch: false });
+                      }
+                    }}
                   >
                     {isRelatedFetchingNextPage
                       ? "در حال بارگذاری…"
