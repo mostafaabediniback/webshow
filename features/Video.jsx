@@ -1,19 +1,18 @@
 "use client";
 
 import axios from "axios";
-import { useQueries } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueries } from "@tanstack/react-query";
 import { Share } from "iconsax-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "@/lib/navigation";
 import { toast } from "react-toastify";
 import VideoPlaylistPanel from "../components/VideoPlaylistPanel";
-import useChannelVideos from "../hooks/channel/useChannelVideos";
 import { useVideo } from "../hooks/video/useVideo";
 import {
   getPlaylistDetail,
   playlistQueryKeys,
 } from "../services/playlist/playlistApi";
-import { getVideoPlaylistIds } from "../services/videoApi";
+import { getVideoPlaylistIds, getVideosByChannel } from "../services/videoApi";
 import { readAuthSession } from "../utils/auth";
 
 const DownloadIcon = ({ size = 16, color = "#4a5565", className = "" }) => (
@@ -69,14 +68,24 @@ function Video({ initialVideo }) {
   const [selectedQuality, setSelectedQuality] = useState(null);
   const [isSwitchingQuality, setIsSwitchingQuality] = useState(false);
 
-  const { data: relatedVideos, isLoading: isRelatedLoading } = useChannelVideos(
-    {
-      channelId: currentChannelId,
-      pageNumber: 1,
-      pageSize: 25,
-      enabled: !!currentChannelId,
-    },
-  );
+  const {
+    data: relatedVideos,
+    isLoading: isRelatedLoading,
+    isError: isRelatedError,
+    isFetchNextPageError: isRelatedNextPageError,
+    isFetchingNextPage: isRelatedFetchingNextPage,
+    hasNextPage: hasMoreRelatedVideos,
+    fetchNextPage: fetchMoreRelatedVideos,
+    refetch: refetchRelatedVideos,
+  } = useInfiniteQuery({
+    queryKey: ["channelVideos", "related", currentChannelId, 10],
+    queryFn: ({ pageParam }) =>
+      getVideosByChannel(currentChannelId, pageParam, 10),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _pages, lastPageParam) =>
+      lastPageParam < lastPage.totalPages ? lastPageParam + 1 : undefined,
+    enabled: !!currentChannelId,
+  });
 
   const playlistIds = useMemo(
     () => [...new Set(getVideoPlaylistIds({ playlists: currentVideo?.playlists }))],
@@ -304,13 +313,17 @@ function Video({ initialVideo }) {
     });
   }, [id]);
 
-  const relatedItems = useMemo(
-    () =>
-      (relatedVideos?.items || [])
-        .filter((video) => String(video.id) !== String(id))
-        .slice(0, 10),
-    [relatedVideos?.items, id],
-  );
+  const relatedItems = useMemo(() => {
+    const seenIds = new Set([String(id)]);
+    return (relatedVideos?.pages || [])
+      .flatMap((page) => page.items || [])
+      .filter((video) => {
+        const videoId = String(video.id);
+        if (seenIds.has(videoId)) return false;
+        seenIds.add(videoId);
+        return true;
+      });
+  }, [relatedVideos?.pages, id]);
 
   const extractFilenameFromContentDisposition = (cd) => {
     if (!cd) return null;
@@ -803,12 +816,19 @@ function Video({ initialVideo }) {
                   />
                 </div>
               )}
-              <div>
-                <h3 className="mb-4 text-lg font-bold text-gray-900">
+              <section aria-labelledby="related-videos-heading">
+                <h3
+                  id="related-videos-heading"
+                  className="mb-4 text-lg font-bold text-gray-900"
+                >
                   ویدیوهای مرتبط
                 </h3>
 
-                <div className="space-y-1 mb-24 sm:mb-0">
+                <div
+                  id="related-videos-list"
+                  className="space-y-1"
+                  aria-busy={isRelatedLoading || isRelatedFetchingNextPage}
+                >
                   {isRelatedLoading
                     ? Array.from({ length: 5 }).map((_, index) => (
                         <div key={index} className="flex gap-3 rounded-lg p-2">
@@ -852,12 +872,57 @@ function Video({ initialVideo }) {
                       ))}
                 </div>
 
-                {!isRelatedLoading && !relatedItems.length && (
+                {isRelatedError && (
+                  <div className="mt-3 text-center">
+                    <p role="alert" className="text-sm text-red-600">
+                      {isRelatedNextPageError
+                        ? "دریافت ویدیوهای بیشتر انجام نشد. دوباره تلاش کنید."
+                        : "دریافت ویدیوهای مرتبط انجام نشد."}
+                    </p>
+                    {!isRelatedNextPageError && (
+                      <button
+                        type="button"
+                        onClick={() => refetchRelatedVideos()}
+                        className="mt-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                      >
+                        تلاش دوباره
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {hasMoreRelatedVideos && (
+                  <button
+                    type="button"
+                    aria-controls="related-videos-list"
+                    disabled={isRelatedFetchingNextPage}
+                    onClick={() => {
+                      if (!isRelatedFetchingNextPage) {
+                        fetchMoreRelatedVideos({ cancelRefetch: false });
+                      }
+                    }}
+                    className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-wait disabled:opacity-60"
+                  >
+                    {isRelatedFetchingNextPage && (
+                      <span
+                        aria-hidden="true"
+                        className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-700"
+                      />
+                    )}
+                    {isRelatedFetchingNextPage
+                      ? "در حال بارگذاری..."
+                      : isRelatedNextPageError
+                        ? "تلاش دوباره"
+                        : "نمایش بیشتر"}
+                  </button>
+                )}
+
+                {!isRelatedLoading && !isRelatedError && !hasMoreRelatedVideos && !relatedItems.length && (
                   <p className="text-sm text-gray-500">
                     ویدیوی مرتبطی یافت نشد
                   </p>
                 )}
-              </div>
+              </section>
             </div>
           </aside>
         </div>
